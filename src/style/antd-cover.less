@@ -1,0 +1,346 @@
+.ant-pro-footer-bar {
+  box-shadow: 0 -1px 20px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.ant-scroll-number.ant-badge-count {
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  line-height: 16px;
+  background: #fb602d;
+  border-radius: 8px;
+
+  .ant-scroll-number-only {
+    height: 16px;
+  }
+}
+
+// 分页 样式覆盖
+.ant-pagination {
+  .ant-pagination-item.ant-pagination-item-active {
+    background: #1890ff;
+    a {
+      color: #fff;
+    }
+  }
+
+  .ant-select-selection-item {
+    text-overflow: initial;
+  }
+}
+
+// modal 样式覆盖
+.ant-modal-custmoize {
+  &.ant-modal-custmoize-no-shadow {
+    .ant-modal-footer {
+      box-shadow: none;
+    }
+  }
+
+  .ant-modal-content {
+    border-radius: 4px;
+
+    .ant-modal-body {
+      max-height: 490px;
+      padding: 16px 24px;
+      overflow: auto;
+    }
+  }
+
+  .ant-modal-close {
+    top: 8px;
+    right: 12px;
+
+    .ant-modal-close-x {
+      color: #000;
+      font-size: 22px;
+    }
+  }
+
+  .ant-modal-header {
+    padding-top: 24px;
+    border-bottom: 0;
+
+    .ant-modal-title {
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 600;
+      font-size: 20px;
+    }
+  }
+
+  .ant-modal-header,
+  .ant-card-body {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  .ant-modal-footer {
+    position: relative;
+    padding-top: 9px;
+    padding-right: 32px;
+    padding-bottom: 24px;
+    border-top: 0;
+    box-shadow: 0 -1px 20px 0 rgba(0, 0, 0, 0.05);
+  }
+}
+
+// drawer 样式覆盖
+.ant-drawer-content-wrapper {
+  .ant-drawer-header {
+    flex-shrink: 0;
+    padding-top: 24px;
+
+    .ant-drawer-close {
+      position: absolute;
+      top: 0;
+      right: 12px;
+      z-index: 10;
+      display: block;
+      margin-right: 0;
+      padding: 20px;
+      color: #000;
+      font-weight: 700;
+      font-size: 22px;
+      font-style: normal;
+      line-height: 1;
+      text-align: center;
+      text-transform: none;
+      text-decoration: none;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+      transition: color 0.3s;
+      text-rendering: auto;
+    }
+  }
+
+  .ant-drawer-title {
+    font-weight: 600;
+    font-size: 20px;
+  }
+
+  .ant-drawer-header,
+  .ant-drawer-body {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  .ant-drawer-footer {
+    padding: 9px 32px 24px 32px;
+    text-align: right;
+    border-top: 0;
+    box-shadow: 0 -1px 20px 0 rgba(0, 0, 0, 0.05);
+  }
+}
+
+.ant-tree {
+  .ant-tree-treenode-disabled.ant-tree-treenode {
+    .ant-tree-node-content-wrapper {
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+
+  .ant-tree-list {
+    .ant-tree-node-content-wrapper {
+      &.ant-tree-node-selected {
+        background-color: initial;
+      }
+
+      &:hover {
+        background-color: initial;
+      }
+    }
+
+    .ant-tree-treenode {
+      // width: 100%;
+      margin-bottom: 10px;
+      padding-bottom: 0;
+
+      &.ant-tree-treenode-selected {
+        background-color: #f5f5f6;
+      }
+
+      &:hover {
+        background-color: #f5f5f6;
+      }
+    }
+
+    .ant-tree-switcher {
+      width: 16px;
+    }
+
+    .ant-tree-checkbox {
+      margin-top: 8px;
+      margin-left: 5px;
+    }
+
+    .ant-tree-switcher,
+    .ant-tree-node-content-wrapper {
+      line-height: 32px;
+    }
+  }
+}
+
+/** 步骤条 **/
+.ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-content
+  > .ant-steps-item-title {
+  font-weight: 600;
+}
+
+.custmize-divider-line {
+  padding-left: 12px;
+
+  &::before {
+    width: 0 !important;
+  }
+
+  .ant-divider-inner-text {
+    padding-left: 0;
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 14px;
+  }
+}
+
+.ant-form-item-label {
+  overflow: inherit !important;
+  & > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+    margin-left: -10px;
+  }
+}
+
+
+.ant-pro-list .ant-list .ant-list-item.ant-pro-list-row {
+  position: relative;
+  width: 100%;
+  padding: 16px 32px 16px 24px;
+  overflow: hidden;
+
+  &::after {
+    position: absolute;
+    right: 32px;
+    bottom: 0;
+    left: 52px;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.05);
+    content: '';
+  }
+
+  .ant-list-item-meta-description {
+    margin-top: 7px;
+  }
+}
+
+.ant-form.ant-form-horizontal .ant-form-item {
+  flex-direction: row;
+}
+
+.ant-form-item-has-error-input-number {
+  .ant-input-number-input {
+    color: #ff4d4f;
+  }
+}
+
+.custome-drap-menu {
+  &.ant-dropdown-menu {
+    padding: 14px 0;
+  }
+
+  .ant-dropdown-menu-item {
+    height: 42px;
+    padding-right: 24px;
+    padding-left: 20px;
+
+    &:hover {
+      background-color: #fafafa;
+    }
+  }
+}
+
+.ant-drawer-content {
+  .ant-drawer-header {
+    border-bottom: 0;
+  }
+
+  .ant-drawer-body {
+    padding-top: 16px;
+  }
+}
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 2px !important;
+}
+
+.ant-pro-table.ant-pro-list .ant-pro-list-row {
+  &.ant-pro-list-row-selected {
+    background-color: #fafafa;
+    &:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  &:hover {
+    background-color: #fafafa;
+  }
+}
+
+.ant-pro-global-header.ant-pro-global-header-layout-side {
+  padding: 0;
+}
+
+// table 样式覆盖
+.ant-table.ant-table-middle .ant-table-thead > tr > th.ant-table-cell {
+  padding: 15px 8px;
+}
+
+.ant-table.ant-table-middle .ant-table-thead > tr > th.ant-table-cell,
+.ant-table.ant-table-middle .ant-table-tbody > tr > td.ant-table-cell {
+  padding-top: 16px;
+  padding-bottom: 16px;
+
+  &.ant-table-selection-column {
+    text-align: right;
+  }
+
+  &:not(.ant-table-selection-column) {
+    &:first-child {
+      padding-left: 24px;
+    }
+  }
+}
+
+.ant-dropdown-menu.ant-dropdown-menu-vertical {
+  border-radius: 4px;
+}
+
+.ant-table {
+  .ant-table-tbody > tr.ant-table-row-selected {
+    &:hover > td {
+      background-color: #fafafa;
+    }
+    & > td {
+      background-color: #fafafa;
+    }
+  }
+}
+
+.table-dropdown-menu-handle {
+  margin-left: 40px;
+
+  .ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled) {
+    min-width: 116px;
+    padding-top: 8px;
+    padding-bottom: 12px;
+    color: rgba(0, 0, 0, 0.65);
+
+    a {
+      display: block;
+    }
+  }
+
+  .ant-dropdown-menu-title-content {
+    text-align: center;
+  }
+}

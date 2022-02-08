@@ -1,0 +1,14 @@
+/**
+ * 在生产环境 代理是无法生效的，所以这里没有生产环境的配置
+ */
+export default {
+  dev: {
+    '/xxx': {
+      target: 'http://xxx.x.x.x',
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
+  },
+};

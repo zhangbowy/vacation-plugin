@@ -1,0 +1,29 @@
+:global {
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
+  .ant-tabs-tab:hover,
+  .ant-tabs-tab-btn:focus,
+  .ant-tabs-tab-remove:focus,
+  .ant-tabs-tab-btn:active,
+  .ant-tabs-tab-remove:active {
+    :local {
+      .tab-bar-capsule-number {
+        color: #1890ff;
+        background-color: #e6f7ff;
+      }
+    }
+  }
+
+  .ant-tabs-tab + .ant-tabs-tab {
+    margin: 0 0 0 54px;
+  }
+
+  .ant-tabs {
+    color: rgba(0, 0, 0, 0.65);
+    :local {
+      .tab-bar-capsule-number {
+        color: rgba(0, 0, 0, 0.45);
+        background: rgba(140, 140, 140, 0.1);
+      }
+    }
+  }
+}
