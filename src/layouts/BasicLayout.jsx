@@ -3,20 +3,14 @@
  *
  * @see You can view component api by: https://github.com/ant-design/ant-design-pro-layout
  */
-import ProLayout, { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Breadcrumb, Tooltip } from 'antd';
+import ProLayout from '@ant-design/pro-layout';
+// import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import cs from 'classnames';
-import { Link, connect, history } from 'umi';
-import { RightOutlined, InfoCircleOutlined } from '@ant-design/icons';
-
-import TabBarWithNumber from '@/components/TabBarWithNumber';
-import GlobalHeader from '@/components/GlobalHeader';
-import { useGlobalHeaderTab } from '@/hooks';
-import getLayoutInfo from './layoutInfo.jsx';
-import defaultLogo from '../assets/logo.png';
-import collapsedLogo from '../assets/collapsed-logo.png';
-
+import { connect, history } from 'umi';
+import { RightOutlined } from '@ant-design/icons';
+import initDingTalkJsapi from '@/init/initDingTalkJsapi';
+import './BasicLayout.less'
 import styles from './index.less';
 
 const BasicLayout = (props) => {
@@ -28,29 +22,26 @@ const BasicLayout = (props) => {
     },
   } = props;
   const { pathname } = location;
-  const [tabActiveKey, { tabListProps: headerTabListProps, updateHeaderInfo }] =
-    useGlobalHeaderTab();
-  const { currentTablist, currentBreadcrumbs, currentTitle, currentHeaderExtra } =
-    getLayoutInfo(pathname);
 
   const [collapsed, setSetcollapsed] = useState(false);
   const [isAdminHeaderTip] = useState(false);
 
-  const headerContentRef = useRef();
+  // const headerContentRef = useRef();
 
   // 切换路由 滚动回到顶部
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  const onTabChange = useCallback(
-    (paramsHeaderActiveKey) => {
-      updateHeaderInfo({
-        activeKey: paramsHeaderActiveKey,
-      });
+  useEffect(
+    () => {
+      initDingTalkJsapi().then(d => {
+        console.log(d)
+      })
     },
-    [updateHeaderInfo],
-  );
+    []
+  )
+
 
   return (
     <div
@@ -67,19 +58,7 @@ const BasicLayout = (props) => {
         className={cs({
           [styles.proLayoutCollapsed]: collapsed,
         })}
-        logo={
-          <div className="m-b-14 m-t-15 overflow-hidden">
-            {collapsed ? (
-              <div className="d-flex justify-content-center">
-                <img className="w-38 h-39" src={collapsedLogo} alt="鑫资产" />
-              </div>
-            ) : (
-              <div className="d-flex justify-content-center">
-                <img className="w-145 h-39" src={defaultLogo} alt="鑫资产" />
-              </div>
-            )}
-          </div>
-        }
+        logo={false}
         title=""
         {...props}
         {...settings}
@@ -119,7 +98,7 @@ const BasicLayout = (props) => {
         menuItemRender={(menuItemProps, defaultDom) => {
           const { level } = menuItemProps;
           const notCollpasedStyle = {
-            paddingLeft: `${44 + (level - 2) * 8}px`,
+            paddingLeft: level === 1 ? '8px' : `${44 + (level - 2) * 8}px`,
           };
           const menuItemStyles = {
             ...(collapsed ? {} : notCollpasedStyle),
@@ -174,68 +153,12 @@ const BasicLayout = (props) => {
             </div>
           );
         }}
-        headerContentRender={() => (
-          <div ref={headerContentRef} className={cs(styles.globalHeader, 'bg-fff')}>
-            <GlobalHeader />
-          </div>
-        )}
+        headerRender={false}
       >
-        <div
-          className={cs(styles.header, {
-            [styles.hasBreadcrumb]: !!currentBreadcrumbs?.length,
-            [styles.hasTitle]: !!currentTitle?.title || !!currentTitle,
-            [styles.hasFooter]: !!currentTablist?.tablist?.length,
-            [styles.hasContent]: !!currentHeaderExtra?.bottom,
-          })}
-        >
-          <PageContainer
-            fixedHeader
-            header={{
-              title: currentTitle
-                ? typeof currentTitle === 'object'
-                  ? currentTitle.title
-                  : currentTitle
-                : null,
-              tags: currentTitle?.tooltip ? (
-                <Tooltip title={currentTitle.tooltip}>
-                  <InfoCircleOutlined className="fs-14 c-000-45 m-l-8" />
-                </Tooltip>
-              ) : null,
-              breadcrumb: {},
-              breadcrumbRender: () =>
-                currentBreadcrumbs ? (
-                  <Breadcrumb>
-                    {currentBreadcrumbs?.map?.((breadcrumb, idx) => {
-                      const { path, breadcrumbName } = breadcrumb;
-                      return (
-                        // eslint-disable-next-line react/no-array-index-key
-                        <Breadcrumb.Item key={idx}>
-                          {path ? <Link to={path}>{breadcrumbName}</Link> : breadcrumbName}
-                        </Breadcrumb.Item>
-                      );
-                    })}
-                  </Breadcrumb>
-                ) : null,
-            }}
-            tabBarExtraContent={currentTablist?.tabBarExtraContent}
-            tabActiveKey={tabActiveKey}
-            tabList={
-              currentTablist?.tablist
-                ? currentTablist.tablist?.map?.((item, idx) => {
-                    return {
-                      ...item,
-                      tab: (
-                        <TabBarWithNumber text={item.tab} {...(headerTabListProps[idx] || {})} />
-                      ),
-                    };
-                  })
-                : null
-            }
-            content={currentHeaderExtra?.bottom}
-            onTabChange={onTabChange}
-          >
-            {children}
-          </PageContainer>
+        <div className='lay-basic-layout--wrap'>
+          <div id='lay-basic-layout--content-header' />
+          { children }
+          <div id='lay-basic-layout--content-footer' />
         </div>
       </ProLayout>
     </div>

@@ -1,11 +1,11 @@
 import initQuery from '@/init/initQuery';
-import initDingTalkJsapi from '@/init/initDingTalkJsapi';
+// import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 
 import './style/auto.css';
 import '@/style/index.less';
 
 initQuery();
-initDingTalkJsapi();
+// initDingTalkJsapi();
 
 export { default as getInitialState, initialStateConfig } from '@/init/initialState';
 export { default as rootContainer } from '@/init/rootContainer';

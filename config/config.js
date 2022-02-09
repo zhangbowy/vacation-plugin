@@ -18,7 +18,7 @@ export default defineConfig({
   },
   define: {
     PUBLIC_PATH: '/',
-    API_PREFIX: '/server',
+    API_PREFIX: '/recruit_api',
     ICONFONT_URL: '//at.alicdn.com/t/font_960416_4sf0n1ihf6k.js',
   },
   antd: {},
@@ -42,6 +42,7 @@ export default defineConfig({
   routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
+    '@layout-body-background': '#fff',
     'primary-color': '#037AFE',
     'link-color': '#037AFE',
   },

@@ -1,9 +1,9 @@
 /* eslint-disable global-require */
 import { dynamic } from 'umi';
-import { setConfig } from '@/config';
+// import { setConfig } from '@/config';
 import LoadingComponent from '@/Loading';
-import layout from '@/pages/_layout';
-import { getRoleMap } from '@/services';
+// import layout from '@/pages/_layout';
+// import { getRoleMap } from '@/services';
 import { recursionFormatData, recursionCollectionData } from '@/utils/utils';
 
 let roleIdMap = {};
@@ -44,29 +44,49 @@ export default function patchRoutes({ routes }) {
 
   const addRoutes = [
     {
-      name: '一级路由',
-      exact: false,
+      path: '/balance',
+      name: '假期余额',
       icon: 'icon-zichanguanli2',
-      path: '/level1',
-      component: layout,
-      routes: [
-        {
-          name: '二级路由',
-          exact: false,
-          path: '/level1/level2',
-          component: layout,
-          routes: [
-            {
-              name: 'demo 示例',
-              path: '/level1/level2/demo',
-              component: dynamic({
-                loader: () => import(/* webpackChunkName:  'demo' */ '@/pages/Demo/index'),
-                loading: LoadingComponent,
-              }),
-            },
-          ],
-        },
-      ],
+      component: dynamic({
+        loader: () => import('@/pages/Balance'),
+        loading: LoadingComponent,
+      })
+    },
+    {
+      path: '/statistics',
+      name: '统计报表',
+      icon: 'icon-zichanguanli2',
+      component: dynamic({
+        loader: () => import('@/pages/Statistics'),
+        loading: LoadingComponent,
+      }),
+    },
+    {
+      path: '/overview',
+      name: '休假总览',
+      icon: 'icon-zichanguanli2',
+      component: dynamic({
+        loader: () => import('@/pages/Overview'),
+        loading: LoadingComponent,
+      }),
+    },
+    {
+      path: '/auth',
+      name: '权限设置',
+      icon: 'icon-zichanguanli2',
+      component: dynamic({
+        loader: () => import('@/pages/Auth'),
+        loading: LoadingComponent,
+      }),
+    },
+    {
+      path: '/log',
+      name: '操作日志',
+      icon: 'icon-zichanguanli2',
+      component: dynamic({
+        loader: () => import('@/pages/Log'),
+        loading: LoadingComponent,
+      }),
     },
     ...otherRoutes,
   ];
@@ -99,11 +119,11 @@ export default function patchRoutes({ routes }) {
 
 // eslint-disable-next-line consistent-return
 export async function render(oldRender) {
-  const [, roleIdMap = {}] = await getRoleMap();
+  // const [, roleIdMap = {}] = await getRoleMap();
 
-  setConfig({
-    roleIdMap,
-  });
+  // setConfig({
+  //   roleIdMap,
+  // });
 
   oldRender();
 }

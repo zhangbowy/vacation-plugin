@@ -71,7 +71,7 @@ const adapRequestDataKey = {
   get: 'params',
 };
 
-export const adapRequest = (method, url, params, options = {}) => {
+export const adapRequest = async (method, url, params, options = {}) => {
   let finallyUrl = url;
   if (process.env.NODE_ENV === 'development') {
     if (options.mock) {
@@ -79,15 +79,23 @@ export const adapRequest = (method, url, params, options = {}) => {
     }
   }
 
-  return to(
-    request(finallyUrl, {
-      method,
-      requestInterceptors,
-      responseInterceptors,
-      [adapRequestDataKey[method.toLowerCase()] || 'data']: params,
-      ...options,
-    }),
-  );
+  try {
+    const [err, result] = await to(
+      request(finallyUrl, {
+        method,
+        requestInterceptors,
+        responseInterceptors,
+        [adapRequestDataKey[method.toLowerCase()] || 'data']: params,
+        ...options,
+      }),
+    );
+    if (err || !result || !result.success) {
+      return [false, result]
+    }
+    return [true, result.result]
+  } catch (e) {
+    return [false, e]
+  }
 };
 
 export const requestConfig = {
