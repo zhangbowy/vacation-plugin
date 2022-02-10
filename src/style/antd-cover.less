@@ -232,7 +232,9 @@
     margin-top: 7px;
   }
 }
-
+.ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  display: none;
+}
 .ant-form.ant-form-horizontal .ant-form-item {
   flex-direction: row;
 }
@@ -267,10 +269,6 @@
   .ant-drawer-body {
     padding-top: 16px;
   }
-}
-
-.ant-select:not(.ant-select-customize-input) .ant-select-selector {
-  border-radius: 2px !important;
 }
 
 .ant-pro-table.ant-pro-list .ant-pro-list-row {

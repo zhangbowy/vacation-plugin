@@ -27,7 +27,7 @@ export default defineConfig({
     localsConvention: 'camelCase',
   },
   dva: {
-    hmr: true,
+    hmr: true
   },
   history: {
     type: 'browser',
@@ -42,9 +42,12 @@ export default defineConfig({
   routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
+    '@border-radius-base': '4px',
+    '@btn-default-color': '#171a1d',
+    '@heading-color': '#111f2c',
     '@layout-body-background': '#fff',
-    'primary-color': '#037AFE',
-    'link-color': '#037AFE',
+    '@primary-color': '#1890ff',
+    '@link-color': '#1890ff',
   },
   title: false,
   ignoreMomentLocale: true,

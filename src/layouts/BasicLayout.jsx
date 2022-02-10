@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import cs from 'classnames';
 import { connect, history } from 'umi';
 import { RightOutlined } from '@ant-design/icons';
-import initDingTalkJsapi from '@/init/initDingTalkJsapi';
+// import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 import './BasicLayout.less'
 import styles from './index.less';
 
@@ -33,14 +33,14 @@ const BasicLayout = (props) => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  useEffect(
-    () => {
-      initDingTalkJsapi().then(d => {
-        console.log(d)
-      })
-    },
-    []
-  )
+  // useEffect(
+  //   () => {
+  //     initDingTalkJsapi().then(d => {
+  //       console.log(d)
+  //     })
+  //   },
+  //   []
+  // )
 
 
   return (

@@ -1,27 +1,45 @@
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import type { FC } from 'react';
 import PageContent from '@/components/structure/PageContent'
-import ContentFooter from '@/components/structure/ContentFooter'
-import { Input, Select, Button } from 'antd'
+import StoreTable from '@/components/table/StoreTable'
+import { useDispatch, useSelector } from 'dva'
 // import { useSelector } from 'dva'
 import Header from './components/Header'
+import Filters from './components/Filters'
+import Buttons from './components/Buttons'
 import './Balance.less';
 
 const Balance: FC = () => {
-  // const sel = useSelector(state => state)
-  // console.log(sel)
+  const dispatch = useDispatch()
+  console.log('useDispatch', dispatch)
+  const params = useSelector(state => state.table.params)
+  console.log('params', params)
+  useEffect(
+    () => {
+      dispatch({
+        type: 'table/initTable',
+        payload: {
+          columns: [
+            { title: '姓名', dataIndex: 'name' },
+            { title: '工号', dataIndex: 'no' },
+            { title: '所属部门', dataIndex: 'dept' },
+            { title: '岗位', dataIndex: 'job' },
+            { title: '事假(小时)', dataIndex: 'thing' },
+            { title: '年假(天)', dataIndex: 'year' },
+            { title: '调休(天)', dataIndex: 'get' }
+          ]
+        }
+      })
+    },
+    [dispatch]
+  )
   return <PageContent className='pg-balance' hasPadding>
     <Header />
-    <div>
-      <div>
-        <Input placeholder='搜索人员姓名' /><Select placeholder='选择部门' /><Select placeholder='选择在职情况' />
-      </div>
-      <div>
-        <Button>使用Excel批量修改</Button>
-        <Button>导出</Button>
-      </div>
+    <div className='pg-balance--options'>
+      <Filters />
+      <Buttons />
     </div>
-    <ContentFooter>footer</ContentFooter>
+    <StoreTable withFooterPaination />
   </PageContent>;
 };
 

@@ -1,0 +1,102 @@
+.com-table-footer-paination {
+  position: relative;
+  padding: 16px 20px;
+  &::before {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    right: 20px;
+    left: 20px;
+    height: 1px;
+    background-color: rgba(17, 31, 44, .08);
+  }
+  .com-table-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .ant-pagination-total-text {
+    flex: auto;
+    height: auto;
+    color: #111f2c;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .ant-pagination-prev, .ant-pagination-next, .ant-pagination-jump-prev, .ant-pagination-item {
+    min-width: 24px;
+    height: 24px;
+    line-height: 22px;
+    border-color: rgba(0, 0, 0, .15);
+    border-radius: 4px;
+  }
+  .ant-pagination-jump-next {
+    min-width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-color: rgba(0, 0, 0, .15);
+    border-radius: 4px;
+    &:hover .ant-pagination-item-ellipsis {
+      color:#1890ff;
+    }
+  }
+  .ant-pagination .ant-pagination-item.ant-pagination-item-active a {
+    color:#1890ff;
+    font-size: 14px;
+    line-height: 22px;
+  }
+  .ant-pagination-item-link {
+    .anticon {
+      color: rgba(0, 0, 0, .65);
+    }
+  }
+  .ant-pagination-disabled {
+    .ant-pagination-item-link .anticon {
+      color: rgba(0, 0, 0, .25);
+    }
+    &:hover button {
+      border-color: rgba(0, 0, 0, .15);
+      cursor: not-allowed;
+    }
+  }
+  .ant-pagination .ant-pagination-item.ant-pagination-item-active {
+    background-color: #fff;
+    border-color: #1890ff;
+  }
+  .ant-pagination-item a {
+    color: rgba(0, 0, 0, .65);
+    font-size: 14px;
+    line-height: 22px;
+    &:hover {
+      color:#1890ff;
+    }
+  }
+  .ant-pagination-options-quick-jumper {
+    height: auto;
+    color: rgba(0, 0, 0, .65);
+    font-size: 12px;
+    line-height: 20px;
+  }
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    width: 80px;
+    height: 24px;
+    padding: 2px 8px;
+  }
+  .ant-pagination-options-quick-jumper input {
+    width: 40px;
+    height: auto;
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-search-input {
+    height: 22px;
+  }
+  .ant-select-single .ant-select-selector .ant-select-selection-item {
+    color: rgba(0, 0, 0, .65);
+    font-size: 12px;
+    line-height: 20px;
+  }
+  .ant-select-arrow {
+    right: 9px;
+    width: 9px;
+  }
+}
