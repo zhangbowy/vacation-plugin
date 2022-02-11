@@ -3,11 +3,11 @@
  */
 export default {
   dev: {
-    "/recruit_api": {
-      target: "http://47.96.94.191:8088/recruit",
+    "/vacation_api": {
+      target: "http://vacation-pc.forwe.work/vacation",
       changeOrigin: true,
       pathRewrite: {
-        '^/recruit_api': '',
+        '^/vacation_api': '',
       },
       cookiePathRewrite: '/'
     },

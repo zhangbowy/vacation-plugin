@@ -3,7 +3,7 @@ import { get, post } from '@/utils/request';
 export const userLogin = params => post('/user/login', params);
 
 // 获取钉钉授权的信息
-export const getApiTicket = (params) => get('/auth/authentication', params);
+export const getApiTicket = (params) => get('/ding/getJsapiAuth', params);
 
 // 获取用户权限列表
 export const getRoleMap = (params) => get('/getRoleMap/x', params);
