@@ -11,8 +11,8 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   hash: true,
-  base: '/',
-  publicPath: '/',
+  base: '/vacation-pc/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/vacation-pc/' : '/',
   alias: {
     fim: path.join(__dirname, '../', 'src/.fim'),
   },
