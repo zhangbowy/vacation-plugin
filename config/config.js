@@ -18,7 +18,7 @@ export default defineConfig({
   },
   define: {
     PUBLIC_PATH: '/',
-    API_PREFIX: '/vacation_api',
+    API_PREFIX: '/vacation',
     ICONFONT_URL: '//at.alicdn.com/t/font_960416_4sf0n1ihf6k.js',
   },
   antd: {},
