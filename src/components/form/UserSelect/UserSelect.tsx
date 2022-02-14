@@ -1,42 +1,46 @@
 import { memo, useCallback, useMemo } from 'react'
 import type { FC } from 'react'
 import classnames from 'classnames'
-import './DeptSelect.less'
+import './UserSelect.less'
 import Tooltip from '@/components/pop/Tooltip'
-import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
+import { chooseComplexPicker } from '@xfw/rc-dingtalk-jsapi'
 
-export type ValuesType = { id: string | number, name: string, number: number }[]
+export type ValuesType = {
+  emplId: string | number, name: string, avatar: number
+}[]
 
-interface DeptSelectProps {
+interface UserSelectProps {
   className?: string
   value?: ValuesType
   onChange?: (
-    departments: ValuesType
+    users: ValuesType
   ) => any
   options?: Record<string, any>,
   placeholder?: string
 }
 
-const DeptSelect: FC<DeptSelectProps> = ({
-  className, value, onChange, options = {}, placeholder = '选择部门'
+const UserSelect: FC<UserSelectProps> = ({
+  className, value, onChange, options = {}, placeholder = '选择成员'
 }) => {
   const cName = useMemo(
-    () => classnames('com-form-dept-select', className),
+    () => classnames('com-form-user-select', className),
     [className]
   )
   console.log('onChange', onChange)
   const handleChoose = useCallback(
     () => {
-      console.log((value || []).map(({ id }) => id))
-      chooseDepartments({
+      console.log((value || []).map(({ emplId }) => emplId))
+      chooseComplexPicker({
         title: '选择部门',
-        departments: value
-          ? value.map(({ id }) => id)
+        pickedUsers: value
+          ? value.map(({ emplId }) => emplId)
           : [],
+        responseUserOnly: true,
         ...options
-      }).then(({ departments }) => {
+        // @ts-ignore
+      }).then(({ users }) => {
         if (onChange) {
-          onChange(departments)
+          onChange(users)
         }
       })
     },
@@ -65,22 +69,22 @@ const DeptSelect: FC<DeptSelectProps> = ({
       txt
         ? <>
           <Tooltip title={txt}>
-            <p className='com-form-dept-select--text'>
+            <p className='com-form-user-select--text'>
               { txt }
             </p>
           </Tooltip>
           <span
-            className='com-form-dept-select--icon'
+            className='com-form-user-select--icon'
             onClick={handleClear}
           >
             x
           </span>
         </>
-        : <span className='com-form-dept-select--placeholder'>
+        : <span className='com-form-user-select--placeholder'>
             { placeholder }
           </span>
     }
   </div>
 }
 
-export default memo(DeptSelect)
+export default memo(UserSelect)

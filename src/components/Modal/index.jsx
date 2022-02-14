@@ -28,7 +28,7 @@ function Modal(props) {
       wrapClassName={cs('ant-modal-custmoize', {
         'ant-modal-custmoize-no-shadow': !hasScroll,
       })}
-      closeIcon={<Icon type="icon-guanbi3" />}
+      closeIcon={<Icon type="icon-Close-Circle-Fill" />}
       {...props}
     >
       <div ref={eleRef}>{props.children}</div>

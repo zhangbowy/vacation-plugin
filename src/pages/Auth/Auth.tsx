@@ -1,78 +1,64 @@
-import { memo, useState } from 'react';
+import { memo, useState, useEffect } from 'react';
 import type { FC } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
-import type { ProColumns } from '@ant-design/pro-table';
+import PageContent from '@/components/structure/PageContent'
+import StoreTable from '@/components/table/StoreTable'
+import { useDispatch, useSelector } from 'dva'
 import { Button } from 'antd';
+import './Auth.less'
 import AuthEdit from './components/AuthEdit';
-
-type AuthItem = {
-  name: string;
-  user: string;
-  range: string;
-  auth: string;
-};
-
-const columns: ProColumns<AuthItem>[] = [
-  {
-    title: '权限名称',
-    dataIndex: 'name',
-  },
-  {
-    title: '成员',
-    dataIndex: 'user',
-  },
-  {
-    title: '管理范围',
-    dataIndex: 'range',
-  },
-  {
-    title: '权限',
-    dataIndex: 'auth',
-  },
-  {
-    title: '操作',
-    key: 'option',
-    render: () => [<a key="edit">编辑</a>, <a key="remove">删除</a>],
-  },
-];
+import Header from './components/Header'
+import Icon from '@/components/Icon'
 
 const Auth: FC = () => {
-  const [info, setInfo] = useState<{ visible: boolean; id: string }>({ visible: false, id: '' });
-  return (
-    <PageContainer>
-      <ProTable
-        rowKey="id"
-        columns={columns}
-        search={false}
-        pagination={{
-          pageSize: 10,
-        }}
-        options={false}
-        request={async (params) => {
-          console.log('params', params);
-          return {
-            data: [
-              {
-                id: 'xxx',
-                name: 'dfdf',
-                user: 'aaa',
-                range: 'tt',
-                auth: 'ww',
-              },
-            ],
-            success: true,
-            total: 1,
-          };
-        }}
-        headerTitle={
-          <Button type="primary" key="primary" onClick={() => setInfo({ visible: true, id: '' })}>
-            新增权限
-          </Button>
+  const dispatch = useDispatch()
+  console.log('useDispatch', dispatch)
+  const params = useSelector(state => state.table.params)
+  console.log('params', params)
+  const handleEdit = (d: any) => {
+    console.log('edit', d)
+  }
+  const handleRemove = (d: any) => {
+    console.log('remove', d)
+  }
+  useEffect(
+    () => {
+      dispatch({
+        type: 'table/initTable',
+        payload: {
+          columns: [
+            { title: '权限名称', dataIndex: 'name' },
+            { title: '成员', dataIndex: 'user' },
+            { title: '管理范围', dataIndex: 'range' },
+            { title: '权限', dataIndex: 'auth' },
+            {
+              title: '操作',
+              key: 'option',
+              render: (d: any) => [
+                <a key="edit" onClick={() => handleEdit(d)}>编辑</a>,
+                <a key="remove" onClick={() => handleRemove(d)}>删除</a>
+              ]
+            }
+          ]
         }
-      />
+      })
+    },
+    [dispatch]
+  )
+  const [info, setInfo] = useState<{ visible: boolean; id: string }>({
+    visible: false, id: ''
+  });
+  return (
+    <PageContent className='pg-auth' hasPadding>
+      <Header />
+      <div className='pg-auth--filters'>
+        <Button type="primary" key="primary" onClick={() => setInfo({ visible: true, id: '' })}>
+          <Icon type='icon-tianjiafenzu' />
+          <span>新增权限</span>
+        </Button>
+      </div>
       <AuthEdit {...info} onVisibleChange={(newInfo) => setInfo(newInfo)} />
-    </PageContainer>
+      <StoreTable withFooterPaination />
+    </PageContent>
   );
 };
 

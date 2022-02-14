@@ -36,7 +36,10 @@ async function initDingTalkJsapi() {
 
       return {}
     },
-    jsApiList: ['biz.contact.departmentsPicker'],
+    jsApiList: [
+      'biz.contact.departmentsPicker',
+      'biz.contact.complexPicker'
+    ],
   })
   return loginResult
 }
