@@ -7,9 +7,10 @@ import { useSelector } from 'dva'
 
 interface StoreTableProps {
   withFooterPaination: boolean
+  bordered?: boolean
 }
 
-const StoreTable: FC<StoreTableProps> = ({ withFooterPaination }) => {
+const StoreTable: FC<StoreTableProps> = ({ withFooterPaination, bordered }) => {
   const {
     columns, list, pageNo, pageSize, total
   } = useSelector(state => state.table)
@@ -19,6 +20,7 @@ const StoreTable: FC<StoreTableProps> = ({ withFooterPaination }) => {
       columns={columns}
       dataSource={list}
       pagination={false}
+      bordered={bordered}
     />
     {
       withFooterPaination &&

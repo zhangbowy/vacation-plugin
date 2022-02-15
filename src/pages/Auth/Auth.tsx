@@ -1,11 +1,11 @@
-import { memo, useState, useEffect } from 'react';
-import type { FC } from 'react';
+import { memo, useState, useEffect } from 'react'
+import type { FC } from 'react'
 import PageContent from '@/components/structure/PageContent'
 import StoreTable from '@/components/table/StoreTable'
 import { useDispatch, useSelector } from 'dva'
-import { Button } from 'antd';
+import { Button } from 'antd'
 import './Auth.less'
-import AuthEdit from './components/AuthEdit';
+import AuthEdit from './components/AuthEdit'
 import Header from './components/Header'
 import Icon from '@/components/Icon'
 
@@ -44,9 +44,9 @@ const Auth: FC = () => {
     },
     [dispatch]
   )
-  const [info, setInfo] = useState<{ visible: boolean; id: string }>({
+  const [info, setInfo] = useState<{ visible: boolean, id: string }>({
     visible: false, id: ''
-  });
+  })
   return (
     <PageContent className='pg-auth' hasPadding>
       <Header />
@@ -56,10 +56,10 @@ const Auth: FC = () => {
           <span>新增权限</span>
         </Button>
       </div>
-      <AuthEdit {...info} onVisibleChange={(newInfo) => setInfo(newInfo)} />
       <StoreTable withFooterPaination />
+      <AuthEdit {...info} onVisibleChange={(newInfo) => setInfo(newInfo)} />
     </PageContent>
-  );
-};
+  )
+}
 
-export default memo(Auth);
+export default memo(Auth)

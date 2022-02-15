@@ -1,24 +1,18 @@
-import { memo } from 'react';
-import type { FC } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
-import type { ProColumns } from '@ant-design/pro-table';
-import { Button, Input, Select, DatePicker } from 'antd';
+import { memo, useEffect } from 'react'
+import type { FC } from 'react'
+import './Statistics.less'
+import { useDispatch } from 'dva'
+import PageContent from '@/components/structure/PageContent'
+import StoreTable from '@/components/table/StoreTable'
+import Header from './components/Header'
+import Filters from './components/Filters'
+import Buttons from './components/Buttons'
 
-type StatisticssItem = {
-  name: string;
-  no: string;
-  department: string;
-  position: string;
-  type: string;
-  time: Date;
-  duration: string;
-};
-
-const columns: ProColumns<StatisticssItem>[] = [
+const columns = [
   {
     title: '姓名',
     dataIndex: 'name',
+    fixed: 'left'
   },
   {
     title: '工号',
@@ -29,66 +23,53 @@ const columns: ProColumns<StatisticssItem>[] = [
     dataIndex: 'department',
   },
   {
-    title: '岗位',
-    dataIndex: 'position',
-  },
-  {
-    title: '假期名称',
-    dataIndex: 'type',
-  },
-  {
-    title: '时间',
-    dataIndex: 'time',
-  },
-  {
-    title: '时长',
-    dataIndex: 'duration',
-  },
-];
-
-const Statistics: FC = () => (
-  <PageContainer>
-    <ProTable
-      rowKey="id"
-      columns={columns}
-      search={false}
-      pagination={{
-        pageSize: 10,
-      }}
-      options={false}
-      request={async (params) => {
-        console.log('params', params);
-        return {
-          data: [
-            {
-              id: 'xxx',
-              name: 'd',
-              no: 'string',
-              department: 'string',
-              position: 'string',
-              type: 'string',
-              time: new Date(),
-              duration: 'string',
-            },
-          ],
-          success: true,
-          total: 1,
-        };
-      }}
-      headerTitle={
-        <div>
-          <div>
-            <Input placeholder="搜索员工姓名" />
-            <DatePicker placeholder="选择时间" />
-            <Select placeholder="选择假期" />
-          </div>
-          <Button type="primary" key="primary">
-            导出
-          </Button>
-        </div>
+    title: '事假(小时)',
+    children: [
+      {
+        title: '往年余额',
+        dataIndex: 'position',
+      },
+      {
+        title: '当年发放',
+        dataIndex: 'type',
+      },
+      {
+        title: '使用数量',
+        dataIndex: 'time',
+      },
+      {
+        title: '过期数量',
+        dataIndex: 'time',
+      },
+      {
+        title: '结余',
+        dataIndex: 'duration',
       }
-    />
-  </PageContainer>
-);
+    ]
+  }
+]
 
-export default memo(Statistics);
+const Statistics: FC = () => {
+  const dispatch = useDispatch()
+  useEffect(
+    () => {
+      dispatch({
+        type: 'table/initTable',
+        payload: {
+          columns
+        }
+      })
+    },
+    [dispatch]
+  )
+  return <PageContent className='pg-statistics' hasPadding>
+    <Header />
+    <div className='pg-statistics--options'>
+      <Filters />
+      <Buttons />
+    </div>
+    <StoreTable withFooterPaination bordered />
+  </PageContent>
+}
+
+export default memo(Statistics)

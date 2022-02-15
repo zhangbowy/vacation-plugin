@@ -28,8 +28,8 @@ const AuthEdit: FC<{
         { count: number, maxLength?: number }
       ) => 
         <p>
-          <span>{ count }</span>
-          <span>{ `/${maxLength}` }</span>
+          <span className='pg-auth--edit--count'>{ count }</span>
+          <span className='pg-auth--edit--max-count'>{ `/${maxLength}` }</span>
         </p>
     }),
     []
