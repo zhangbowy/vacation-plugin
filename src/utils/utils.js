@@ -5,6 +5,14 @@ import { cloneDeep } from 'lodash';
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
+export const downloadFile = (url, name) => {
+  const el = document.createElement('a');
+  el.download = name;
+  el.href = url;
+  el.style.display = 'none';
+  el.click();
+}
+
 export function proxyBackUpDefault(target) {
   return new Proxy(target, {
     get(obj, prop) {

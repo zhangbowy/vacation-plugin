@@ -15,7 +15,12 @@ const Header: FC<HeaderProps> = ({ tabs, activeKey, onTabChange }) =>
   <ContentHeader className='pg-overview--header' hasShadow>
     <ContentTitle className='pg-overview--header--title'>休假总览</ContentTitle>
     <div className='pg-overview--header--divider' />
-    <CommonTabs className='pg-overview--header--tabs' tabs={tabs} />
+    <CommonTabs
+      className='pg-overview--header--tabs'
+      tabs={tabs}
+      activeKey={activeKey}
+      onChange={onTabChange}
+    />
   </ContentHeader>
 
 export default memo(Header)

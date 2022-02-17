@@ -5,6 +5,7 @@ import config from '@/config';
 
 // header 添加 token 和 corpId
 const requestInterceptorToken = (url, options) => {
+  console.log('config', config)
   const { token, corpId } = config;
   if (token && corpId) {
     const headers = { ...options.headers };

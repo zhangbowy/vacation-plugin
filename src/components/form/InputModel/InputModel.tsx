@@ -20,7 +20,6 @@ const InputModel: FC<InputProps> = ({ className, name, ...rest }) => {
   )
   const { run, flush } = useDebounceFn(
     (propName: string | undefined, value: string) => {
-      console.log('mdddd')
       if (propName) {
         dispatch({
           type: 'table/updateParams',
@@ -44,17 +43,12 @@ const InputModel: FC<InputProps> = ({ className, name, ...rest }) => {
         refInputValue.current = newValue
         setInputValue(newValue)
         run(name, newValue)
-      } else {
-        refInputValue.current = ''
-        setInputValue('')
-        run(name, '')
       }
     },
     [storeValue, name, run]
   )
   const handleChange = useCallback(
     (e: any) => {
-      console.log('gogogog')
       const v = e.target.value
       setInputValue(v)
       refInputValue.current = v
@@ -64,7 +58,6 @@ const InputModel: FC<InputProps> = ({ className, name, ...rest }) => {
   )
   const handlePressEnter = useCallback(
     () => {
-      console.log('dododo')
       flush()
     },
     [flush]

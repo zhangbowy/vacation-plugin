@@ -1,20 +1,11 @@
-import { memo } from 'react';
-import type { FC } from 'react';
-import ProTable from '@ant-design/pro-table';
-import type { ProColumns } from '@ant-design/pro-table';
-import { Button, Input, Select, DatePicker } from 'antd';
+import { memo, useEffect } from 'react'
+import type { FC } from 'react'
+import StoreTable from '@/components/table/StoreTable'
+import { useDispatch } from 'dva'
+import './Record.less'
+import RecordOptions from '../RecordOptions'
 
-type RecordItem = {
-  name: string;
-  no: string;
-  department: string;
-  position: string;
-  type: string;
-  time: Date;
-  duration: string;
-};
-
-const columns: ProColumns<RecordItem>[] = [
+const columns = [
   {
     title: '姓名',
     dataIndex: 'name',
@@ -43,49 +34,26 @@ const columns: ProColumns<RecordItem>[] = [
     title: '时长',
     dataIndex: 'duration',
   },
-];
+]
 
-const Record: FC = () => (
-  <ProTable
-    rowKey="id"
-    columns={columns}
-    search={false}
-    pagination={{
-      pageSize: 10,
-    }}
-    options={false}
-    request={async (params) => {
-      console.log('params', params);
-      return {
-        data: [
-          {
-            id: 'xxx',
-            name: 'd',
-            no: 'string',
-            department: 'string',
-            position: 'string',
-            type: 'string',
-            time: new Date(),
-            duration: 'string',
-          },
-        ],
-        success: true,
-        total: 1,
-      };
-    }}
-    headerTitle={
-      <div>
-        <div>
-          <Input placeholder="搜索员工姓名" />
-          <Select placeholder="选择假期" />
-          <DatePicker placeholder="选择时间" />
-        </div>
-        <Button type="primary" key="primary">
-          导出
-        </Button>
-      </div>
-    }
-  />
-);
+const Record: FC = () => {
+  const dispatch = useDispatch()
+  console.log('useDispatch', dispatch)
+  useEffect(
+    () => {
+      dispatch({
+        type: 'table/initTable',
+        payload: {
+          columns
+        }
+      })
+    },
+    [dispatch]
+  )
+  return <>
+    <RecordOptions />
+    <StoreTable withFooterPaination />
+  </>
+}
 
-export default memo(Record);
+export default memo(Record)

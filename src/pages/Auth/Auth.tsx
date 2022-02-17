@@ -52,7 +52,7 @@ const Auth: FC = () => {
       <Header />
       <div className='pg-auth--filters'>
         <Button type="primary" key="primary" onClick={() => setInfo({ visible: true, id: '' })}>
-          <Icon type='icon-tianjiafenzu' />
+          <Icon type='icon-tianjia' />
           <span>新增权限</span>
         </Button>
       </div>

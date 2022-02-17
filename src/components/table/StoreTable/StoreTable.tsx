@@ -6,17 +6,21 @@ import Table from '@/components/table/Table'
 import { useSelector } from 'dva'
 
 interface StoreTableProps {
+  rowKey?: string | ((record: any) => string)
   withFooterPaination: boolean
   bordered?: boolean
 }
 
-const StoreTable: FC<StoreTableProps> = ({ withFooterPaination, bordered }) => {
+const StoreTable: FC<StoreTableProps> = ({
+  rowKey, withFooterPaination, bordered
+}) => {
   const {
     columns, list, pageNo, pageSize, total
   } = useSelector(state => state.table)
   return <>
     <Table
       className='com-table--store'
+      rowKey={rowKey}
       columns={columns}
       dataSource={list}
       pagination={false}

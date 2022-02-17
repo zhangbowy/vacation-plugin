@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import type { FC } from 'react'
-import { SearchOutlined } from '@ant-design/icons'
+import Icon from '@/components/Icon'
 import Select from '@/components/form/Select'
 import RangePicker from '@/components/form/RangePicker'
 import hocFilter from '@/hoc/tableModel/hocFilter'
@@ -19,7 +19,7 @@ const Filters: FC = () => {
     <InputModel
       className='pg-log--filters--name'
       placeholder='搜索人员姓名'
-      prefix={<SearchOutlined />}
+      prefix={<Icon type='icon-sousuo' />}
     />
     <FilterRangePicker
       className='pg-log--filters--range'

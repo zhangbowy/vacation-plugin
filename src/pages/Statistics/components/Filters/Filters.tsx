@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import type { FC } from 'react'
-import { SearchOutlined } from '@ant-design/icons'
+import Icon from '@/components/Icon'
 import Select from '@/components/form/Select'
 import hocFilter from '@/hoc/tableModel/hocFilter'
 import InputModel from '@/components/form/InputModel'
@@ -16,7 +16,7 @@ const Filters: FC = () => {
     <InputModel
       className='pg-statistics--filters--name'
       placeholder='搜索人员姓名'
-      prefix={<SearchOutlined />}
+      prefix={<Icon type='icon-sousuo' />}
     />
     <CombineDatePicker />
     <FilterSelect

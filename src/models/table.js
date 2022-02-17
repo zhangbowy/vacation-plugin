@@ -1,4 +1,4 @@
-const defaultParamsHandle = (params, pageNo, pageSize) => ({
+export const defaultParamsHandle = (params, pageNo, pageSize) => ({
   ...(params || {}), pageNo: pageNo || 1, pageSize: pageSize || 10
 })
 
@@ -35,7 +35,7 @@ const getDefaultState = () =>({
 
 const doFetch = async (action, params, pageNo, pageSize, paramsHandle, resultHandle) => {
   const [success, result] = await action(
-    paramsFilter(paramsHandle || defaultParamsHandle(params, pageNo, pageSize))
+    paramsFilter((paramsHandle || defaultParamsHandle)(params, pageNo, pageSize))
   )
   if (success) {
     if (resultHandle) {

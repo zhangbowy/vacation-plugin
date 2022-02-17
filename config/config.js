@@ -19,7 +19,7 @@ export default defineConfig({
   define: {
     PUBLIC_PATH: '/',
     API_PREFIX: '/vacation',
-    ICONFONT_URL: '//at.alicdn.com/t/font_3178022_le1w0whujtq.js',
+    ICONFONT_URL: '//at.alicdn.com/t/font_3178022_2157dev9gqz.js',
   },
   antd: {},
   sass: {},

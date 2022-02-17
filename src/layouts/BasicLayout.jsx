@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import cs from 'classnames';
 import { connect, history } from 'umi';
 import { RightOutlined } from '@ant-design/icons';
-import initDingTalkJsapi from '@/init/initDingTalkJsapi';
+// import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 import './BasicLayout.less'
 import styles from './index.less';
 
@@ -26,22 +26,10 @@ const BasicLayout = (props) => {
   const [collapsed, setSetcollapsed] = useState(false);
   const [isAdminHeaderTip] = useState(false);
 
-  // const headerContentRef = useRef();
-
   // 切换路由 滚动回到顶部
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
-  useEffect(
-    () => {
-      initDingTalkJsapi().then(d => {
-        console.log(d)
-      })
-    },
-    []
-  )
-
 
   return (
     <div
@@ -157,7 +145,7 @@ const BasicLayout = (props) => {
       >
         <div className='lay-basic-layout--wrap'>
           <div id='lay-basic-layout--content-header' />
-          { children }
+            { children }
           <div id='lay-basic-layout--content-footer' />
         </div>
       </ProLayout>
