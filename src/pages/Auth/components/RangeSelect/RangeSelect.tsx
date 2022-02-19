@@ -1,49 +1,75 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import type { FC } from 'react'
 import './RangeSelect.less'
-import { Radio } from 'antd'
+import Radio, { Group } from '@/components/form/Radio'
 import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
 import Tooltip from '@/components/pop/Tooltip'
 
-const { Group } = Radio
+interface RangeValueType {
+  depts?: [],
+  dataAuthority?: number
+}
 
 interface RangeSelectProps {
-  value?: any
-  onChange?: () => void
+  value?: RangeValueType
+  onChange?: (x: RangeValueType) => void
 }
 
 const RangeSelect: FC<RangeSelectProps> = ({ value, onChange }) => {
+  const { depts, dataAuthority } = useMemo(
+    () => {
+      if (value) {
+        return {
+          depts: value.depts || [],
+          dataAuthority: value.dataAuthority
+        }
+      }
+      return {
+        depts: [], dataAuthority: null
+      }
+    },
+    [value]
+  )
   console.log(value, onChange)
-  const [test, setTest] = useState([])
   const chooseDepts = useCallback(
     () => {
       chooseDepartments({
         title: '选择部门',
-        departments: test.map(({ id }) => id)
+        departments: (value && value.depts || []).map(({ id }) => id)
       }).then(({ departments }) => {
-        setTest(departments)
+        if (onChange) {
+          onChange({
+            depts: departments,
+            dataAuthority: 2
+          })
+        }
       })
     },
-    [test]
+    [value, onChange]
+  )
+  const handleChangeDataAuthority = useCallback(
+    ({ target }) => {
+      if (onChange) {
+        onChange({
+          depts: value && value.depts ? value.depts : [],
+          dataAuthority: target.value
+        })
+      }
+    },
+    [value, onChange]
   )
   return <div className='com-auth--range-select'>
-    <Group>
-      <Radio value={'a'}>全公司</Radio>
-      <Radio value={'b'}>所在部门及其下属部门</Radio>
-      <Radio value={'c'}>
+    <Group value={dataAuthority} onChange={handleChangeDataAuthority}>
+      <Radio value={0}>全公司</Radio>
+      <Radio value={1}>所在部门及其下属部门</Radio>
+      <Radio value={2}>
         <span className='com-auth--range-select--custom-text'>指定部门</span>
         {
-          test && test.length > 0
+          depts && depts.length > 0
             ? <>
-              <Tooltip title={test.map(({ name }) => name).join('，')}>
+              <Tooltip title={depts.map(({ name }) => name).join('，')}>
                 <span className='com-auth--range-select--custom-depts'>
-                  {
-                    `已选择${
-                      test.slice(0, 2).map(({ name }) => name).join('，')
-                    }${
-                      test.length > 2 ? `等` : ''
-                    }${test.length}个部门`
-                  }
+                  { `已选择${depts.length}个部门` }
                 </span>
               </Tooltip>
               <a

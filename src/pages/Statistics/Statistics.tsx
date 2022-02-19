@@ -4,6 +4,7 @@ import './Statistics.less'
 import { useDispatch } from 'dva'
 import PageContent from '@/components/structure/PageContent'
 import StoreTable from '@/components/table/StoreTable'
+import { getStatisticsList } from '@/services/statistics'
 import Header from './components/Header'
 import Filters from './components/Filters'
 import Buttons from './components/Buttons'
@@ -56,6 +57,7 @@ const Statistics: FC = () => {
       dispatch({
         type: 'table/initTable',
         payload: {
+          action: getStatisticsList,
           columns
         }
       })

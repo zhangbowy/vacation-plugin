@@ -3,11 +3,12 @@ import type { FC } from 'react'
 import PageContent from '@/components/structure/PageContent'
 import StoreTable from '@/components/table/StoreTable'
 import { useDispatch, useSelector } from 'dva'
-import { Button } from 'antd'
+import Button from '@/components/buttons/Button'
+import Icon from '@/components/Icon'
 import './Auth.less'
 import AuthEdit from './components/AuthEdit'
 import Header from './components/Header'
-import Icon from '@/components/Icon'
+import { getRoleList } from '@/services/role'
 
 const Auth: FC = () => {
   const dispatch = useDispatch()
@@ -25,6 +26,7 @@ const Auth: FC = () => {
       dispatch({
         type: 'table/initTable',
         payload: {
+          action: getRoleList,
           columns: [
             { title: '权限名称', dataIndex: 'name' },
             { title: '成员', dataIndex: 'user' },
@@ -51,7 +53,11 @@ const Auth: FC = () => {
     <PageContent className='pg-auth' hasPadding>
       <Header />
       <div className='pg-auth--filters'>
-        <Button type="primary" key="primary" onClick={() => setInfo({ visible: true, id: '' })}>
+        <Button
+          type="primary"
+          key="primary"
+          onClick={() => setInfo({ visible: true, id: '' })}
+        >
           <Icon type='icon-tianjia' />
           <span>新增权限</span>
         </Button>

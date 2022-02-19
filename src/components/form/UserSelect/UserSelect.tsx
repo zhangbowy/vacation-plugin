@@ -2,6 +2,7 @@ import { memo, useCallback, useMemo } from 'react'
 import type { FC } from 'react'
 import classnames from 'classnames'
 import './UserSelect.less'
+import Icon from '@/components/Icon'
 import Tooltip from '@/components/pop/Tooltip'
 import { chooseComplexPicker } from '@xfw/rc-dingtalk-jsapi'
 
@@ -73,12 +74,11 @@ const UserSelect: FC<UserSelectProps> = ({
               { txt }
             </p>
           </Tooltip>
-          <span
+          <Icon
             className='com-form-user-select--icon'
+            type='icon-Close-Circle-Fill'
             onClick={handleClear}
-          >
-            x
-          </span>
+          />
         </>
         : <span className='com-form-user-select--placeholder'>
             { placeholder }

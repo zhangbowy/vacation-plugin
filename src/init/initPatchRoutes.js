@@ -47,8 +47,23 @@ export default function patchRoutes({ routes }) {
       path: '/balance',
       name: '假期余额',
       icon: 'icon-zichanguanli2',
+      exact: true,
       component: dynamic({
         loader: () => import('@/pages/Balance'),
+        loading: LoadingComponent,
+      }),
+      routes: [
+        { path: '/balance' },
+        { path: '/batch-edit' }
+      ]
+    },
+    {
+      path: '/balance/batch-edit',
+      name: '假期余额批量修改',
+      icon: 'icon-zichanguanli2',
+      hideInMenu: true,
+      component: dynamic({
+        loader: () => import('@/pages/BalanceBatchEdit'),
         loading: LoadingComponent,
       })
     },

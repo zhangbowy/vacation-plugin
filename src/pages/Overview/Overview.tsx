@@ -1,6 +1,7 @@
 import { memo, useState } from 'react';
 import type { FC } from 'react';
 import PageContent from '@/components/structure/PageContent'
+import type { Moment } from 'moment'
 import Survey from './components/Survey';
 import Record from './components/Record';
 import Header from './components/Header'
@@ -12,6 +13,7 @@ const tabs = [
 
 const Overview: FC = () => {
   const [tabActiveKey, setTabActiveKey] = useState<string>('survey');
+  const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
   console.log('tabActiveKey', tabActiveKey);
   return (
     <PageContent
@@ -23,7 +25,11 @@ const Overview: FC = () => {
         activeKey={tabActiveKey}
         onTabChange={setTabActiveKey}
       />
-      { tabActiveKey === 'survey' ? <Survey /> : <Record /> }
+      {
+        tabActiveKey === 'survey'
+          ? <Survey changeSelecteDate={setSelectedDate} />
+          : <Record selectedDate={selectedDate} />
+      }
     </PageContent>
   );
 };

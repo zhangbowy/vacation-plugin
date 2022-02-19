@@ -1,14 +1,14 @@
 import { memo, useMemo, useCallback } from 'react'
 import type { FC } from 'react'
-import { Drawer, Form, Input } from 'antd'
+import Drawer from '@/components/pop/Drawer'
+import Form, { Item } from '@/components/form/Form'
+import Input from '@/components/form/Input'
 import Icon from '@/components/Icon'
 import UserSelect from '@/components/form/UserSelect'
 import Button from '@/components/buttons/Button'
 import CheckGroups from '../CheckGroups'
 import RangeSelect from '../RangeSelect'
 import './AuthEdit.less'
-
-const { Item } = Form
 
 const AuthEdit: FC<{
   id: string
@@ -60,7 +60,7 @@ const AuthEdit: FC<{
       <Form layout='vertical'>
         <Item
           label='规则名称'
-          name='company'
+          name='name'
           rules={[{ required: true, message: '请输入规则名称' }]}
         >
           <Input
@@ -71,12 +71,12 @@ const AuthEdit: FC<{
         </Item>
         <Item
           label='成员'
-          name='unusedMode'
+          name='dingUsers'
           rules={[{ required: true, message: '请选择成员' }]}
         >
           <UserSelect placeholder='请选择' />
         </Item>
-        <Item label='管理范围' name='kkk'>
+        <Item label='管理范围' name='range'>
           <RangeSelect />
         </Item>
         <Item label='分配权限'>

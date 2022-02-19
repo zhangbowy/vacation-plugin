@@ -1,13 +1,14 @@
-import { memo, useEffect } from 'react';
-import type { FC } from 'react';
+import { memo, useEffect, useState } from 'react'
+import type { FC } from 'react'
 import PageContent from '@/components/structure/PageContent'
 import StoreTable from '@/components/table/StoreTable'
+import BalanceDetail from '@/components/pop/BalanceDetail'
 import { useDispatch } from 'dva'
 import { getBalanceList } from '@/services/balance'
 import Header from './components/Header'
 import Filters from './components/Filters'
 import Buttons from './components/Buttons'
-import './Balance.less';
+import './Balance.less'
 
 
 const defaultColumns = [
@@ -35,6 +36,8 @@ const getColumns = (cell?: any) => {
 }
 
 const Balance: FC = () => {
+  const [visible, setVisible] = useState<boolean>(false)
+  const handleCloseDetail = () => { setVisible(false) }
   const dispatch = useDispatch()
   useEffect(
     () => {
@@ -98,7 +101,8 @@ const Balance: FC = () => {
       rowKey='userId'
       withFooterPaination
     />
-  </PageContent>;
-};
+    <BalanceDetail visible={visible} onClose={handleCloseDetail} />
+  </PageContent>
+}
 
-export default memo(Balance);
+export default memo(Balance)

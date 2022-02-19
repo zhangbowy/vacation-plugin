@@ -1,0 +1,61 @@
+.com-pop-balance-detail--item {
+  display:  flex;
+  &:last-child .com-pop-balance-detail--item--line {
+    display: none;
+  }
+}
+.com-pop-balance-detail--item--graph {
+  flex: none;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-right: 8px;
+}
+.com-pop-balance-detail--item--icon {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin: 5px 0 3px;
+  color:#d8d8d8;
+  font-size: 12px;
+  line-height: 12px;
+  text-align: center;
+}
+.com-pop-balance-detail--item--line {
+  flex: auto;
+  width: 2px;
+  margin-bottom: 1px;
+  background-color: rgba(126, 134, 142, .16);
+  border-radius: 2px;
+}
+.com-pop-balance-detail--item--datetime {
+  flex: none;
+  width: 126px;
+  margin-top: 2px;
+}
+.com-pop-balance-detail--item--date {
+  margin-bottom: 4px;
+  color: rgba(23, 26, 29, .24);
+  font-size: 12px;
+  line-height: 18px;
+}
+.com-pop-balance-detail--item--time {
+  color: rgba(23, 26, 29, .24);
+  font-size: 12px;
+  line-height: 18px;
+}
+.com-pop-balance-detail--item--content {
+  flex: auto;
+}
+.com-pop-balance-detail--item--change {
+  margin-bottom: 4px;
+  color: #171a1d;
+  font-size: 14px;
+  line-height: 22px;
+}
+.com-pop-balance-detail--item--description {
+  margin-bottom: 24px;
+  color: rgba(23, 26, 29, .6);
+  font-size: 14px;
+  line-height: 22px;
+}

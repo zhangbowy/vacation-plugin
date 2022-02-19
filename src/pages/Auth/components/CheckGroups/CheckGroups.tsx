@@ -1,9 +1,7 @@
 import { memo } from 'react'
 import type { FC } from 'react'
-import { Checkbox } from 'antd'
+import Checkbox, { Group } from '@/components/form/Checkbox'
 import './CheckGroups.less'
-
-const { Group } = Checkbox
 
 interface CheckGroupsProps {
   value?: any

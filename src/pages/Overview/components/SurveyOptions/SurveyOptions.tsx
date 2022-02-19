@@ -1,7 +1,6 @@
 import { memo, useCallback } from 'react'
 import type { FC } from 'react'
 import './SurveyOptions.less'
-import Select from '@/components/form/Select'
 import DatePicker from '@/components/form/DatePicker'
 import type { Moment } from 'moment'
 import Icon from '@/components/Icon'
@@ -11,7 +10,9 @@ interface SurveyOptionsProps {
   onChange: (x: Moment | null) => void
 }
 
-const SurveyOptions: FC<SurveyOptionsProps> = ({ value, onChange }) => {
+const SurveyOptions: FC<SurveyOptionsProps> = ({
+  value, onChange
+}) => {
   console.log('value', value)
   console.log('onChange', onChange)
   const handlePrev = useCallback(
@@ -31,7 +32,6 @@ const SurveyOptions: FC<SurveyOptionsProps> = ({ value, onChange }) => {
     [value, onChange]
   )
   return <div className='pg-overview--survey-options'>
-    <Select placeholder="选择部门" options={[{ label: '部门', value: 'x' }]} />
     <div className='pg-overview--survey-options--date-filter'>
       <Icon
         className='pg-overview--survey-options--prev'

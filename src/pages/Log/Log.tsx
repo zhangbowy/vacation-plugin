@@ -4,6 +4,7 @@ import moment from 'moment'
 import PageContent from '@/components/structure/PageContent'
 import StoreTable from '@/components/table/StoreTable'
 import { useDispatch } from 'dva'
+import { getLogList } from '@/services/operateLog'
 import Header from './components/Header'
 import Filters from './components/Filters'
 
@@ -36,6 +37,7 @@ const Log: FC = () => {
       dispatch({
         type: 'table/initTable',
         payload: {
+          action: getLogList,
           columns
         }
       })

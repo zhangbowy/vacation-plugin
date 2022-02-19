@@ -2,6 +2,8 @@ import { memo, useEffect } from 'react'
 import type { FC } from 'react'
 import StoreTable from '@/components/table/StoreTable'
 import { useDispatch } from 'dva'
+import { getLeaveRecord } from '@/services/leave'
+import type { Moment } from 'moment'
 import './Record.less'
 import RecordOptions from '../RecordOptions'
 
@@ -36,14 +38,21 @@ const columns = [
   },
 ]
 
-const Record: FC = () => {
+const Record: FC<{ selectedDate: Moment | null }> = ({ selectedDate }) => {
   const dispatch = useDispatch()
   console.log('useDispatch', dispatch)
+  useEffect(
+    () => {
+      console.log('selectedDate', selectedDate)
+    },
+    [selectedDate]
+  )
   useEffect(
     () => {
       dispatch({
         type: 'table/initTable',
         payload: {
+          action: getLeaveRecord,
           columns
         }
       })

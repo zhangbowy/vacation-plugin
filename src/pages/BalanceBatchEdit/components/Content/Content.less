@@ -1,0 +1,100 @@
+.pg-balance-batch-edit--content--info {
+  position: relative;
+  &::before {
+    content: ' ';
+    position: absolute;
+    top: 14px;
+    bottom: -5px;
+    left: 4.5px;
+    width: 1px;
+    background-color: rgba(126, 134, 142, .24);
+    z-index: 1;
+  }
+  &:last-child::before {
+    display: none;
+  }
+}
+.pg-balance-batch-edit--content--header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+.pg-balance-batch-edit--content--cycle {
+  width: 10px;
+  height: 10px;
+  margin-right: 16px;
+  border: 2px solid #0089ff;
+  border-radius: 50%;
+}
+.pg-balance-batch-edit--content--title {
+  margin-right: 8px;
+  color: rgba(0, 0, 0, .85);
+  font-size: 14px;
+  line-height: 22px;
+}
+.pg-balance-batch-edit--content--subtitle {
+  color: rgba(25, 31, 37, .4);
+  font-size: 12px;
+  line-height: 20px;
+}
+.pg-balance-batch-edit--content--wrap {
+  width: 740px;
+  padding: 0 25px 24px;
+}
+.pg-balance-batch-edit--content--body {
+  margin: 8px 0 0;
+  padding: 8px 20px 4px;
+  background-color: rgba(23, 26, 29, .04);
+  border-radius: 6px;
+}
+.pg-balance-batch-edit--content--item {
+  display: flex;
+  margin: 8px 0 4px;
+}
+.pg-balance-batch-edit--content--label {
+  flex: none;
+  color: #171a1d;
+  font-size: 14px;
+  line-height: 22px;
+}
+.pg-balance-batch-edit--content--departments {
+  flex: none;
+  margin-right: 12px;
+  color: #171a1d;
+  font-size: 14px;
+  line-height: 22px;
+}
+.pg-balance-batch-edit--content--detail {
+  flex: auto;
+}
+.pg-balance-batch-edit--content--clickable {
+  color: #0089ff;
+  font-size: 14px;
+  line-height: 22px;
+  user-select: none;
+  cursor: pointer;
+}
+.pg-balance-batch-edit--content--checkbox {
+  min-width: 74px;
+  user-select: none;
+  &.ant-checkbox-wrapper {
+    display: flex;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+}
+.pg-balance-batch-edit--content--checkbox-group {
+  .ant-checkbox-wrapper {
+    min-width: 74px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    user-select: none;
+  }
+  .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+    margin-left: 0;
+  }
+}
+.pg-balance-batch-edit--content--button {
+  margin: 12px 0 0;
+}

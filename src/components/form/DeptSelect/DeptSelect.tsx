@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import classnames from 'classnames'
 import './DeptSelect.less'
 import Tooltip from '@/components/pop/Tooltip'
+import Icon from '@/components/Icon'
 import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
 
 export type ValuesType = { id: string | number, name: string, number: number }[]
@@ -69,12 +70,11 @@ const DeptSelect: FC<DeptSelectProps> = ({
               { txt }
             </p>
           </Tooltip>
-          <span
+          <Icon
             className='com-form-dept-select--icon'
+            type='icon-Close-Circle-Fill'
             onClick={handleClear}
-          >
-            x
-          </span>
+          />
         </>
         : <span className='com-form-dept-select--placeholder'>
             { placeholder }
