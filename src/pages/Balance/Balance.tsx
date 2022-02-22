@@ -44,6 +44,7 @@ const Balance: FC = () => {
       dispatch({
         type: 'table/initTable',
         payload: {
+          name: 'balance',
           action: getBalanceList,
           columns: getColumns(),
           paramsHandle: (
@@ -98,6 +99,7 @@ const Balance: FC = () => {
       <Buttons />
     </div>
     <StoreTable
+      name='balance'
       rowKey='userId'
       withFooterPaination
     />

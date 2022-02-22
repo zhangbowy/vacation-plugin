@@ -75,7 +75,7 @@ const Auth: FC = () => {
           <span>新增权限</span>
         </Button>
       </div>
-      <StoreTable rowKey='id' />
+      <StoreTable name='auth' rowKey='id' />
       <AuthEdit
         {...info}
         resourceList={resourceList}

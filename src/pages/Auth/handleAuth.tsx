@@ -126,6 +126,7 @@ export const getInitTablePayload = (
   handleEdit: (d: any) => void,
   handleRemove: (d: any) => void
 ) => ({
+  name: 'auth',
   action: getRoleList,
   columns: [
     { title: '权限名称', dataIndex: 'name', width: '17.918%' },

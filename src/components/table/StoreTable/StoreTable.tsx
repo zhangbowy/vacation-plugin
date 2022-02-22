@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import type { FC } from 'react'
 import './StoreTable.less'
 import FooterPagination from '@/components/table/FooterPagination'
@@ -10,21 +10,35 @@ interface StoreTableProps {
   withFooterPaination?: boolean
   bordered?: boolean
   tableLayout?: 'auto' | 'fixed'
+  name: string
 }
 
 const StoreTable: FC<StoreTableProps> = ({
-  rowKey, withFooterPaination, bordered, tableLayout = 'fixed'
+  rowKey, withFooterPaination, bordered, tableLayout = 'fixed', name
 }) => {
   const {
-    columns, list, pageNo, pageSize, total
+    columns, list, pageNo, pageSize, total, name: tableName
   } = useSelector(state => state.table)
+  const dataSource = useMemo(
+    () => {
+      if (name) {
+        if (name === tableName) {
+          return list
+        }
+        return []
+      } else {
+        return list
+      }
+    },
+    [name, tableName, list]
+  )
   return <>
     <Table
       className='com-table--store'
       tableLayout={tableLayout}
       rowKey={rowKey}
       columns={columns}
-      dataSource={list}
+      dataSource={dataSource}
       pagination={false}
       bordered={bordered}
     />

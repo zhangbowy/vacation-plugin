@@ -16,7 +16,7 @@ const InputModel: FC<InputProps> = ({ className, name, ...rest }) => {
   const dispatch = useDispatch()
   const [inputValue, setInputValue] = useState<string>('')
   const storeValue = useSelector(
-    (state) => name ? state.table.params[name] : ''
+    state => name ? state.table.params[name] : ''
   )
   const { run, flush } = useDebounceFn(
     (propName: string | undefined, value: string) => {

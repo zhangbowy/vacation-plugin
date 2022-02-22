@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import './Statistics.less'
 import { useDispatch } from 'dva'
 import PageContent from '@/components/structure/PageContent'
+import moment from 'moment'
 import StoreTable from '@/components/table/StoreTable'
 import { getStatisticsList } from '@/services/statistics'
 import Header from './components/Header'
@@ -57,7 +58,26 @@ const Statistics: FC = () => {
       dispatch({
         type: 'table/initTable',
         payload: {
+          name: 'statistics',
           action: getStatisticsList,
+          params: {
+            pickerMode: 'year',
+            date: moment(),
+            status: 1
+          },
+          paramsHandle: (
+            p: Record<string, any> = {}, pageNo: number, pageSize: number
+          ) => {
+            const { pickerMode, date, status, ...rest } = p
+            rest.year = date.year()
+            if (pickerMode === 'month') {
+              rest.month = date.month() + 1
+            }
+            rest.isLeave = !status
+            rest.pageNo = pageNo || 1
+            rest.pageSize = pageSize || 10
+            return rest
+          },
           columns
         }
       })
@@ -70,7 +90,7 @@ const Statistics: FC = () => {
       <Filters />
       <Buttons />
     </div>
-    <StoreTable withFooterPaination bordered />
+    <StoreTable name='statistics' withFooterPaination bordered />
   </PageContent>
 }
 

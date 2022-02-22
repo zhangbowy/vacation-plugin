@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import StoreTable from '@/components/table/StoreTable'
 import { useDispatch } from 'dva'
 import { getLeaveRecord } from '@/services/leave'
+import moment from 'moment'
 import type { Moment } from 'moment'
 import './Record.less'
 import RecordOptions from '../RecordOptions'
@@ -10,15 +11,15 @@ import RecordOptions from '../RecordOptions'
 const columns = [
   {
     title: '姓名',
-    dataIndex: 'name',
+    dataIndex: 'userName',
   },
   {
     title: '工号',
-    dataIndex: 'no',
+    dataIndex: 'jobNumber',
   },
   {
     title: '所属部门',
-    dataIndex: 'department',
+    dataIndex: 'deptName',
   },
   {
     title: '岗位',
@@ -26,16 +27,34 @@ const columns = [
   },
   {
     title: '假期名称',
-    dataIndex: 'type',
+    dataIndex: 'ruleName',
   },
   {
     title: '时间',
-    dataIndex: 'time',
+    key: 'time',
+    rander: ({ startTime, endTime }: { startTime: Date, endTime: Date }) => {
+      if (startTime && endTime) {
+        return '-'
+      }
+      return `${
+        moment(startTime).format('YYYY-MM-DD HH:mm')
+      } ~ ${
+        moment(endTime).format('YYYY-MM-DD HH:mm')
+      }`
+    }
   },
   {
     title: '时长',
-    dataIndex: 'duration',
+    key: 'duration',
+    render: (
+      { durationType, duration }: { durationType: 0 | 2, duration: number }
+    ) =>
+      `${duration / 100}${durationType === 0 ? '天' : '小时'}`
   },
+  {
+    title: '请假理由',
+    dataIndex: 'reason',
+  }
 ]
 
 interface RecordProps {
@@ -53,6 +72,7 @@ const Record: FC<RecordProps> = ({ refDates }) => {
       dispatch({
         type: 'table/initTable',
         payload: {
+          name: 'record',
           action: getLeaveRecord,
           columns,
           params,
@@ -75,7 +95,7 @@ const Record: FC<RecordProps> = ({ refDates }) => {
   )
   return <>
     <RecordOptions />
-    <StoreTable withFooterPaination />
+    <StoreTable name='record' rowKey='userId' withFooterPaination />
   </>
 }
 

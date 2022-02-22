@@ -8,24 +8,40 @@ import { getLogList } from '@/services/operateLog'
 import Header from './components/Header'
 import Filters from './components/Filters'
 
+console.log('need operateTypes')
 const columns = [
   {
     title: '时间',
-    dataIndex: 'time',
-    render: (_: any, { time }: { time: any }) =>
-      moment(time).format('YYYY-MM-DD HH:mm')
+    dataIndex: 'createTime',
+    render: (createTime: number) =>
+      moment(createTime).format('YYYY-MM-DD HH:mm')
   },
   {
     title: '操作人员',
-    dataIndex: 'user'
+    dataIndex: 'operateUserName'
   },
   {
     title: '操作模块',
-    dataIndex: 'modal'
+    dataIndex: 'operateType'
   },
   {
     title: '操作内容',
-    dataIndex: 'content'
+    key: 'operateContent',
+    render: (
+      { operateContent, operateFileName, operateFileUrl }:
+      {
+        operateContent: string, operateFileName: string, operateFileUrl: string
+      }
+    ) => {
+      if (operateFileUrl) {
+        const name = operateFileName || '下载明细'
+        return <>
+          <span>{ `${operateContent}&nbsp;&nbsp;` }</span>
+          <a href={operateFileUrl} download={name} target='_blacnk'>{ name }</a>
+        </>
+      }
+      return operateContent
+    }
   },
 ]
 
@@ -36,6 +52,7 @@ const Log: FC = () => {
       dispatch({
         type: 'table/initTable',
         payload: {
+          name: 'log',
           action: getLogList,
           paramsHandle: (
             p: Record<string, any> = {}, pageNo: number, pageSize: number
@@ -49,7 +66,14 @@ const Log: FC = () => {
             rest.pageSize = pageSize || 10
             return rest
           },
-          columns
+          columns,
+          resultHandle: (fetchResult: any) => {
+            const { list, ...rest } = fetchResult || {}
+            return {
+              list: list.map((v: any, i: number) => ({ ...v, key: i })),
+              ...rest
+            }
+          }
         }
       })
     },
@@ -58,7 +82,7 @@ const Log: FC = () => {
   return <PageContent className='pg-auth' hasPadding>
     <Header />
     <Filters />
-    <StoreTable withFooterPaination />
+    <StoreTable name='log' rowKey='key' withFooterPaination />
   </PageContent>
 }
 

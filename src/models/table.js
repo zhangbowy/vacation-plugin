@@ -23,6 +23,7 @@ const paramsFilter = obj => {
 };
 
 const getDefaultState = () =>({
+  name: '',
   inLoading: false,
   params: {},
   pageNo: 1,
@@ -83,7 +84,9 @@ const LoginModel = {
         const result = yield doFetch(
           action, params, pageNo, pageSize, paramsHandle, resultHandle
         )
-        yield put({ type: 'init', payload: { ...nextPayload, ...result } })
+        yield put({
+          type: 'init', payload: { ...nextPayload, ...result }
+        })
       } else {
         yield put({ type: 'init', payload: nextPayload })
       }
