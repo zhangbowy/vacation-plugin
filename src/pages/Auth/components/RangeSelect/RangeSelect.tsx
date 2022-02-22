@@ -30,7 +30,6 @@ const RangeSelect: FC<RangeSelectProps> = ({ value, onChange }) => {
     },
     [value]
   )
-  console.log(value, onChange)
   const chooseDepts = useCallback(
     () => {
       chooseDepartments({
@@ -65,7 +64,7 @@ const RangeSelect: FC<RangeSelectProps> = ({ value, onChange }) => {
       <Radio value={2}>
         <span className='com-auth--range-select--custom-text'>指定部门</span>
         {
-          depts && depts.length > 0
+          dataAuthority === 2 && depts && depts.length > 0
             ? <>
               <Tooltip title={depts.map(({ name }) => name).join('，')}>
                 <span className='com-auth--range-select--custom-depts'>

@@ -38,6 +38,18 @@ const Log: FC = () => {
         type: 'table/initTable',
         payload: {
           action: getLogList,
+          paramsHandle: (
+            p: Record<string, any> = {}, pageNo: number, pageSize: number
+          ) => {
+            const { rangeTime, ...rest } = p
+            if (rangeTime && rangeTime[0]) {
+              rest.startTime = `${rangeTime[0].format('YYYY-MM-DD')} 00:00:00`
+              rest.endTime = `${rangeTime[1].format('YYYY-MM-DD')} 23:59:59`
+            }
+            rest.pageNo = pageNo || 1
+            rest.pageSize = pageSize || 10
+            return rest
+          },
           columns
         }
       })

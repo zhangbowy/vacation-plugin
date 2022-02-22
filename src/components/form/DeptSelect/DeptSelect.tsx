@@ -72,7 +72,7 @@ const DeptSelect: FC<DeptSelectProps> = ({
           </Tooltip>
           <Icon
             className='com-form-dept-select--icon'
-            type='icon-Close-Circle-Fill'
+            type='icon-qingkong_mian'
             onClick={handleClear}
           />
         </>

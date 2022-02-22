@@ -1,20 +1,38 @@
-import { memo, useMemo, useCallback } from 'react'
+import { memo, useMemo, useCallback, useEffect, useState } from 'react'
 import type { FC } from 'react'
+import { useDispatch } from 'dva'
 import Drawer from '@/components/pop/Drawer'
-import Form, { Item } from '@/components/form/Form'
+import Form, { Item, useForm } from '@/components/form/Form'
+import { msg, errMsg } from '@/components/pop'
 import Input from '@/components/form/Input'
 import Icon from '@/components/Icon'
 import UserSelect from '@/components/form/UserSelect'
 import Button from '@/components/buttons/Button'
+import { updateRole, getRoleDetail } from '@/services/role'
+import loading from '@/components/pop/loading'
 import CheckGroups from '../CheckGroups'
 import RangeSelect from '../RangeSelect'
 import './AuthEdit.less'
 
-const AuthEdit: FC<{
+interface AuthEditProps {
   id: string
   visible: boolean
   onVisibleChange: ({ id, visible }: { id: string, visible: boolean }) => void
-}> = ({ id, visible, onVisibleChange }) => {
+  resourceList: any[] | null
+}
+
+const getInitialValues = () => ({
+  range: {
+    depts: [], dataAuthority: 0
+  }
+})
+
+const AuthEdit: FC<AuthEditProps> = ({
+  id, visible, onVisibleChange, resourceList
+}) => {
+  const [initialValues, setInitialValues] = useState<any>(null)
+  const dispatch = useDispatch()
+  const [form] = useForm()
   const handleVisibleChange = useCallback(
     () => onVisibleChange({
       visible: false, id: ''
@@ -36,9 +54,131 @@ const AuthEdit: FC<{
   )
   const handleConfirm = useCallback(
     () => {
-      console.log('id', id)
+      form.validateFields().then(values => {
+        const { dingUsers, name, range, resourceInfo } = values
+        const { dataAuthority, depts } = range
+        const { isAllHandleAuthority, resourceMap = {} } = resourceInfo || {}
+        const params = {
+          id,
+          name,
+          dataAuthority,
+          deptIds: (depts || []).map(
+            ({ id: deptId }: { id: string | number }) => deptId
+          ),
+          dingUserIds: (dingUsers || []).map(
+            ({ emplId }: { emplId: string | number }) => emplId
+          ),
+          isAllHandleAuthority: isAllHandleAuthority || false,
+          resourceIds: Object.entries(resourceMap).filter(
+            v => v[1]
+          ).map(([key]) => key)
+        }
+        loading.show()
+        updateRole(params).then(
+          ([success]) => {
+            loading.hide()
+            if (success) {
+              msg(id ? '权限编辑成功' : '权限添加成功')
+              dispatch({ type: 'table/refreshTable' })
+              handleVisibleChange()
+            } else {
+              errMsg(id ? '编辑失败，请重试' : '添加失败，请重试')
+            }
+          }
+        )
+      }).catch(e => {
+        const { errorFields = [] } = e;
+        if (errorFields[0] && errorFields[0].errors) {
+          const errors = errorFields[0].errors || []
+          errMsg(errors[0] || '参数错误，请检查')
+        } else {
+          errMsg(e)
+        }
+      })
     },
-    [id]
+    [id, form, dispatch, handleVisibleChange]
+  )
+  useEffect(
+    () => {
+      if (visible) {
+        if (id) {
+          getRoleDetail({ id }).then(d => {
+            const [success, result] = d
+            if (success) {
+              const {
+                dataAuthority = 0,
+                deptBOs = [],
+                isAllHandleAuthority = false,
+                name = '',
+                resourceVOS = [],
+                userBOS = []
+              } = result
+              const resourceMap = {}
+              if (isAllHandleAuthority) {
+                const list = resourceList || []
+                list.forEach(
+                  ((
+                    { resourceId, children }:
+                    { resourceId: string | number, children?: [] }
+                  ) => {
+                    resourceMap[resourceId] = true
+                    if (children) {
+                      children.forEach((
+                        { resourceId: childResourceId }:
+                        { resourceId: string | number }
+                      ) => {
+                        resourceMap[childResourceId] = true
+                      })
+                    }
+                  })
+                )
+              } else {
+                resourceVOS.forEach(
+                  ({ resourceId }: { resourceId: string | number }) => {
+                    resourceMap[resourceId] = true
+                  }
+                )
+              }
+              setInitialValues({
+                name,
+                dingUsers: userBOS.map((
+                  { name: userName, dingUserId }:
+                  { name: string, dingUserId: string | number }
+                ) => ({
+                  emplId: dingUserId, name: userName
+                })),
+                range: {
+                  dataAuthority,
+                  depts: deptBOs.map((
+                    { deptId, name: deptName }:
+                    { deptId: string | number, name: string }
+                  ) => ({
+                    id: deptId.toString(), name: deptName
+                  }))
+                },
+                resourceInfo: {
+                  isAllHandleAuthority,
+                  resourceMap
+                }
+              })
+            } else {
+              setInitialValues(getInitialValues())
+            }
+          })
+        } else {
+          setInitialValues(getInitialValues())
+        }
+      }
+    },
+    [visible, id, resourceList]
+  )
+  useEffect(
+    () => {
+      if (initialValues) {
+        form.resetFields()
+      }
+    },
+    [initialValues, form]
   )
   const footer = useMemo(
     () => <div>
@@ -52,12 +192,12 @@ const AuthEdit: FC<{
       className='pg-auth--edit'
       visible={visible}
       onClose={handleVisibleChange}
-      title='新增权限'
+      title={id ? '编辑权限' : '新增权限'}
       width={600}
       closeIcon={<Icon type='icon-guanbi' />}
       footer={footer}
     >
-      <Form layout='vertical'>
+      <Form layout='vertical' form={form} initialValues={initialValues}>
         <Item
           label='规则名称'
           name='name'
@@ -79,8 +219,8 @@ const AuthEdit: FC<{
         <Item label='管理范围' name='range'>
           <RangeSelect />
         </Item>
-        <Item label='分配权限'>
-          <CheckGroups />
+        <Item label='分配权限' name='resourceInfo'>
+          <CheckGroups resourceList={resourceList} />
         </Item>
       </Form>
     </Drawer>

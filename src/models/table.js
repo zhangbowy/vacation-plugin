@@ -1,3 +1,5 @@
+import loading from '@/components/pop/loading'
+
 export const defaultParamsHandle = (params, pageNo, pageSize) => ({
   ...(params || {}), pageNo: pageNo || 1, pageSize: pageSize || 10
 })
@@ -34,9 +36,11 @@ const getDefaultState = () =>({
 })
 
 const doFetch = async (action, params, pageNo, pageSize, paramsHandle, resultHandle) => {
+  loading.show()
   const [success, result] = await action(
     paramsFilter((paramsHandle || defaultParamsHandle)(params, pageNo, pageSize))
   )
+  loading.hide()
   if (success) {
     if (resultHandle) {
       const handleResult = resultHandle(result)
@@ -132,10 +136,23 @@ const LoginModel = {
         payload: { inLoading: false, pageNo, pageSize, ...result }
       })
     },
-    *refreshTable(...args) {
-      const r = yield args[1].select(state => state.table)
-      console.log(r)
-      yield args[1].put({ type: 'init', payload: getDefaultState() })
+    *refreshTable(_, { select, put }) {
+      const {
+        action, params, paramsHandle, resultHandle
+      } = yield select(state => state.table)
+      yield put({ type: 'update', payload: { inLoading: true } })
+      const result = yield doFetch(
+        action,
+        params,
+        1,
+        10,
+        paramsHandle,
+        resultHandle
+      )
+      yield put({
+        type: 'update',
+        payload: { inLoading: false, pageNo: 1, pageSize: 10, ...result }
+      })
     }
   },
 

@@ -7,7 +7,7 @@ import Tooltip from '@/components/pop/Tooltip'
 import { chooseComplexPicker } from '@xfw/rc-dingtalk-jsapi'
 
 export type ValuesType = {
-  emplId: string | number, name: string, avatar: number
+  emplId: string | number, name: string, avatar?: string
 }[]
 
 interface UserSelectProps {
@@ -27,10 +27,8 @@ const UserSelect: FC<UserSelectProps> = ({
     () => classnames('com-form-user-select', className),
     [className]
   )
-  console.log('onChange', onChange)
   const handleChoose = useCallback(
     () => {
-      console.log((value || []).map(({ emplId }) => emplId))
       chooseComplexPicker({
         title: '选择部门',
         pickedUsers: value
@@ -76,7 +74,7 @@ const UserSelect: FC<UserSelectProps> = ({
           </Tooltip>
           <Icon
             className='com-form-user-select--icon'
-            type='icon-Close-Circle-Fill'
+            type='icon-qingkong_mian'
             onClick={handleClear}
           />
         </>

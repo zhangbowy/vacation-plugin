@@ -8,10 +8,10 @@ import InputModel from '@/components/form/InputModel'
 import './Filters.less'
 
 const FilterSelect = hocFilter(
-  Select, { name: 'testSelect' }
+  Select, { name: 'operateTypes' }
 )
 const FilterRangePicker = hocFilter(
-  RangePicker, { name: 'haha' }
+  RangePicker, { name: 'rangeTime' }
 )
 
 const Filters: FC = () => {
@@ -19,6 +19,7 @@ const Filters: FC = () => {
     <InputModel
       className='pg-log--filters--name'
       placeholder='搜索人员姓名'
+      name='operateUserName'
       prefix={<Icon type='icon-sousuo' />}
     />
     <FilterRangePicker

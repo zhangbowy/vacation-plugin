@@ -1,54 +1,67 @@
-import { memo, useState, useEffect } from 'react'
+import { memo, useState, useEffect, useCallback } from 'react'
 import type { FC } from 'react'
 import PageContent from '@/components/structure/PageContent'
 import StoreTable from '@/components/table/StoreTable'
-import { useDispatch, useSelector } from 'dva'
+import { useDispatch } from 'dva'
 import Button from '@/components/buttons/Button'
 import Icon from '@/components/Icon'
 import './Auth.less'
 import AuthEdit from './components/AuthEdit'
 import Header from './components/Header'
-import { getRoleList } from '@/services/role'
+import { getResourceList } from '@/services/role'
+import { getResources, getInitTablePayload } from './handleAuth'
+import { confirm } from '@/components/pop/Modal'
+import { msg } from '@/components/pop'
+import { removeRole } from '@/services/role'
+import loading from '@/components/pop/loading'
 
 const Auth: FC = () => {
+  const [resourceList, setResourceList] = useState<any[] | null>(null)
   const dispatch = useDispatch()
-  console.log('useDispatch', dispatch)
-  const params = useSelector(state => state.table.params)
-  console.log('params', params)
+  const [info, setInfo] = useState<{ visible: boolean, id: string }>({
+    visible: false, id: ''
+  })
   const handleEdit = (d: any) => {
-    console.log('edit', d)
+    setInfo({ visible: true, id: d.id })
   }
-  const handleRemove = (d: any) => {
-    console.log('remove', d)
-  }
-  useEffect(
-    () => {
-      dispatch({
-        type: 'table/initTable',
-        payload: {
-          action: getRoleList,
-          columns: [
-            { title: '权限名称', dataIndex: 'name' },
-            { title: '成员', dataIndex: 'user' },
-            { title: '管理范围', dataIndex: 'range' },
-            { title: '权限', dataIndex: 'auth' },
-            {
-              title: '操作',
-              key: 'option',
-              render: (d: any) => [
-                <a key="edit" onClick={() => handleEdit(d)}>编辑</a>,
-                <a key="remove" onClick={() => handleRemove(d)}>删除</a>
-              ]
+  const handleRemove = useCallback(
+    (d: any) => {
+      confirm({
+        title: '提示',
+        content: '确定要删除权限吗？',
+        onOk: () => {
+          loading.show()
+          removeRole({ id: d.id }).then(
+            ([success]) => {
+              loading.hide()
+              if (success) {
+                msg('删除成功')
+                dispatch({ type: 'table/refreshTable' })
+              }
             }
-          ]
+          )
         }
       })
     },
     [dispatch]
   )
-  const [info, setInfo] = useState<{ visible: boolean, id: string }>({
-    visible: false, id: ''
-  })
+  useEffect(
+    () => {
+      getResourceList().then(
+        ([success, result]) => {
+          const resources = success ? getResources(result || []) : []
+          setResourceList(resources)
+          dispatch({
+            type: 'table/initTable',
+            payload: getInitTablePayload(
+              resources, handleEdit, handleRemove
+            )
+          })
+        }
+      )
+    },
+    [dispatch, handleRemove]
+  )
   return (
     <PageContent className='pg-auth' hasPadding>
       <Header />
@@ -62,8 +75,12 @@ const Auth: FC = () => {
           <span>新增权限</span>
         </Button>
       </div>
-      <StoreTable withFooterPaination />
-      <AuthEdit {...info} onVisibleChange={(newInfo) => setInfo(newInfo)} />
+      <StoreTable rowKey='id' />
+      <AuthEdit
+        {...info}
+        resourceList={resourceList}
+        onVisibleChange={(newInfo) => setInfo(newInfo)}
+      />
     </PageContent>
   )
 }

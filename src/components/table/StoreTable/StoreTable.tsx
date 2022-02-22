@@ -7,12 +7,13 @@ import { useSelector } from 'dva'
 
 interface StoreTableProps {
   rowKey?: string | ((record: any) => string)
-  withFooterPaination: boolean
+  withFooterPaination?: boolean
   bordered?: boolean
+  tableLayout?: 'auto' | 'fixed'
 }
 
 const StoreTable: FC<StoreTableProps> = ({
-  rowKey, withFooterPaination, bordered
+  rowKey, withFooterPaination, bordered, tableLayout = 'fixed'
 }) => {
   const {
     columns, list, pageNo, pageSize, total
@@ -20,6 +21,7 @@ const StoreTable: FC<StoreTableProps> = ({
   return <>
     <Table
       className='com-table--store'
+      tableLayout={tableLayout}
       rowKey={rowKey}
       columns={columns}
       dataSource={list}
