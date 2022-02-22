@@ -31,7 +31,6 @@ const columns = [
 
 const Log: FC = () => {
   const dispatch = useDispatch()
-  console.log('useDispatch', dispatch)
   useEffect(
     () => {
       dispatch({

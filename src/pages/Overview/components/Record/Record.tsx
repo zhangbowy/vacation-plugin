@@ -38,26 +38,40 @@ const columns = [
   },
 ]
 
-const Record: FC<{ selectedDate: Moment | null }> = ({ selectedDate }) => {
+interface RecordProps {
+  refDates: { current: [Moment, Moment] | null }
+}
+
+const Record: FC<RecordProps> = ({ refDates }) => {
   const dispatch = useDispatch()
-  console.log('useDispatch', dispatch)
   useEffect(
     () => {
-      console.log('selectedDate', selectedDate)
-    },
-    [selectedDate]
-  )
-  useEffect(
-    () => {
+      const params: Record<string, any> = {}
+      if (refDates && refDates.current && refDates.current[0]) {
+        params.date = refDates.current
+      }
       dispatch({
         type: 'table/initTable',
         payload: {
           action: getLeaveRecord,
-          columns
+          columns,
+          params,
+          paramsHandle: (
+            p: Record<string, any> = {}, pageNo: number, pageSize: number
+          ) => {
+            const { date, ...rest } = p
+            if (date && date[0]) {
+              rest.startDate = +date[0]
+              rest.endDate = +date[1]
+            }
+            rest.pageNo = pageNo || 1
+            rest.pageSize = pageSize || 10
+            return rest
+          }
         }
       })
     },
-    [dispatch]
+    [dispatch, refDates]
   )
   return <>
     <RecordOptions />

@@ -93,7 +93,6 @@ const LoginModel = {
       const {
         action, params, pageSize, paramsHandle, resultHandle
       } = table
-      console.log(newParams)
       const nextParams = {
         ...params, ...newParams
       }

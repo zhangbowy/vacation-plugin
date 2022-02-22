@@ -25,10 +25,8 @@ const DeptSelect: FC<DeptSelectProps> = ({
     () => classnames('com-form-dept-select', className),
     [className]
   )
-  console.log('onChange', onChange)
   const handleChoose = useCallback(
     () => {
-      console.log((value || []).map(({ id }) => id))
       chooseDepartments({
         title: '选择部门',
         departments: value

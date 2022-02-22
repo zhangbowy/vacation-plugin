@@ -13,8 +13,6 @@ interface SurveyOptionsProps {
 const SurveyOptions: FC<SurveyOptionsProps> = ({
   value, onChange
 }) => {
-  console.log('value', value)
-  console.log('onChange', onChange)
   const handlePrev = useCallback(
     () => {
       if (onChange) {

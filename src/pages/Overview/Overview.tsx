@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useState, useRef } from 'react';
 import type { FC } from 'react';
 import PageContent from '@/components/structure/PageContent'
 import type { Moment } from 'moment'
@@ -13,8 +13,19 @@ const tabs = [
 
 const Overview: FC = () => {
   const [tabActiveKey, setTabActiveKey] = useState<string>('survey');
-  const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
-  console.log('tabActiveKey', tabActiveKey);
+  const refDates = useRef<[Moment, Moment] | null>(null)
+  const changeSelecteDate = (date: Moment) => {
+    refDates.current = [
+      date.clone().startOf('day'), date.clone().endOf('day')
+    ]
+    setTabActiveKey('record')
+  }
+  const onTabChange = (key: string) => {
+    if (key === 'survey') {
+      refDates.current = null
+    }
+    setTabActiveKey(key)
+  }
   return (
     <PageContent
       className='pg-overview'
@@ -23,12 +34,12 @@ const Overview: FC = () => {
       <Header
         tabs={tabs}
         activeKey={tabActiveKey}
-        onTabChange={setTabActiveKey}
+        onTabChange={onTabChange}
       />
       {
         tabActiveKey === 'survey'
-          ? <Survey changeSelecteDate={setSelectedDate} />
-          : <Record selectedDate={selectedDate} />
+          ? <Survey changeSelecteDate={changeSelecteDate} />
+          : <Record refDates={refDates} />
       }
     </PageContent>
   );

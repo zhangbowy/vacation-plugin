@@ -12,10 +12,10 @@ import hocFilter from '@/hoc/tableModel/hocFilter'
 import { exportLeaveRecord } from '@/services/leave'
 
 const FilterSelect = hocFilter(
-  Select, { name: 'testSelect' }
+  Select, { name: 'ruleId' }
 )
 const FilterRangePicker = hocFilter(
-  RangePicker, { name: 'haha' }
+  RangePicker, { name: 'date' }
 )
 
 const RecordOptions: FC = () => {
@@ -24,7 +24,6 @@ const RecordOptions: FC = () => {
     paramsHandle: state.table.paramsHandle
   }))
   const handleExport = () => {
-    
     const p = (paramsHandle || defaultParamsHandle)(params)
     delete p.pageNo
     delete p.pageSize
@@ -36,20 +35,20 @@ const RecordOptions: FC = () => {
         className='pg-overview--record-options--filters-name'
         placeholder='搜索人员姓名'
         prefix={<Icon type='icon-sousuo' />}
+        name='search'
       />
       <FilterSelect
         className='pg-overview--record-options--filters-status'
-        options={[{ label: 'yy', value: 'aa' }, { label: 'xx', value: 'bb' }]}
+        options={[{ label: 'yy', value: 12 }, { label: 'xx', value: 34 }]}
         placeholder='假期名称'
         allowClear
       />
       <FilterRangePicker
         className='pg-overview--record-options--filters-range'
         placeholder={['选择时间', '选择时间']}
-        allowClear
       />
     </div>
-    <Button type='primary' key='primary' onClick={handleExport}>
+    <Button type='primary' ghost onClick={handleExport}>
       导出
     </Button>
   </div>
