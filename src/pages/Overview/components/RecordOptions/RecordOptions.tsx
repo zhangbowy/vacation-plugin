@@ -18,7 +18,11 @@ const FilterRangePicker = hocFilter(
   RangePicker, { name: 'date' }
 )
 
-const RecordOptions: FC = () => {
+interface RecordOptionsProps {
+  ruleOptions: { value: string, label: string | number }[]
+}
+
+const RecordOptions: FC<RecordOptionsProps> = ({ ruleOptions }) => {
   const { params, paramsHandle } = useSelector(state => ({
     params: state.table.params,
     paramsHandle: state.table.paramsHandle
@@ -39,7 +43,7 @@ const RecordOptions: FC = () => {
       />
       <FilterSelect
         className='pg-overview--record-options--filters-status'
-        options={[{ label: 'yy', value: 12 }, { label: 'xx', value: 34 }]}
+        options={ruleOptions}
         placeholder='假期名称'
         allowClear
       />

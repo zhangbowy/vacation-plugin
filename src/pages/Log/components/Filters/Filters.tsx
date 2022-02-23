@@ -1,10 +1,11 @@
-import { memo } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import type { FC } from 'react'
 import Icon from '@/components/Icon'
 import Select from '@/components/form/Select'
 import RangePicker from '@/components/form/RangePicker'
 import hocFilter from '@/hoc/tableModel/hocFilter'
 import InputModel from '@/components/form/InputModel'
+import { getLogModules } from '@/services/operateLog'
 import './Filters.less'
 
 const FilterSelect = hocFilter(
@@ -15,6 +16,29 @@ const FilterRangePicker = hocFilter(
 )
 
 const Filters: FC = () => {
+  const [moduleOptions, setModuleOptions] = useState([])
+  const refDestroyed = useRef(false)
+  useEffect(
+    () => {
+      refDestroyed.current = false
+      getLogModules().then(d => {
+        console.log('d', d)
+        if (d[0] && !refDestroyed.current) {
+          setModuleOptions((d[1] || []).map(
+            (
+              { moduleCode, moduleDesc }:
+              { moduleCode: string | number, moduleDesc: string }
+            ) =>
+              ({ label: moduleDesc, value: moduleCode })
+          ))
+        }
+      })
+      return () => {
+        refDestroyed.current = true
+      }
+    },
+    []
+  )
   return <div className='pg-log--filters'>
     <InputModel
       className='pg-log--filters--name'
@@ -29,7 +53,7 @@ const Filters: FC = () => {
     />
     <FilterSelect
       className='pg-log--filters--status'
-      options={[{ label: 'yy', value: 'aa' }, { label: 'xx', value: 'bb' }]}
+      options={moduleOptions}
       placeholder='选择操作模块'
       allowClear
     />

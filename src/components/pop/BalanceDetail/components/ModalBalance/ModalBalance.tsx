@@ -1,18 +1,14 @@
 import { memo, useMemo, useCallback } from 'react'
 import type { FC } from 'react'
 import './ModalBalance.less'
-import Modal from '@/components/pop/Modal'
+import CommonModal from '@/components/pop/CommonModal'
 import Form, { Item } from '@/components/form/Form'
 import Select from '@/components/form/Select'
 import InputNumber from '@/components/form/InputNumber'
-import Icon from '@/components/Icon'
 
 const selOptions = [
-  {
-    label: '增加' , value: 'add'
-  }, {
-    label: '减少' , value: 'sub'
-  }
+  { label: '增加' , value: 'add' },
+  { label: '减少' , value: 'sub' }
 ]
 
 interface ItemInfoProps {
@@ -66,18 +62,12 @@ const ModalBalance: FC<ModalBalanceProps> = ({ visible, onCancel }) => {
   const handleConfirm = () => {
     console.log('save')
   }
-  return <Modal
+  return <CommonModal
     className='com-pop-balance-detail--modal-balance'
     title='修改余额'
     visible={visible}
     onOk={handleConfirm}
     onCancel={onCancel}
-    closeIcon={
-      <Icon
-        className='com-pop-balance-detail--modal-balance--close-icon'
-        type='icon-guanbi'
-      />
-    }
     okText='保存'
   >
     <div className='com-pop-balance-detail--modal-balance--texts'>
@@ -98,7 +88,7 @@ const ModalBalance: FC<ModalBalanceProps> = ({ visible, onCancel }) => {
         <ItemInfo />
       </Item>
     </Form>
-  </Modal>
+  </CommonModal>
 }
 
 export default memo(ModalBalance)

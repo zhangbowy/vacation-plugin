@@ -44,8 +44,7 @@ const doFetch = async (action, params, pageNo, pageSize, paramsHandle, resultHan
   loading.hide()
   if (success) {
     if (resultHandle) {
-      const handleResult = resultHandle(result)
-      return handleResult
+      return resultHandle(result)
     }
     return result
   }
@@ -157,7 +156,6 @@ const LoginModel = {
       })
     }
   },
-
   reducers: {
     init(_, { payload = {} }) {
       return payload

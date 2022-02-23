@@ -59,9 +59,10 @@ const columns = [
 
 interface RecordProps {
   refDates: { current: [Moment, Moment] | null }
+  ruleOptions: { value: string, label: string | number }[]
 }
 
-const Record: FC<RecordProps> = ({ refDates }) => {
+const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
   const dispatch = useDispatch()
   useEffect(
     () => {
@@ -94,7 +95,7 @@ const Record: FC<RecordProps> = ({ refDates }) => {
     [dispatch, refDates]
   )
   return <>
-    <RecordOptions />
+    <RecordOptions ruleOptions={ruleOptions} />
     <StoreTable name='record' rowKey='userId' withFooterPaination />
   </>
 }

@@ -1,7 +1,8 @@
-import { memo, useState, useRef } from 'react';
+import { memo, useState, useRef, useEffect } from 'react';
 import type { FC } from 'react';
 import PageContent from '@/components/structure/PageContent'
 import type { Moment } from 'moment'
+import { getDropdownList } from '@/services/vacationType'
 import Survey from './components/Survey';
 import Record from './components/Record';
 import Header from './components/Header'
@@ -12,6 +13,7 @@ const tabs = [
 ]
 
 const Overview: FC = () => {
+  const refDestroyed = useRef(false)
   const [tabActiveKey, setTabActiveKey] = useState<string>('survey');
   const refDates = useRef<[Moment, Moment] | null>(null)
   const changeSelecteDate = (date: Moment) => {
@@ -26,6 +28,29 @@ const Overview: FC = () => {
     }
     setTabActiveKey(key)
   }
+  const [ruleOptions, setRuleOptionss] = useState([])
+  useEffect(
+    () => {
+      refDestroyed.current = false
+      getDropdownList().then(
+        d => {
+          const [success, result = []] = d
+          if (success && !refDestroyed.current) {
+            setRuleOptionss(
+              result.map(
+                ({ id, name }: { id: string | number, name: string }) =>
+                  ({ label: name, value: id })
+              )
+            )
+          }
+        }
+      )
+      return () => {
+        refDestroyed.current = true
+      }
+    },
+    []
+  )
   return (
     <PageContent
       className='pg-overview'
@@ -39,7 +64,7 @@ const Overview: FC = () => {
       {
         tabActiveKey === 'survey'
           ? <Survey changeSelecteDate={changeSelecteDate} />
-          : <Record refDates={refDates} />
+          : <Record refDates={refDates} ruleOptions={ruleOptions} />
       }
     </PageContent>
   );

@@ -9,3 +9,5 @@ export const exportBalanceList = params => get(
 export const downloadEditTemplate = params => get(
   '/balance/getEditTemplate', params, { download: true }
 )
+
+export const getSyncName = params => get('/balance/synName', params)
