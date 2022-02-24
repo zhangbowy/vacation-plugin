@@ -1,6 +1,7 @@
 import { getRoleList } from '@/services/role'
 import Tooltip from '@/components/pop/Tooltip'
 import getActions from '@/components/table/getAction'
+import checkAuth from '@/utils/checkAuth'
 
 interface ResourceProps {
   resourceId: number
@@ -125,10 +126,8 @@ export const getInitTablePayload = (
   resources: any[],
   handleEdit: (d: any) => void,
   handleRemove: (d: any) => void
-) => ({
-  name: 'auth',
-  action: getRoleList,
-  columns: [
+) => {
+  const columns = [
     { title: '权限名称', dataIndex: 'name', width: '17.918%' },
     {
       title: '成员',
@@ -195,36 +194,52 @@ export const getInitTablePayload = (
           }
         </Tooltip>
       }
-    },
-    getActions({
+    }
+  ]
+  if (checkAuth(6003) || checkAuth(6004)) {
+    const actionsReturn = getActions({
       width: 106,
-      getHandles: (v: any) => [
-        {
-          title: '编辑',
-          handle: handleEdit
-        }, {
-          title: '删除',
-          handle: handleRemove,
-          disabled: v.isDefault
+      getHandles: (v: any) => {
+        const r = []
+        if (checkAuth(6003)) {
+          r.push({
+            title: '编辑',
+            handle: handleEdit
+          })
         }
-      ]
+        if (checkAuth(6004)) {
+          r.push({
+            title: '删除',
+            handle: handleRemove,
+            disabled: v.isDefault
+          })
+        }
+        return r
+      }
     })
-  ],
-  resultHandle: (fetchResult: any) => {
-    const r = fetchResult || []
-    const total = r.length
-    return {
-      list: r.map(
-        (v: any) => ({
-          ...v,
-          resources: getItemResources(v.resourceVOS, resources)
-        })
-      ),
-      pageNo: 1,
-      pageSize: total,
-      total: total
+    //@ts-ignore
+    columns.push(actionsReturn)
+  }
+  return {
+    name: 'auth',
+    action: getRoleList,
+    columns,
+    resultHandle: (fetchResult: any) => {
+      const r = fetchResult || []
+      const total = r.length
+      return {
+        list: r.map(
+          (v: any) => ({
+            ...v,
+            resources: getItemResources(v.resourceVOS, resources)
+          })
+        ),
+        pageNo: 1,
+        pageSize: total,
+        total: total
+      }
     }
   }
-})
+}
 
 export default null
