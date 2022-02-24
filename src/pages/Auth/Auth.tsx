@@ -14,6 +14,7 @@ import { confirm } from '@/components/pop/Modal'
 import { msg } from '@/components/pop'
 import { removeRole } from '@/services/role'
 import loading from '@/components/pop/loading'
+import checkAuth from '@/utils/checkAuth'
 
 const Auth: FC = () => {
   const [resourceList, setResourceList] = useState<any[] | null>(null)
@@ -65,16 +66,19 @@ const Auth: FC = () => {
   return (
     <PageContent className='pg-auth' hasPadding>
       <Header />
-      <div className='pg-auth--filters'>
-        <Button
-          type="primary"
-          key="primary"
-          onClick={() => setInfo({ visible: true, id: '' })}
-        >
-          <Icon type='icon-tianjia' />
-          <span>新增权限</span>
-        </Button>
-      </div>
+      {
+        checkAuth(6002) &&
+        <div className='pg-auth--filters'>
+          <Button
+            type="primary"
+            key="primary"
+            onClick={() => setInfo({ visible: true, id: '' })}
+          >
+            <Icon type='icon-tianjia' />
+            <span>新增权限</span>
+          </Button>
+        </div>
+      }
       <StoreTable name='auth' rowKey='id' />
       <AuthEdit
         {...info}

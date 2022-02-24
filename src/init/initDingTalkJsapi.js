@@ -23,9 +23,19 @@ async function initDingTalkJsapi() {
     code: authResult.code, corpId
   })
   const [success, result] = loginResult
+
+  const authMap = {}
   if (success) {
+    const { resourceList = [] } = result || {}
+    resourceList.forEach(
+      ({ resourceId }) => {
+        authMap[resourceId] = true
+      }
+    )
     setConfig({
-      token: result.token
+      token: result.token,
+      authMap,
+      loginInfo: result
     })
   }
   await initDDConfig({

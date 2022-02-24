@@ -1,12 +1,13 @@
 import { Spin } from 'antd';
 import config from '@/config';
 
-async function getInitialState() {
+async function getInitialState(loginInfo) {
   return {
+    ...loginInfo,
     ...config,
     user: {
       avatar: '',
-      name: '马以闪',
+      name: '张博',
       isAdmin: true,
     },
     roles: {},

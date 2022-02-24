@@ -10,7 +10,6 @@ import Filters from './components/Filters'
 import Buttons from './components/Buttons'
 import './Balance.less'
 
-
 const defaultColumns = [
   { title: '姓名', dataIndex: 'userName' },
   { title: '工号', dataIndex: 'jobNumber' },

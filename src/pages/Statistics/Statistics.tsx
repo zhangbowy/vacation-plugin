@@ -7,13 +7,11 @@ import getScroll from '@/components/table/getScroll'
 import moment from 'moment'
 import StoreTable from '@/components/table/StoreTable'
 import { getStatisticsList } from '@/services/statistics'
+import checkAuth from '@/utils/checkAuth'
 import Header from './components/Header'
 import Filters from './components/Filters'
 import Buttons from './components/Buttons'
 
-const defaultColumnIndex = {
-  user_name: true, job_number: true, dept_name: true
-}
 interface Column {
   dataIndex?: string,
   title: string,
@@ -21,32 +19,32 @@ interface Column {
   fixed?: string,
   width?: number
 }
+const defaultColumns = [
+  {
+    title: '姓名',
+    dataIndex: 'user_name',
+    width: 109
+  },
+  {
+    title: '工号',
+    dataIndex: 'job_number',
+    width: 114
+  },
+  {
+    title: '所属部门',
+    dataIndex: 'dept_name',
+    width: 103
+  }
+]
+const widthMap = {
+  user_name: 109, job_number: 114, dept_name: 103
+}
 const getColumns = (data?: Column[] | null) => {
-  const r: Column[] = [
-    {
-      title: '姓名',
-      dataIndex: 'name',
-      width: 109
-    },
-    {
-      title: '工号',
-      dataIndex: 'no',
-      width: 114
-    },
-    {
-      title: '所属部门',
-      dataIndex: 'department',
-      width: 103
-    }
-  ]
   if (data) {
+    const r: Column[] = []
     data.forEach(
       ({ title, dataIndex, children }: Column) => {
-        if (
-          (!dataIndex || !defaultColumnIndex[dataIndex]) &&
-          children &&
-          children.length
-        ) {
+        if (children && children.length) {
           const lastIndex = children.length - 1
           r.push({
             title,
@@ -67,12 +65,18 @@ const getColumns = (data?: Column[] | null) => {
                   })
             )
           })
+        } else {
+          r.push({
+            title,
+            dataIndex,
+            width: dataIndex ? widthMap[dataIndex] || 100 : 100
+          })
         }
       }
     )
     return r
   }
-  return r
+  return defaultColumns
 }
 
 const Statistics: FC = () => {
@@ -112,7 +116,7 @@ const Statistics: FC = () => {
             }
             return r
           },
-          columns: getColumns()
+          columns: defaultColumns
         }
       })
     },
@@ -136,9 +140,10 @@ const Statistics: FC = () => {
     <Header />
     <div className='pg-statistics--options'>
       <Filters />
-      <Buttons />
+      { checkAuth(3002) && <Buttons /> }
     </div>
     <StoreTable
+      rowKey='id'
       name='statistics'
       withFooterPaination
       bordered

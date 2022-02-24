@@ -5,6 +5,7 @@ import Button from '@/components/buttons/Button'
 import { defaultParamsHandle } from '@/models/table'
 import { exportBalanceList } from '@/services/balance'
 import { history } from 'umi'
+import checkAuth from '@/utils/checkAuth'
 import './Buttons.less'
 
 const Buttons: FC = () => {
@@ -22,8 +23,14 @@ const Buttons: FC = () => {
     exportBalanceList(p)
   }
   return <div className='pg-balance--buttons'>
-    <Button onClick={handleBatchEdit}>使用Excel批量修改</Button>
-    <Button type='primary' ghost onClick={handleExport}>导出</Button>
+    {
+      checkAuth(2002) &&
+      <Button onClick={handleBatchEdit}>使用Excel批量修改</Button>
+    }
+    {
+      checkAuth(2003) &&
+      <Button type='primary' ghost onClick={handleExport}>导出</Button>
+    }
   </div>
 }
 

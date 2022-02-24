@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import PageContent from '@/components/structure/PageContent'
 import type { Moment } from 'moment'
 import { getDropdownList } from '@/services/vacationType'
+import checkAuth from '@/utils/checkAuth'
 import Survey from './components/Survey';
 import Record from './components/Record';
 import Header from './components/Header'
@@ -57,7 +58,7 @@ const Overview: FC = () => {
       hasPadding
     >
       <Header
-        tabs={tabs}
+        tabs={checkAuth(4002) ? tabs : [tabs[0]]}
         activeKey={tabActiveKey}
         onTabChange={onTabChange}
       />

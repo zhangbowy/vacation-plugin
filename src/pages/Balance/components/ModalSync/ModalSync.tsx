@@ -6,7 +6,7 @@ import Icon from '@/components/Icon'
 import { Group } from '@/components/form/Checkbox'
 import { balanceSync } from '@/services/balance'
 import loading from '@/components/pop/loading'
-import { msg } from '@/components/pop'
+import { msg, errMsg } from '@/components/pop'
 
 interface ModalSyncProps {
   visible: boolean
@@ -21,6 +21,10 @@ const ModalSync: FC<ModalSyncProps> = ({ visible, onCancel, syncOptions }) => {
   }
   const handleConfirm = useCallback(
     () => {
+      if (!value || !value.length) {
+        errMsg('请选择需要同步的假期')
+        return
+      }
       loading.show()
       balanceSync({ name: value }).then(d => {
         loading.hide()

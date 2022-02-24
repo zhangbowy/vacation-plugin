@@ -10,6 +10,7 @@ import RangePicker from '@/components/form/RangePicker'
 import InputModel from '@/components/form/InputModel'
 import hocFilter from '@/hoc/tableModel/hocFilter'
 import { exportLeaveRecord } from '@/services/leave'
+import checkAuth from '@/utils/checkAuth'
 
 const FilterSelect = hocFilter(
   Select, { name: 'ruleId' }
@@ -52,9 +53,12 @@ const RecordOptions: FC<RecordOptionsProps> = ({ ruleOptions }) => {
         placeholder={['选择时间', '选择时间']}
       />
     </div>
-    <Button type='primary' ghost onClick={handleExport}>
-      导出
-    </Button>
+    {
+      checkAuth(4003) &&
+      <Button type='primary' ghost onClick={handleExport}>
+        导出
+      </Button>
+    }
   </div>
 }
 
