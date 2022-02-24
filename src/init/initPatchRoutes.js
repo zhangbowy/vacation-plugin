@@ -7,6 +7,8 @@ import LoadingComponent from '@/Loading';
 import { recursionFormatData, recursionCollectionData } from '@/utils/utils';
 import config from '@/config';
 import initDingTalkJsapi from '@/init/initDingTalkJsapi';
+import checkAuth from '@/utils/checkAuth'
+
 let roleIdMap = {};
 
 function filterRoleMenu(menu) {
@@ -19,7 +21,7 @@ function filterRoleMenu(menu) {
 
       // 如果当前路由资源的 id 不在后台配置的列表中， 则移除当前路由
       if (route.permissionId) {
-        return !config.resourceList.some((item) => item.resourceId === route.permissionId);
+        return !checkAuth(route.permissionId)
       }
       return false;
     },
