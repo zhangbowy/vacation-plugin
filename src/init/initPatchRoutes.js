@@ -15,9 +15,9 @@ function filterRoleMenu(menu) {
   return recursionFormatData(menu, 'routes', {
     isRemove(route) {
       // 如果不存在 子路由 则移除当前路由
-      if (route.routes) {
-        return !route.routes.length;
-      }
+      // if (route.routes) {
+      //   return !route.routes.length;
+      // }
 
       // 如果当前路由资源的 id 不在后台配置的列表中， 则移除当前路由
       if (route.permissionId) {
@@ -101,7 +101,7 @@ export default function patchRoutes({ routes }) {
         loader: () => import('@/pages/Overview'),
         loading: LoadingComponent,
       }),
-      permissionId: 3000,
+      permissionId: 4000,
     },
     {
       path: '/auth',
