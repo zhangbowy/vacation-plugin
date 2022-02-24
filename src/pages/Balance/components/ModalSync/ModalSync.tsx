@@ -1,9 +1,12 @@
-import { memo, useState, useEffect } from 'react'
+import { memo, useState, useEffect, useCallback } from 'react'
 import type { FC } from 'react'
 import './ModalSync.less'
 import CommonModal from '@/components/pop/CommonModal'
 import Icon from '@/components/Icon'
 import { Group } from '@/components/form/Checkbox'
+import { balanceSync } from '@/services/balance'
+import loading from '@/components/pop/loading'
+import { msg } from '@/components/pop'
 
 interface ModalSyncProps {
   visible: boolean
@@ -14,9 +17,21 @@ interface ModalSyncProps {
 const ModalSync: FC<ModalSyncProps> = ({ visible, onCancel, syncOptions }) => {
   const [value, setValue] = useState<any[]>([])
   const handleChange = (d: any[]) => {
-    console.log('d', d)
     setValue(d)
   }
+  const handleConfirm = useCallback(
+    () => {
+      loading.show()
+      balanceSync({ name: value }).then(d => {
+        loading.hide()
+        if (d[0]) {
+          msg('操作成功')
+          onCancel()
+        }
+      })
+    },
+    [value, onCancel]
+  )
   useEffect(
     () => {
       if (visible) {
@@ -29,7 +44,7 @@ const ModalSync: FC<ModalSyncProps> = ({ visible, onCancel, syncOptions }) => {
     className='pg-balance--modal-sync'
     title='同步历史余额'
     visible={visible}
-    onOk={onCancel}
+    onOk={handleConfirm}
     onCancel={onCancel}
     width={432}
     okText='同步'

@@ -1,6 +1,7 @@
-import { memo, useState, useCallback, useEffect } from 'react'
+import { memo, useState, useCallback, useEffect, useRef } from 'react'
 import type { FC } from 'react'
 import './Content.less'
+import { getDropdownList } from '@/services/vacationType'
 import { downloadEditTemplate } from '@/services/balance'
 import Button from '@/components/buttons/Button'
 import Checkbox, { Group } from '@/components/form/Checkbox'
@@ -11,12 +12,9 @@ import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
 
 type DepartmentsType = { id: string | number, name: string, number: number }[]
 
-const checkOptions = [
-  { label: '年假', value: 'a' },
-  { label: '事假', value: 'b' },
-]
-
 const Content: FC = () => {
+  const refDestroyed = useRef(false)
+  const [ruleOptions, setRuleOptionss] = useState([])
   const [depts, setDepts] = useState<DepartmentsType>([])
   const [checkAllInfo, setCheckAllInfo] = useState({
     checked: false,
@@ -27,12 +25,34 @@ const Content: FC = () => {
   >([])
   useEffect(
     () => {
+      refDestroyed.current = false
+      getDropdownList().then(
+        d => {
+          const [success, result = []] = d
+          if (success && !refDestroyed.current) {
+            setRuleOptionss(
+              result.map(
+                ({ id, name }: { id: string | number, name: string }) =>
+                  ({ label: name, value: id })
+              )
+            )
+          }
+        }
+      )
+      return () => {
+        refDestroyed.current = true
+      }
+    },
+    []
+  )
+  useEffect(
+    () => {
       if (checkedValue.length === 0) {
         setCheckAllInfo({
           checked: false,
           indeterminate: false
         })
-      } else if (checkOptions.length <= checkedValue.length) {
+      } else if (ruleOptions.length <= checkedValue.length) {
         setCheckAllInfo({
           checked: true,
           indeterminate: false
@@ -44,7 +64,7 @@ const Content: FC = () => {
         })
       }
     },
-    [checkedValue]
+    [checkedValue, ruleOptions]
   )
   const handleSuccess = () => {
     createSuccess({
@@ -73,7 +93,7 @@ const Content: FC = () => {
     { target }: { target: { checked: boolean }}
   ) => {
     if (target.checked) {
-      setCheckedValue(checkOptions.map(({ value }) => value))
+      setCheckedValue(ruleOptions.map(({ value }) => value))
     } else {
       setCheckedValue([])
     }
@@ -141,7 +161,7 @@ const Content: FC = () => {
               </Checkbox>
               <Group
                 className='pg-balance-batch-edit--content--checkbox-group'
-                options={checkOptions}
+                options={ruleOptions}
                 value={checkedValue}
                 onChange={handleChangeCheckbox}
               />

@@ -62,7 +62,7 @@ const Balance: FC = () => {
           },
           resultHandle: (r: any) => {
             if (r && r.list) {
-              getColumns(r.list)
+              // getColumns(r.list)
               return {
                 ...r,
                 ...r.list.map((
