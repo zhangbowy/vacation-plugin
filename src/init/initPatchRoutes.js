@@ -59,7 +59,7 @@ export default function patchRoutes({ routes }) {
         loader: () => import('@/pages/Rules'),
         loading: LoadingComponent,
       }),
-      permissionId: 1000,
+      permissionId: 1001,
     },
     {
       path: '/balance',
@@ -71,7 +71,7 @@ export default function patchRoutes({ routes }) {
         loading: LoadingComponent,
       }),
       routes: [],
-      permissionId: 2000,
+      permissionId: 2001,
     },
     {
       path: '/balance/batch-edit',
@@ -91,7 +91,7 @@ export default function patchRoutes({ routes }) {
         loader: () => import('@/pages/Statistics'),
         loading: LoadingComponent,
       }),
-      permissionId: 3000,
+      permissionId: 3001,
     },
     {
       path: '/overview',
@@ -101,7 +101,7 @@ export default function patchRoutes({ routes }) {
         loader: () => import('@/pages/Overview'),
         loading: LoadingComponent,
       }),
-      permissionId: 4000,
+      permissionId: 4001,
     },
     {
       path: '/auth',
@@ -111,7 +111,7 @@ export default function patchRoutes({ routes }) {
         loader: () => import('@/pages/Auth'),
         loading: LoadingComponent,
       }),
-      permissionId: 6000,
+      permissionId: 6001,
     },
     {
       path: '/log',
@@ -121,7 +121,7 @@ export default function patchRoutes({ routes }) {
         loader: () => import('@/pages/Log'),
         loading: LoadingComponent,
       }),
-      permissionId: 7000,
+      permissionId: 7001,
     },
     ...otherRoutes,
   ];
