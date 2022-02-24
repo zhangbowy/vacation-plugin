@@ -16,11 +16,11 @@ import UserSelect from '@/components/form/UserSelect/UserSelect';
 
 const RULE_TYPE = [
   {
-    value: '1',
+    value: 'general_leave',
     label: '普通假',
   },
   {
-    value: '2',
+    value: 'lieu_leave',
     label: '调休假',
   },
 ];
@@ -137,23 +137,27 @@ const AddRulePop: FC = () => {
           {/*基本信息*/}
           <div className="base_info">
             <div className="title">基本信息</div>
-            <Item label="假期规则名称" name="name" rules={[{ required: true, message: '请输入' }]}>
+            <Item
+              label="假期规则名称"
+              name="leaveName"
+              rules={[{ required: true, message: '请输入' }]}
+            >
               <Input placeholder="请输入" showCount={true} maxLength={30} />
             </Item>
           </div>
           <Item
             label="假期规则类型"
-            name="dingUsers"
+            name="bizType"
             className="w-120"
             rules={[{ required: true, message: '请选择' }]}
           >
             <Select onChange={() => {}} options={RULE_TYPE} />
           </Item>
-          <Item label="新员工请假" name="range">
+          <Item label="新员工请假" name="whenCanLeave">
             <Group>
               <Space direction="vertical">
-                <Radio value={0}>入职可使用</Radio>
-                <Radio value={1}>转正可使用</Radio>
+                <Radio value={'entry'}>入职可使用</Radio>
+                <Radio value={'formal'}>转正可使用</Radio>
               </Space>
             </Group>
           </Item>
