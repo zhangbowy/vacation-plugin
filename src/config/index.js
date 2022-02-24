@@ -3,6 +3,8 @@ import { SESSION_KEY_CORPID } from '@/constant';
 const config = {
   corpId: '',
   token: '',
+  authMap: {},
+  loginInfo: {}
 };
 
 const cacheKeyMap = {
@@ -37,7 +39,7 @@ const proxyConfig = new Proxy(config, {
 
     target[key] = value;
 
-    return true
+    return true;
   },
 
   deleteProperty(target, key) {

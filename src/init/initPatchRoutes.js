@@ -1,11 +1,12 @@
 /* eslint-disable global-require */
-import { dynamic } from 'umi';
+import { dynamic, getDvaApp } from 'umi';
 // import { setConfig } from '@/config';
 import LoadingComponent from '@/Loading';
 // import layout from '@/pages/_layout';
 // import { getRoleMap } from '@/services';
 import { recursionFormatData, recursionCollectionData } from '@/utils/utils';
-
+import config from '@/config';
+import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 let roleIdMap = {};
 
 function filterRoleMenu(menu) {
@@ -17,7 +18,10 @@ function filterRoleMenu(menu) {
       }
 
       // 如果当前路由资源的 id 不在后台配置的列表中， 则移除当前路由
-      return route.id ? !roleIdMap[route.id] : false;
+      if (route.permissionId) {
+        return !config.resourceList.some((item) => item.resourceId === route.permissionId);
+      }
+      return false;
     },
   });
 }
@@ -32,7 +36,8 @@ function addRouteLevel(menu) {
 
 export default function patchRoutes({ routes }) {
   const oldRoutes = routes[0].routes[0].routes[0].routes;
-
+  const resourceList = config.resourceList;
+  console.log(resourceList);
   const otherRoutes = [
     {
       component: dynamic({
@@ -44,18 +49,27 @@ export default function patchRoutes({ routes }) {
 
   const addRoutes = [
     {
+      path: '/rules',
+      name: '假期规则',
+      icon: 'icon-jiaqiguize',
+      exact: true,
+      component: dynamic({
+        loader: () => import('@/pages/Rules'),
+        loading: LoadingComponent,
+      }),
+      permissionId: 1000,
+    },
+    {
       path: '/balance',
       name: '假期余额',
-      icon: 'icon-zichanguanli2',
+      icon: 'icon-jiaqiyue',
       exact: true,
       component: dynamic({
         loader: () => import('@/pages/Balance'),
         loading: LoadingComponent,
       }),
-      routes: [
-        { path: '/balance' },
-        { path: '/batch-edit' }
-      ]
+      routes: [],
+      permissionId: 2000,
     },
     {
       path: '/balance/batch-edit',
@@ -65,80 +79,68 @@ export default function patchRoutes({ routes }) {
       component: dynamic({
         loader: () => import('@/pages/BalanceBatchEdit'),
         loading: LoadingComponent,
-      })
+      }),
     },
     {
       path: '/statistics',
       name: '统计报表',
-      icon: 'icon-zichanguanli2',
+      icon: 'icon-tongjibaobiao',
       component: dynamic({
         loader: () => import('@/pages/Statistics'),
         loading: LoadingComponent,
       }),
+      permissionId: 3000,
     },
     {
       path: '/overview',
       name: '休假总览',
-      icon: 'icon-zichanguanli2',
+      icon: 'icon-xiujiazonglan',
       component: dynamic({
         loader: () => import('@/pages/Overview'),
         loading: LoadingComponent,
       }),
+      permissionId: 3000,
     },
     {
       path: '/auth',
       name: '权限设置',
-      icon: 'icon-zichanguanli2',
+      icon: 'icon-quanxianshezhi',
       component: dynamic({
         loader: () => import('@/pages/Auth'),
         loading: LoadingComponent,
       }),
+      permissionId: 6000,
     },
     {
       path: '/log',
       name: '操作日志',
-      icon: 'icon-zichanguanli2',
+      icon: 'icon-caozuorizhi',
       component: dynamic({
         loader: () => import('@/pages/Log'),
         loading: LoadingComponent,
       }),
+      permissionId: 7000,
     },
     ...otherRoutes,
   ];
 
   // 过滤没有权限的页面
   const filterAddRoutesByRole = filterRoleMenu(addRoutes);
-
-  // 默认展示第一个子路由
-  const redirectPath = recursionCollectionData(filterAddRoutesByRole, 'routes', {
-    addCondition(data) {
-      return !data?.routes?.length;
-    },
-    stop: ($1, values) => {
-      return values.length === 1;
-    },
-  });
-
+  const fistPage = filterAddRoutesByRole.find((item) => !item.hideInMenu);
   const mergeRoutes = [
     {
       path: '/',
-      redirect: redirectPath?.[0]?.path,
+      redirect: fistPage?.path,
       exact: true,
     },
     ...oldRoutes,
     ...filterRoleMenu(addRoutes),
   ];
-
+  console.log(mergeRoutes);
   routes[0].routes[0].routes[0].routes = addRouteLevel(mergeRoutes);
 }
 
-// eslint-disable-next-line consistent-return
 export async function render(oldRender) {
-  // const [, roleIdMap = {}] = await getRoleMap();
-
-  // setConfig({
-  //   roleIdMap,
-  // });
-
+  await initDingTalkJsapi();
   oldRender();
 }
