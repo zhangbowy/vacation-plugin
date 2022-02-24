@@ -10,7 +10,7 @@ import cs from 'classnames';
 import { connect, history } from 'umi';
 import { RightOutlined } from '@ant-design/icons';
 // import initDingTalkJsapi from '@/init/initDingTalkJsapi';
-import './BasicLayout.less'
+import './BasicLayout.less';
 import styles from './index.less';
 
 const BasicLayout = (props) => {
@@ -51,7 +51,7 @@ const BasicLayout = (props) => {
         {...props}
         {...settings}
         collapsedWidth={40}
-        siderWidth={190}
+        siderWidth={160}
         iconfontUrl={ICONFONT_URL}
         fixedHeader={true}
         fixSiderbar={true}
@@ -143,10 +143,10 @@ const BasicLayout = (props) => {
         }}
         headerRender={false}
       >
-        <div className='lay-basic-layout--wrap'>
-          <div id='lay-basic-layout--content-header' />
-            { children }
-          <div id='lay-basic-layout--content-footer' />
+        <div className="lay-basic-layout--wrap">
+          <div id="lay-basic-layout--content-header" />
+          {children}
+          <div id="lay-basic-layout--content-footer" />
         </div>
       </ProLayout>
     </div>
