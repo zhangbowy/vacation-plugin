@@ -8,7 +8,10 @@ import { getLogList } from '@/services/operateLog'
 import Header from './components/Header'
 import Filters from './components/Filters'
 
-console.log('need operateTypes')
+const operateTypeMap = {
+  1: '假期规则', 2: '假期余额', 3: '统计报表', 4: '休假总览', 5: '权限设置'
+}
+
 const columns = [
   {
     title: '时间',
@@ -25,7 +28,8 @@ const columns = [
   {
     title: '操作模块',
     dataIndex: 'operateType',
-    width: '20.874%'
+    width: '20.874%',
+    render: (v: 1 | 2 | 3 | 4 | 5) => operateTypeMap[v] || '-'
   },
   {
     title: '操作内容',
