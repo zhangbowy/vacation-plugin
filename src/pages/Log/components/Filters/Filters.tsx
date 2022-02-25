@@ -22,7 +22,6 @@ const Filters: FC = () => {
     () => {
       refDestroyed.current = false
       getLogModules().then(d => {
-        console.log('d', d)
         if (d[0] && !refDestroyed.current) {
           setModuleOptions((d[1] || []).map(
             (
