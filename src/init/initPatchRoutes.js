@@ -1,15 +1,12 @@
 /* eslint-disable global-require */
-import { dynamic, getDvaApp } from 'umi';
+import { dynamic } from 'umi';
 // import { setConfig } from '@/config';
 import LoadingComponent from '@/Loading';
 // import layout from '@/pages/_layout';
 // import { getRoleMap } from '@/services';
-import { recursionFormatData, recursionCollectionData } from '@/utils/utils';
-import config from '@/config';
+import { recursionFormatData } from '@/utils/utils';
 import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 import checkAuth from '@/utils/checkAuth'
-
-let roleIdMap = {};
 
 function filterRoleMenu(menu) {
   return recursionFormatData(menu, 'routes', {
@@ -38,8 +35,6 @@ function addRouteLevel(menu) {
 
 export default function patchRoutes({ routes }) {
   const oldRoutes = routes[0].routes[0].routes[0].routes;
-  const resourceList = config.resourceList;
-  console.log(resourceList);
   const otherRoutes = [
     {
       component: dynamic({
@@ -138,7 +133,6 @@ export default function patchRoutes({ routes }) {
     ...oldRoutes,
     ...filterRoleMenu(addRoutes),
   ];
-  console.log(mergeRoutes);
   routes[0].routes[0].routes[0].routes = addRouteLevel(mergeRoutes);
 }
 

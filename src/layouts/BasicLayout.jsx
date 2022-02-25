@@ -9,18 +9,17 @@ import React, { useEffect, useState } from 'react';
 import cs from 'classnames';
 import { connect, history } from 'umi';
 import { RightOutlined } from '@ant-design/icons';
+import useStoreContentSize from '@/hooks/useStoreContentSize'
 // import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 import './BasicLayout.less';
 import styles from './index.less';
 
 const BasicLayout = (props) => {
+  useStoreContentSize()
   const {
-    children,
-    settings,
-    location = {
-      pathname: '/',
-    },
+    children, settings, location = { pathname: '/' },
   } = props;
+
   const { pathname } = location;
 
   const [collapsed, setSetcollapsed] = useState(false);
@@ -36,16 +35,12 @@ const BasicLayout = (props) => {
       className={cs({
         [styles.hasSystemTip]: isAdminHeaderTip,
       })}
-      style={{
-        height: '100%',
-        margin: 0,
-        padding: 0,
-      }}
+      style={{ height: '100%', margin: 0, padding: 0 }}
     >
       <ProLayout
         className={cs({
-          [styles.proLayoutCollapsed]: collapsed,
-        })}
+          [styles.proLayoutCollapsed]: collapsed
+        }, 'lay-content')}
         logo={false}
         title=""
         {...props}
