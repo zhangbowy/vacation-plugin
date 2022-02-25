@@ -5,28 +5,30 @@ import StoreTable from '@/components/table/StoreTable'
 import BalanceDetail from '@/components/pop/BalanceDetail'
 import { useDispatch } from 'dva'
 import { getBalanceList } from '@/services/balance'
+import useTableStoreScroll from '@/hooks/useTableStoreScroll'
+import useTableStoreActiveColumn from '@/hooks/useTableStoreActiveColumn'
 import Header from './components/Header'
 import Filters from './components/Filters'
 import Buttons from './components/Buttons'
 import './Balance.less'
 
 const defaultColumns = [
-  { title: '姓名', dataIndex: 'userName' },
-  { title: '工号', dataIndex: 'jobNumber' },
-  { title: '所属部门', dataIndex: 'deptName' },
-  { title: '岗位', dataIndex: 'job' }
+  { title: '姓名', dataIndex: 'userName', width: 111 },
+  { title: '工号', dataIndex: 'jobNumber', width: 114 },
+  { title: '所属部门', dataIndex: 'deptName', width: 113 },
+  { title: '岗位', dataIndex: 'job', width: 151 }
 ]
-const getColumns = (cell?: any) => {
-  if (cell && cell[0] && cell[0].balanceDetails) {
+const getColumns = (cells?: any) => {
+  if (cells && cells[0] && cells[0].balanceDetails) {
     return [
       ...defaultColumns,
-      ...cell[0].balanceDetails.map(
+      ...cells[0].balanceDetails.map(
         (
           { ruleId, ruleName, unit }: {
             ruleId: number, ruleName: string, unit: string
           }
         ) => ({
-          title: `${ruleName}(${unit})`, dataIndex: ruleId
+          title: `${ruleName}(${unit})`, dataIndex: ruleId, width: 102
         })
       )
     ]
@@ -35,6 +37,7 @@ const getColumns = (cell?: any) => {
 }
 
 const Balance: FC = () => {
+  const updateData = useTableStoreActiveColumn(getColumns)
   const [visible, setVisible] = useState<boolean>(false)
   const handleCloseDetail = () => { setVisible(false) }
   const dispatch = useDispatch()
@@ -61,7 +64,7 @@ const Balance: FC = () => {
           },
           resultHandle: (r: any) => {
             if (r && r.list) {
-              // getColumns(r.list)
+              updateData(r.list)
               return {
                 ...r,
                 ...r.list.map((
@@ -89,8 +92,9 @@ const Balance: FC = () => {
         }
       })
     },
-    [dispatch]
+    [dispatch, updateData]
   )
+  const scroll = useTableStoreScroll()
   return <PageContent className='pg-balance' hasPadding>
     <Header />
     <div className='pg-balance--options'>
@@ -101,6 +105,7 @@ const Balance: FC = () => {
       name='balance'
       rowKey='userId'
       withFooterPaination
+      scroll={scroll}
     />
     <BalanceDetail visible={visible} onClose={handleCloseDetail} />
   </PageContent>

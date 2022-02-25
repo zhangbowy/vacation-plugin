@@ -14,19 +14,23 @@ const columns = [
     title: '时间',
     dataIndex: 'createTime',
     render: (createTime: number) =>
-      moment(createTime).format('YYYY-MM-DD HH:mm')
+      moment(createTime).format('YYYY-MM-DD HH:mm'),
+    width: '26.942%'
   },
   {
     title: '操作人员',
-    dataIndex: 'operateUserName'
+    dataIndex: 'operateUserName',
+    width: '17.597%'
   },
   {
     title: '操作模块',
-    dataIndex: 'operateType'
+    dataIndex: 'operateType',
+    width: '20.874%'
   },
   {
     title: '操作内容',
     key: 'operateContent',
+    width: '34.587%',
     render: (
       { operateContent, operateFileName, operateFileUrl }:
       {
