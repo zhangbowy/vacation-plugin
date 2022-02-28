@@ -108,13 +108,25 @@ const Statistics: FC = () => {
             rest.pageSize = pageSize || 10
             return rest
           },
-          resultHandle: (r: any) => {
+          resultHandle: (r: any, _: number, pageSize: number) => {
+            const { page } = r || {}
+            const { currentPage = 1, total = 0 } = page
             if (r && r.data) {
               const { data: resultData, ...rest } = r
               updateData(resultData)
-              return rest
+              return {
+                ...rest,
+                pageNo: currentPage,
+                total,
+                pageSize
+              }
             }
-            return r
+            return {
+              ...(r || {}),
+              pageNo: currentPage,
+              total,
+              pageSize
+            }
           },
           columns: defaultColumns
         }
@@ -132,7 +144,7 @@ const Statistics: FC = () => {
     <StoreTable
       rowKey='id'
       name='statistics'
-      withFooterPaination
+      withFooterPagination
       bordered
       scroll={scroll}
     />

@@ -62,7 +62,9 @@ const Balance: FC = () => {
             rest.pageSize = pageSize || 10
             return rest
           },
-          resultHandle: (r: any) => {
+          resultHandle: (r: any, _: number, pageSize: number) => {
+            const { page } = r || {}
+            const { currentPage = 1, total = 0 } = page
             if (r && r.list) {
               updateData(r.list)
               return {
@@ -83,11 +85,18 @@ const Balance: FC = () => {
                     }
                   }
                   return rest
-                })
+                }),
+                pageNo: currentPage,
+                total,
+                pageSize
               }
             }
-
-            return r
+            return {
+              ...(r || {}),
+              pageNo: currentPage,
+              total,
+              pageSize
+            }
           }
         }
       })
@@ -104,7 +113,7 @@ const Balance: FC = () => {
     <StoreTable
       name='balance'
       rowKey='userId'
-      withFooterPaination
+      withFooterPagination
       scroll={scroll}
     />
     <BalanceDetail visible={visible} onClose={handleCloseDetail} />

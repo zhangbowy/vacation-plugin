@@ -75,11 +75,15 @@ const Log: FC = () => {
             return rest
           },
           columns,
-          resultHandle: (fetchResult: any) => {
-            const { list, ...rest } = fetchResult || {}
+          resultHandle: (fetchResult: any, _: number, pageSize: number) => {
+            const {  page = {}, list, ...rest } = fetchResult || {}
+            const { currentPage = 1, total = 0 } = page
             return {
               list: list.map((v: any, i: number) => ({ ...v, key: i })),
-              ...rest
+              ...rest,
+              total,
+              pageNo: currentPage,
+              pageSize
             }
           }
         }
@@ -90,7 +94,7 @@ const Log: FC = () => {
   return <PageContent className='pg-auth' hasPadding>
     <Header />
     <Filters />
-    <StoreTable name='log' rowKey='key' withFooterPaination />
+    <StoreTable name='log' rowKey='key' withFooterPagination />
   </PageContent>
 }
 

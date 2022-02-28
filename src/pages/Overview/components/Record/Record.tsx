@@ -110,7 +110,7 @@ const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
       name='record'
       rowKey='userId'
       scroll={scroll}
-      withFooterPaination
+      withFooterPagination
     />
   </>
 }
