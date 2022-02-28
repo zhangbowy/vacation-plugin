@@ -44,7 +44,7 @@ const doFetch = async (action, params, pageNo, pageSize, paramsHandle, resultHan
   loading.hide()
   if (success) {
     if (resultHandle) {
-      return resultHandle(result)
+      return resultHandle(result, pageNo, pageSize)
     }
     const { page = {}, list } = result || {}
     const { currentPage = 1, total = 0 } = page
