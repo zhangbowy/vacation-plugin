@@ -236,7 +236,7 @@ export const getInitTablePayload = (
         ),
         pageNo: 1,
         pageSize: total,
-        total: total
+        total
       }
     }
   }

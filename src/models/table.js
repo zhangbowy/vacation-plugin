@@ -46,7 +46,11 @@ const doFetch = async (action, params, pageNo, pageSize, paramsHandle, resultHan
     if (resultHandle) {
       return resultHandle(result)
     }
-    return result
+    const { page = {}, list } = result || {}
+    const { currentPage = 1, total = 0 } = page
+    return {
+      list, total, pageNo: currentPage, pageSize
+    }
   }
   return {
     list: [],

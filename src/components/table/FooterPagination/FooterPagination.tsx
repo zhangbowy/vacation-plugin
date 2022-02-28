@@ -15,6 +15,10 @@ const totalFunction = (total: number) => `共${total}项`
 const FooterPagination: FC<FooterPaginationProps> = ({
   pageNo = 1, total = 0, pageSize = 10
 }) => {
+  console.log('aa', pageNo, total, pageSize)
+  const handlePageChange = pageInfo => {
+    console.log('pageinfo')
+  }
   if (total > 0) {
     return <ContentFooter className='com-table-footer-paination'>
       <Pagination
@@ -22,6 +26,7 @@ const FooterPagination: FC<FooterPaginationProps> = ({
         total={total}
         current={pageNo}
         showTotal={totalFunction}
+        onChange={handlePageChange}
         showSizeChanger
         showQuickJumper
       />

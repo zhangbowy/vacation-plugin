@@ -94,7 +94,7 @@ const Rules: FC = () => {
             {/*<Filters />*/}
             <Buttons />
           </div>
-          <StoreTable name="balance" rowKey="userId" withFooterPaination />
+          <StoreTable name="balance" rowKey="userId" withFooterPagination />
           {/*<BalanceDetail visible={visible} onClose={handleCloseDetail} />*/}
         </>
       )}

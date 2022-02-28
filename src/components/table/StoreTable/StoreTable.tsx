@@ -9,7 +9,7 @@ import { useSelector } from 'dva'
 interface StoreTableProps {
   className?: string
   rowKey?: string | ((record: any) => string)
-  withFooterPaination?: boolean
+  withFooterPagination?: boolean
   bordered?: boolean
   tableLayout?: 'auto' | 'fixed'
   name: string
@@ -18,7 +18,7 @@ interface StoreTableProps {
 
 const StoreTable: FC<StoreTableProps> = ({
   rowKey,
-  withFooterPaination,
+  withFooterPagination,
   bordered,
   tableLayout = 'fixed',
   name,
@@ -28,18 +28,18 @@ const StoreTable: FC<StoreTableProps> = ({
   const {
     columns, list, pageNo, pageSize, total, name: tableName
   } = useSelector(state => state.table)
-  const dataSource = useMemo(
+  const { dataSource, showPagination } = useMemo(
     () => {
       if (name) {
         if (name === tableName) {
-          return list
+          return { dataSource: list, showPagination: withFooterPagination }
         }
-        return []
+        return { dataSource: [], showPagination: false }
       } else {
-        return list
+        return { dataSource: list, showPagination: withFooterPagination }
       }
     },
-    [name, tableName, list]
+    [name, tableName, list, withFooterPagination]
   )
   const cName = useMemo(
     () => classnames('com-table--store', className),
@@ -57,7 +57,7 @@ const StoreTable: FC<StoreTableProps> = ({
       scroll={scroll}
     />
     {
-      withFooterPaination &&
+      showPagination &&
       <FooterPagination pageNo={pageNo} pageSize={pageSize} total={total} />
     }
   </>
