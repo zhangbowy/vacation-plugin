@@ -45,7 +45,7 @@ const BasicLayout = (props) => {
         title=""
         {...props}
         {...settings}
-        collapsedWidth={40}
+        collapsedWidth={32}
         siderWidth={160}
         iconfontUrl={ICONFONT_URL}
         fixedHeader={true}
