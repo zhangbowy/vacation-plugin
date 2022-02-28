@@ -103,7 +103,9 @@ const LoginModel = {
         ...params, ...newParams
       }
       if (typeof action === 'function') {
-        yield put({ type: 'update', payload: { inLoading: true } })
+        yield put({
+          type: 'update', payload: { params: nextParams, inLoading: true }
+        })
         const result = yield doFetch(
           action, nextParams, 1, pageSize, paramsHandle, resultHandle
         )

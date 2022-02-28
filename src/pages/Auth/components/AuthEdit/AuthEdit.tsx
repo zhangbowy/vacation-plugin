@@ -219,7 +219,24 @@ const AuthEdit: FC<AuthEditProps> = ({
         <Item label='管理范围' name='range'>
           <RangeSelect />
         </Item>
-        <Item label='分配权限' name='resourceInfo'>
+        <Item
+          label='分配权限'
+          name='resourceInfo'
+          rules={[
+            () => ({
+              validator(_rule, value) {
+                if (
+                  value &&
+                  value.resourceMap &&
+                  Object.values(value.resourceMap).some(Boolean)
+                ) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('请勾选分配权限'));
+              },
+            })
+          ]}
+        >
           <CheckGroups resourceList={resourceList} />
         </Item>
       </Form>
