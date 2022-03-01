@@ -6,7 +6,7 @@ import LoadingComponent from '@/Loading';
 // import { getRoleMap } from '@/services';
 import { recursionFormatData } from '@/utils/utils';
 import initDingTalkJsapi from '@/init/initDingTalkJsapi';
-import checkAuth from '@/utils/checkAuth'
+import checkAuth from '@/utils/checkAuth';
 
 function filterRoleMenu(menu) {
   return recursionFormatData(menu, 'routes', {
@@ -18,7 +18,7 @@ function filterRoleMenu(menu) {
 
       // 如果当前路由资源的 id 不在后台配置的列表中， 则移除当前路由
       if (route.permissionId) {
-        return !checkAuth(route.permissionId)
+        return !checkAuth(route.permissionId);
       }
       return false;
     },
@@ -126,7 +126,7 @@ export default function patchRoutes({ routes }) {
   const fistPage = filterAddRoutesByRole.find((item) => !item.hideInMenu);
   const mergeRoutes = [
     {
-      path: '/',
+      path: '/(index.html)?',
       redirect: fistPage?.path,
       exact: true,
     },
