@@ -2,7 +2,7 @@ import { memo, useEffect } from 'react';
 import type { FC } from 'react';
 import PageContent from '@/components/structure/PageContent';
 import StoreTable from '@/components/table/StoreTable';
-import { useDispatch } from 'dva';
+import { useDispatch, useSelector } from 'dva';
 import { getBalanceList } from '@/services/balance';
 import Header from './components/Header';
 // import Filters from './components/Filters'
@@ -16,7 +16,7 @@ import checkAuth from '@/utils/checkAuth';
 import { confirm } from '@/components/pop/Modal';
 import loading from '@/components/pop/loading';
 import { msg } from '@/components/pop';
-
+import { leaveViewUnit } from '@/constant/rule';
 interface AgeRules {
   type: string;
   minAge: number;
@@ -138,19 +138,19 @@ const defaultColumns = [
     title: '请假单位',
     dataIndex: 'vacationTypeRule',
     render: (d: VacationTypeRule) => {
-      return d.leaveViewUnit || '-';
+      return leaveViewUnit[d.leaveViewUnit] || '-';
     },
   },
   {
     title: '请假计算时长方式',
-    dataIndex: 'deptName',
+    dataIndex: 'vacationTypeRule',
     render: (d: VacationTypeRule) => {
-      return d?.naturalDayLeave ? '按工作日计算' : '-';
+      return d?.naturalDayLeave ? '按照自然日计算时长' : '按照工作日计算时长';
     },
   },
   {
     title: '是否带薪',
-    dataIndex: 'job',
+    dataIndex: 'vacationTypeRule',
     render: (d: VacationTypeRule) => {
       return d?.paidLeave ? '是' : '否';
     },
@@ -160,6 +160,10 @@ const defaultColumns = [
 
 const Rules: FC = () => {
   const dispatch = useDispatch();
+  const { isShowAddPop } = useSelector((state) => ({
+    isShowAddPop: state.rules.isShowAddPop,
+    editInfo: state.rules.editInfo,
+  }));
   useEffect(() => {
     dispatch({
       type: 'table/initTable',
@@ -173,9 +177,15 @@ const Rules: FC = () => {
           rest.pageSize = pageSize || 10;
           return rest;
         },
-        resultHandle: (fetchResult: Result[]) => {
+        resultHandle: (fetchResult: any, _: number, pageSize: number) => {
+          const { page = {}, list, ...rest } = fetchResult || {};
+          const { currentPage = 1, total = 0 } = page;
           return {
-            list: fetchResult.map((v: any, i: number) => ({ ...v, key: i })),
+            list: list.map((v: any, i: number) => ({ ...v, key: i })),
+            ...rest,
+            total,
+            pageNo: currentPage,
+            pageSize,
           };
         },
       },
@@ -186,13 +196,14 @@ const Rules: FC = () => {
     init();
   }, []);
 
-  const onClick_edit = (d: Result) => {};
-
-  const Add = (d: Result) => {
-    const param = {};
-    addRule(param).then((res) => {});
+  const onClick_edit = (d: Result) => {
+    dispatch({
+      type: 'rules/updateState',
+      payload: { isShowAddPop: true, editInfo: d },
+    });
   };
 
+  // 删除规则
   const onClick_del = (d: Result) => {
     confirm({
       title: '提示',
@@ -218,13 +229,13 @@ const Rules: FC = () => {
       width: 120,
       getHandles: (v: any) => {
         const r = [];
-        if (checkAuth(6003)) {
+        if (checkAuth(1003)) {
           r.push({
             title: '编辑',
             handle: onClick_edit,
           });
         }
-        if (checkAuth(6004)) {
+        if (checkAuth(1004)) {
           r.push({
             title: '删除',
             handle: onClick_del,
@@ -239,22 +250,21 @@ const Rules: FC = () => {
   const init = () => {};
 
   return (
-    <PageContent className="pg-balance" hasPadding>
+    <PageContent className="pg-rules" hasPadding>
       <Header />
       {false ? (
         <Empty />
       ) : (
         <>
-          <div className="pg-balance--options">
+          <div className="pg-rules--options">
             {/*<Filters />*/}
             <Buttons />
           </div>
-          <StoreTable name="rule" rowKey="key" withFooterPaination />
+          <StoreTable name="rule" rowKey="id" withFooterPagination />
         </>
       )}
-
       {/*新增假期规则弹窗*/}
-      <AddRulePop />
+      {isShowAddPop && <AddRulePop />}
     </PageContent>
   );
 };
