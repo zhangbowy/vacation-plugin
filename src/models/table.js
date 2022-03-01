@@ -44,7 +44,7 @@ const doFetch = async (action, params, pageNo, pageSize, paramsHandle, resultHan
   loading.hide()
   if (success) {
     if (resultHandle) {
-      return resultHandle(result)
+      return resultHandle(result, pageNo, pageSize)
     }
     const { page = {}, list } = result || {}
     const { currentPage = 1, total = 0 } = page
@@ -103,7 +103,9 @@ const LoginModel = {
         ...params, ...newParams
       }
       if (typeof action === 'function') {
-        yield put({ type: 'update', payload: { inLoading: true } })
+        yield put({
+          type: 'update', payload: { params: nextParams, inLoading: true }
+        })
         const result = yield doFetch(
           action, nextParams, 1, pageSize, paramsHandle, resultHandle
         )
