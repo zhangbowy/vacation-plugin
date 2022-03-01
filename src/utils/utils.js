@@ -180,3 +180,29 @@ export function formatImageUploadUrl(urls) {
     return file;
   });
 }
+
+/**
+ * created by zhangbo
+ * 合并两个对象（将第二个对象合并到第一个对象），也可用于深度复制
+ * @param d 要输出的对象
+ * @param b 要合并的对象
+ * @param cover 是否覆盖属性
+ * @private
+ */
+export function __merge(d, b, cover) {
+  if (b) {
+    for (const k in b) {
+      if (typeof b[k] === 'object' && (!d[k] || typeof d[k] === 'object') && b[k] != null) {
+        if (Array.isArray(b[k])) {
+          d[k] = d[k] || [];
+        } else {
+          d[k] = d[k] || {};
+        }
+        __merge(d[k], b[k], cover);
+      } else {
+        !(!cover && d.hasOwnProperty(k)) && (d[k] = b[k]);
+      }
+    }
+  }
+  return d;
+}
