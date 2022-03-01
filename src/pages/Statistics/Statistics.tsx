@@ -1,13 +1,14 @@
-import { memo, useEffect, useState, useMemo } from 'react'
+import { memo, useEffect } from 'react'
 import type { FC } from 'react'
 import './Statistics.less'
-import { useDispatch, useSelector } from 'dva'
+import { useDispatch } from 'dva'
 import PageContent from '@/components/structure/PageContent'
-import getScroll from '@/components/table/getScroll'
 import moment from 'moment'
 import StoreTable from '@/components/table/StoreTable'
 import { getStatisticsList } from '@/services/statistics'
 import checkAuth from '@/utils/checkAuth'
+import useTableStoreScroll from '@/hooks/useTableStoreScroll'
+import useTableStoreActiveColumn from '@/hooks/useTableStoreActiveColumn'
 import Header from './components/Header'
 import Filters from './components/Filters'
 import Buttons from './components/Buttons'
@@ -80,9 +81,8 @@ const getColumns = (data?: Column[] | null) => {
 }
 
 const Statistics: FC = () => {
+  const updateData = useTableStoreActiveColumn(getColumns)
   const dispatch = useDispatch()
-  const columns = useSelector(state => state.table.columns)
-  const [data, setData] = useState(null)
   useEffect(
     () => {
       dispatch({
@@ -108,34 +108,33 @@ const Statistics: FC = () => {
             rest.pageSize = pageSize || 10
             return rest
           },
-          resultHandle: (r: any) => {
+          resultHandle: (r: any, _: number, pageSize: number) => {
+            const { page } = r || {}
+            const { currentPage = 1, total = 0 } = page
             if (r && r.data) {
               const { data: resultData, ...rest } = r
-              setData(resultData)
-              return rest
+              updateData(resultData)
+              return {
+                ...rest,
+                pageNo: currentPage,
+                total,
+                pageSize
+              }
             }
-            return r
+            return {
+              ...(r || {}),
+              pageNo: currentPage,
+              total,
+              pageSize
+            }
           },
           columns: defaultColumns
         }
       })
     },
-    [dispatch]
+    [dispatch, updateData]
   )
-  useEffect(
-    () => {
-      dispatch({
-        type: 'table/update',
-        payload: { columns: getColumns(data) }
-      })
-    },
-    [data, dispatch]
-  )
-  const scroll = useMemo(
-    //@ts-ignore
-    () => ({ x: getScroll(columns) }),
-    [columns]
-  )
+  const scroll = useTableStoreScroll()
   return <PageContent className='pg-statistics' hasPadding>
     <Header />
     <div className='pg-statistics--options'>
@@ -145,7 +144,7 @@ const Statistics: FC = () => {
     <StoreTable
       rowKey='id'
       name='statistics'
-      withFooterPaination
+      withFooterPagination
       bordered
       scroll={scroll}
     />
