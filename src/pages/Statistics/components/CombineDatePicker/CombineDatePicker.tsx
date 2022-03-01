@@ -51,6 +51,7 @@ const CombineDatePicker: FC = () => {
       value={date}
       onChange={handleUpdateDate}
       disabledDate={disabledDate}
+      allowClear={false}
     />
   </div>
 }

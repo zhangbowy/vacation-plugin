@@ -5,6 +5,7 @@ import { useDispatch } from 'dva'
 import { getLeaveRecord } from '@/services/leave'
 import moment from 'moment'
 import type { Moment } from 'moment'
+import useTableStoreScroll from '@/hooks/useTableStoreScroll'
 import './Record.less'
 import RecordOptions from '../RecordOptions'
 
@@ -12,22 +13,27 @@ const columns = [
   {
     title: '姓名',
     dataIndex: 'userName',
+    width: 111
   },
   {
     title: '工号',
     dataIndex: 'jobNumber',
+    width: 114
   },
   {
     title: '所属部门',
     dataIndex: 'deptName',
+    width: 113
   },
   {
     title: '岗位',
     dataIndex: 'position',
+    width: 128
   },
   {
     title: '假期名称',
     dataIndex: 'ruleName',
+    width: 113
   },
   {
     title: '时间',
@@ -41,7 +47,8 @@ const columns = [
       } ~ ${
         moment(endTime).format('YYYY-MM-DD HH:mm')
       }`
-    }
+    },
+    width: 161
   },
   {
     title: '时长',
@@ -49,11 +56,13 @@ const columns = [
     render: (
       { durationType, duration }: { durationType: 0 | 2, duration: number }
     ) =>
-      `${duration / 100}${durationType === 0 ? '天' : '小时'}`
+      `${duration / 100}${durationType === 0 ? '天' : '小时'}`,
+    width: 84
   },
   {
     title: '请假理由',
     dataIndex: 'reason',
+    width: 161
   }
 ]
 
@@ -94,9 +103,15 @@ const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
     },
     [dispatch, refDates]
   )
+  const scroll = useTableStoreScroll()
   return <>
     <RecordOptions ruleOptions={ruleOptions} />
-    <StoreTable name='record' rowKey='userId' withFooterPaination />
+    <StoreTable
+      name='record'
+      rowKey='userId'
+      scroll={scroll}
+      withFooterPagination
+    />
   </>
 }
 

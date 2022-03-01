@@ -8,25 +8,33 @@ import { getLogList } from '@/services/operateLog'
 import Header from './components/Header'
 import Filters from './components/Filters'
 
-console.log('need operateTypes')
+const operateTypeMap = {
+  1: '假期规则', 2: '假期余额', 3: '统计报表', 4: '休假总览', 5: '权限设置'
+}
+
 const columns = [
   {
     title: '时间',
     dataIndex: 'createTime',
     render: (createTime: number) =>
-      moment(createTime).format('YYYY-MM-DD HH:mm')
+      moment(createTime).format('YYYY-MM-DD HH:mm'),
+    width: '26.942%'
   },
   {
     title: '操作人员',
-    dataIndex: 'operateUserName'
+    dataIndex: 'operateUserName',
+    width: '17.597%'
   },
   {
     title: '操作模块',
-    dataIndex: 'operateType'
+    dataIndex: 'operateType',
+    width: '20.874%',
+    render: (v: 1 | 2 | 3 | 4 | 5) => operateTypeMap[v] || '-'
   },
   {
     title: '操作内容',
     key: 'operateContent',
+    width: '34.587%',
     render: (
       { operateContent, operateFileName, operateFileUrl }:
       {
@@ -67,11 +75,15 @@ const Log: FC = () => {
             return rest
           },
           columns,
-          resultHandle: (fetchResult: any) => {
-            const { list, ...rest } = fetchResult || {}
+          resultHandle: (fetchResult: any, _: number, pageSize: number) => {
+            const {  page = {}, list, ...rest } = fetchResult || {}
+            const { currentPage = 1, total = 0 } = page
             return {
               list: list.map((v: any, i: number) => ({ ...v, key: i })),
-              ...rest
+              ...rest,
+              total,
+              pageNo: currentPage,
+              pageSize
             }
           }
         }
@@ -82,7 +94,7 @@ const Log: FC = () => {
   return <PageContent className='pg-auth' hasPadding>
     <Header />
     <Filters />
-    <StoreTable name='log' rowKey='key' withFooterPaination />
+    <StoreTable name='log' rowKey='key' withFooterPagination />
   </PageContent>
 }
 

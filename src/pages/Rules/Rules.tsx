@@ -250,7 +250,6 @@ const Rules: FC = () => {
             <Buttons />
           </div>
           <StoreTable name="rule" rowKey="key" withFooterPaination />
-          {/*<BalanceDetail visible={visible} onClose={handleCloseDetail} />*/}
         </>
       )}
 
