@@ -16,6 +16,7 @@ declare module 'react-redux' {
       resultHandle: VoidFunction | null;
     };
     rules: {
+      editInfo: any;
       isShowAddPop: boolean;
     };
     login: {};
