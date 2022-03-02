@@ -23,7 +23,7 @@ const columns = [
   {
     title: '所属部门',
     dataIndex: 'deptName',
-    width: 113
+    width: 143
   },
   {
     title: '岗位',
@@ -38,8 +38,8 @@ const columns = [
   {
     title: '时间',
     key: 'time',
-    rander: ({ startTime, endTime }: { startTime: Date, endTime: Date }) => {
-      if (startTime && endTime) {
+    render: ({ startTime, endTime }: { startTime: Date, endTime: Date }) => {
+      if (!startTime || !endTime) {
         return '-'
       }
       return `${
@@ -48,7 +48,7 @@ const columns = [
         moment(endTime).format('YYYY-MM-DD HH:mm')
       }`
     },
-    width: 161
+    width: 171
   },
   {
     title: '时长',
@@ -62,7 +62,8 @@ const columns = [
   {
     title: '请假理由',
     dataIndex: 'reason',
-    width: 161
+    width: 161,
+    render: (v: string) => v || '-'
   }
 ]
 
@@ -108,7 +109,7 @@ const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
     <RecordOptions ruleOptions={ruleOptions} />
     <StoreTable
       name='record'
-      rowKey='userId'
+      rowKey='id'
       scroll={scroll}
       withFooterPagination
     />

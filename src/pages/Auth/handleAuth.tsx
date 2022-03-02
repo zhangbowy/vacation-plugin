@@ -65,12 +65,6 @@ export const getResources = (resources: ResourceProps[]): ResourceProps[] => {
   })
 }
 
-interface Resource {
-  resourceId: string | number,
-  resourceName: string,
-  children: Resource[]
-}
-
 const getTexts = (
   isAll: boolean,
   itemResources: Resource[],
