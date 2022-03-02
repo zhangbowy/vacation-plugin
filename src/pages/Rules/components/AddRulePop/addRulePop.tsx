@@ -361,8 +361,10 @@ const AddRulePop: FC = () => {
           ...vacationIssueRule,
           expireRule: {
             ...vacationIssueRule.expireRule,
-            specifyDay: moment(vacationIssueRule.expireRule.specifyDay),
-            untilDay: vacationIssueRule.expireRule.untilDay
+            specifyDay: vacationIssueRule?.expireRule?.specifyDay
+              ? moment(vacationIssueRule?.expireRule?.specifyDay)
+              : null,
+            untilDay: vacationIssueRule?.expireRule?.untilDay
               ? moment(vacationIssueRule.expireRule.untilDay)
               : null,
           },
