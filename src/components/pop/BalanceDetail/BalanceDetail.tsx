@@ -1,4 +1,4 @@
-import { memo, useState, useMemo } from 'react'
+import { memo, useState, useMemo, useEffect } from 'react'
 import type { FC } from 'react'
 import './BalanceDetail.less'
 import Drawer from '@/components/pop/Drawer'
@@ -10,17 +10,13 @@ import Item from './components/Item'
 import ModalBalance from './components/ModalBalance'
 
 interface BalanceDetailProps {
-  visible: boolean
   onClose: () => void
+  info: { visible: boolean, item: any }
+  tabs: Tab[]
 }
 
-const tabs = [
-  { tab: '休假概况', key: 'survey' },
-  { tab: '请假记录', key: 'record' }
-]
-
-const BalanceDetail: FC<BalanceDetailProps> = ({ visible, onClose }) => {
-  const [activeKey, setActiveKey] = useState<string>('survey')
+const BalanceDetail: FC<BalanceDetailProps> = ({ info, onClose, tabs }) => {
+  const [activeKey, setActiveKey] = useState<string>('')
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const onModalOpen = () => {
     setModalVisible(true)
@@ -33,12 +29,29 @@ const BalanceDetail: FC<BalanceDetailProps> = ({ visible, onClose }) => {
       tabs={tabs}
       activeKey={activeKey}
       onActiveChange={setActiveKey}
+      detail={info.item || {}}
     />,
-    [activeKey]
+    [activeKey, tabs, info]
+  )
+  useEffect(
+    () => {
+      if (info.visible) {
+        console.log('xxx')
+      }
+    },
+    [info]
+  )
+  useEffect(
+    () => {
+      if (tabs && tabs[0]) {
+        setActiveKey(tabs[0].key)
+      }
+    },
+    [tabs]
   )
   return <Drawer
     className='com-pop-balance-detail'
-    visible={visible}
+    visible={info.visible}
     title={detailTitle}
     width={600}
     closeIcon={
