@@ -3,6 +3,7 @@ const RulesModel = {
 
   state: {
     isShowAddPop: false,
+    editInfo: null,
   },
 
   effects: {},
