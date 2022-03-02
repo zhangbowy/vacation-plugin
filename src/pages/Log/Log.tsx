@@ -38,17 +38,38 @@ const columns = [
     render: (
       { operateContent, operateFileName, operateFileUrl }:
       {
-        operateContent: string, operateFileName: string, operateFileUrl: string
+        operateContent: {
+          title: string,
+          changeDatas?: { field: string, before: string, after: string }[]
+        },
+        operateFileName: string,
+        operateFileUrl: string
       }
     ) => {
+      const { title = '', changeDatas = [] } = operateContent || {}
       if (operateFileUrl) {
         const name = operateFileName || '下载明细'
         return <>
-          <span>{ `${operateContent}&nbsp;&nbsp;` }</span>
+          <span>{ `${title}：` }</span>
           <a href={operateFileUrl} download={name} target='_blacnk'>{ name }</a>
         </>
       }
-      return operateContent
+      return <>
+        <span>
+          {
+            `${title}${
+              changeDatas.length > 0
+                ? `：${
+                  changeDatas.map(
+                    ({ field, before, after }) =>
+                      `${field}修改前${before}，修改后${after}`
+                  ).join('；')
+                }`
+                : ''
+            }`
+          }
+        </span>
+      </>
     }
   },
 ]
