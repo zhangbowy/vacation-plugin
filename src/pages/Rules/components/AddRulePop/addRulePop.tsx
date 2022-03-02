@@ -834,7 +834,7 @@ const AddRulePop: FC = () => {
                       label=""
                       style={{ display: 'inline-block' }}
                       className="w-120 m-r-8"
-                      name={['vacationIssueRule', 'timeRule', 'day']}
+                      name={['vacationIssueRule', 'timeRule', 'issueDayOfMonth']}
                     >
                       <DatePicker showTime />
                     </Item>
