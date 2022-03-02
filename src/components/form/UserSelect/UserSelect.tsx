@@ -14,30 +14,57 @@ export type ValuesType = {
 
 interface UserSelectProps {
   className?: string;
-  value?: ValuesType;
+  value?: ValuesType | Result;
   onChange?: (users: ValuesType) => any;
   options?: Record<string, any>;
   placeholder?: string;
+  responseUserOnly: boolean;
+}
+
+interface Result {
+  departments: [];
+  selectedCount: number;
+  users: ValuesType;
 }
 
 const UserSelect: FC<UserSelectProps> = ({
   className,
-  value = [],
+  value,
   onChange,
   options = {},
   placeholder = '选择成员',
+  responseUserOnly = true,
 }) => {
   const cName = useMemo(() => classnames('com-form-user-select', className), [className]);
+  const pickedDepartments = useMemo(() => {
+    let result: any[] = [];
+    if (!responseUserOnly) {
+      const { departments } = (value as Result) || {};
+      result = departments ? departments.map(({ id }) => id) : [];
+    }
+    return result;
+  }, [value]);
+  const pickedUsers = useMemo(() => {
+    let users: { emplId: string | number; name: string; avatar?: string }[] | Result | undefined =
+      value;
+    if (!responseUserOnly) {
+      users = (value as Result)?.users || [];
+    }
+    // @ts-ignore
+    return users?.map(({ emplId }) => emplId);
+  }, [value]);
   const handleChoose = useCallback(() => {
     chooseComplexPicker({
       title: '选择部门',
-      pickedUsers: value ? value.map(({ emplId }) => emplId) : [],
-      responseUserOnly: true,
+      pickedUsers: pickedUsers,
+      pickedDepartments: pickedDepartments,
+      responseUserOnly,
       ...options,
       // @ts-ignore
-    }).then(({ users }) => {
+    }).then((result: any) => {
+      const { users } = result;
       if (onChange) {
-        onChange(users);
+        onChange(responseUserOnly ? users : result);
       }
     });
   }, [onChange, options, value]);
@@ -51,7 +78,20 @@ const UserSelect: FC<UserSelectProps> = ({
     [onChange],
   );
   const txt = useMemo(() => {
+    if (!responseUserOnly) {
+      let text = '';
+      const { departments = [], users = [] } = (value as Result) || {};
+      if (departments && departments.length > 0) {
+        text = text + departments.map(({ name }) => name).join('，');
+      }
+      if (users && users.length > 0) {
+        text = text + users.map(({ name }) => name).join('，');
+      }
+      return text;
+    }
+    // @ts-ignore
     if (value && value.length > 0) {
+      // @ts-ignore
       return value.map(({ name }) => name).join('，');
     }
     return '';
