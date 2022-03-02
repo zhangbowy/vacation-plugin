@@ -1,7 +1,8 @@
 import { memo, useMemo } from 'react'
 import type { FC } from 'react'
-import classnames from 'classnames'
+//@ts-ignore
 import pngEmpty from '@/assets/empty.png'
+import classnames from 'classnames'
 import './Empty.less'
 
 interface EmptyProps {

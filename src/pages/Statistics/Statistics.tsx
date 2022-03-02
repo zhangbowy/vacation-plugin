@@ -18,27 +18,31 @@ interface Column {
   title: string,
   children?: Column[],
   fixed?: string,
-  width?: number
+  width?: number,
+  render?: (x: any) => any
 }
 const defaultColumns = [
   {
     title: '姓名',
     dataIndex: 'user_name',
-    width: 109
+    width: 109,
+    render: (v: string) => v || '-'
   },
   {
     title: '工号',
     dataIndex: 'job_number',
-    width: 114
+    width: 114,
+    render: (v: string) => v || '-'
   },
   {
     title: '所属部门',
     dataIndex: 'dept_name',
-    width: 103
+    width: 143,
+    render: (v: string) => v || '-'
   }
 ]
 const widthMap = {
-  user_name: 109, job_number: 114, dept_name: 103
+  user_name: 109, job_number: 114, dept_name: 143
 }
 const getColumns = (data?: Column[] | null) => {
   if (data) {
@@ -56,13 +60,15 @@ const getColumns = (data?: Column[] | null) => {
                     className: 'pg-statistics--child-th',
                     dataIndex: childDataIndex,
                     title: childTitle,
-                    width: 72
+                    width: 72,
+                    render: (v: string) => v || '-'
                   })
                   : ({
                     className: 'pg-statistics--child-th not-last',
                     dataIndex: childDataIndex,
                     title: childTitle,
-                    width: 72
+                    width: 72,
+                    render: (v: string) => v || '-'
                   })
             )
           })
@@ -70,7 +76,8 @@ const getColumns = (data?: Column[] | null) => {
           r.push({
             title,
             dataIndex,
-            width: dataIndex ? widthMap[dataIndex] || 100 : 100
+            width: dataIndex ? widthMap[dataIndex] || 100 : 100,
+            render: (v: string) => v || '-'
           })
         }
       }

@@ -13,7 +13,8 @@ interface StoreTableProps {
   bordered?: boolean
   tableLayout?: 'auto' | 'fixed'
   name: string
-  scroll?: any
+  scroll?: any,
+  onRow?: (record: any) => any
 }
 
 const StoreTable: FC<StoreTableProps> = ({
@@ -23,7 +24,8 @@ const StoreTable: FC<StoreTableProps> = ({
   tableLayout = 'fixed',
   name,
   scroll,
-  className
+  className,
+  onRow
 }) => {
   const {
     columns, list, pageNo, pageSize, total, name: tableName
@@ -55,6 +57,7 @@ const StoreTable: FC<StoreTableProps> = ({
       pagination={false}
       bordered={bordered}
       scroll={scroll}
+      onRow={onRow}
     />
     {
       showPagination &&

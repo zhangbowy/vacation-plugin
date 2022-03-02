@@ -15,7 +15,7 @@ import './Balance.less'
 const defaultColumns = [
   { title: '姓名', dataIndex: 'userName', width: 111 },
   { title: '工号', dataIndex: 'jobNumber', width: 114 },
-  { title: '所属部门', dataIndex: 'deptName', width: 113 },
+  { title: '所属部门', dataIndex: 'deptName', width: 143 },
   { title: '岗位', dataIndex: 'job', width: 151 }
 ]
 const getColumns = (cells?: any) => {
@@ -40,6 +40,10 @@ const Balance: FC = () => {
   const updateData = useTableStoreActiveColumn(getColumns)
   const [visible, setVisible] = useState<boolean>(false)
   const handleCloseDetail = () => { setVisible(false) }
+  const handleOpenDetail = (item: any) => {
+    console.log('item', item)
+    setVisible(true)
+  }
   const dispatch = useDispatch()
   useEffect(
     () => {
@@ -115,6 +119,7 @@ const Balance: FC = () => {
       rowKey='userId'
       withFooterPagination
       scroll={scroll}
+      onRow={(item: any) => ({ onClick: () => handleOpenDetail(item) })}
     />
     <BalanceDetail visible={visible} onClose={handleCloseDetail} />
   </PageContent>
