@@ -35,14 +35,37 @@ const getColumns = (cells?: any) => {
   }
   return defaultColumns
 }
+const getTabs = (cells?: any) => {
+  if (cells && cells[0] && cells[0].balanceDetails) {
+    return [
+      ...cells[0].balanceDetails.map(
+        (
+          { ruleId, ruleName }: {
+            ruleId: number, ruleName: string, unit: string
+          }
+        ) => ({
+          tab: ruleName, key: ruleId
+        })
+      )
+    ]
+  }
+  return []
+}
 
 const Balance: FC = () => {
+  const [tabs, setTabs] = useState<Tab[]>([])
   const updateData = useTableStoreActiveColumn(getColumns)
-  const [visible, setVisible] = useState<boolean>(false)
-  const handleCloseDetail = () => { setVisible(false) }
+  const [detailInfo, setDetailInfo] = useState<{
+    visible: boolean, item: any
+  }>({ visible: false, item: null })
+  const handleCloseDetail = () => {
+    setDetailInfo({ visible: false, item: null })
+  }
   const handleOpenDetail = (item: any) => {
     console.log('item', item)
-    setVisible(true)
+    setDetailInfo({
+      visible: true, item
+    })
   }
   const dispatch = useDispatch()
   useEffect(
@@ -69,8 +92,9 @@ const Balance: FC = () => {
           resultHandle: (r: any, _: number, pageSize: number) => {
             const { page } = r || {}
             const { currentPage = 1, total = 0 } = page
+            setTabs((r && r.list) ? getTabs(r.list) : [])
+            updateData(r && r.list)
             if (r && r.list) {
-              updateData(r.list)
               return {
                 ...r,
                 ...r.list.map((
@@ -121,7 +145,11 @@ const Balance: FC = () => {
       scroll={scroll}
       onRow={(item: any) => ({ onClick: () => handleOpenDetail(item) })}
     />
-    <BalanceDetail visible={visible} onClose={handleCloseDetail} />
+    <BalanceDetail
+      tabs={tabs}
+      onClose={handleCloseDetail}
+      info={detailInfo}
+    />
   </PageContent>
 }
 

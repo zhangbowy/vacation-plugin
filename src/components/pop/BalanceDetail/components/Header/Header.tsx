@@ -7,10 +7,11 @@ interface HeaderProps {
   tabs: any[]
   activeKey: string
   onActiveChange: (x: string) => void
+  detail: any
 }
 
-const Header: FC<HeaderProps> = ({ tabs, activeKey, onActiveChange }) =>
-  <div className='com-pop-balance-detail--header'>
+const Header: FC<HeaderProps> = ({ tabs, activeKey, onActiveChange, detail }) => {
+  return <div className='com-pop-balance-detail--header'>
     <p className='com-pop-balance-detail--header--title font-bold'>
       余额使用记录
     </p>
@@ -21,10 +22,10 @@ const Header: FC<HeaderProps> = ({ tabs, activeKey, onActiveChange }) =>
       />
       <div className='com-pop-balance-detail--header--user-text'>
         <p className='com-pop-balance-detail--header--name font-bold'>
-          姓名
+          { detail.userName }
         </p>
         <p className='com-pop-balance-detail--header--no'>
-          222333
+        { detail.jobNumber }
         </p>
       </div>
     </div>
@@ -36,5 +37,6 @@ const Header: FC<HeaderProps> = ({ tabs, activeKey, onActiveChange }) =>
       onChange={onActiveChange}
     />
   </div>
+}
 
 export default memo(Header)
