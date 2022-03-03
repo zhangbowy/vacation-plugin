@@ -99,11 +99,10 @@ const BalanceDetail: FC<BalanceDetailProps> = ({ info, onClose }) => {
           return tar.tab
         }
       }
-      return ''
+      return '调休假'
     },
     [info, activeKey]
   )
-  console.log('title', title)
   return <Drawer
     className='com-pop-balance-detail'
     visible={info.visible}
@@ -127,7 +126,7 @@ const BalanceDetail: FC<BalanceDetailProps> = ({ info, onClose }) => {
           />
           {
             recordInfo.list.length
-              ? <Item list={recordInfo.list} />
+              ? <Item title={title} list={recordInfo.list} />
               : <Empty text='暂无使用记录' />
           }
         </>
