@@ -1,10 +1,12 @@
-import { memo, useMemo, useCallback } from 'react'
+import { memo, useMemo, useCallback, useEffect } from 'react'
 import type { FC } from 'react'
 import './ModalBalance.less'
 import CommonModal from '@/components/pop/CommonModal'
-import Form, { Item } from '@/components/form/Form'
+import Form, { Item, useForm } from '@/components/form/Form'
+import { msg, errMsg } from '@/components/pop'
 import Select from '@/components/form/Select'
 import InputNumber from '@/components/form/InputNumber'
+import { updateBalance } from '@/services/balance'
 
 const selOptions = [
   { label: '增加' , value: 'add' },
@@ -12,11 +14,12 @@ const selOptions = [
 ]
 
 interface ItemInfoProps {
-  value?: { status?: string, number?: number },
+  value?: { status?: string, number?: number }
   onChange?: (x: { status?: string, number?: number }) => void
+  data: { durationType?: 0 | 2, duration?: number }
 }
 
-const ItemInfo: FC<ItemInfoProps> = memo(({ value, onChange }) => {
+const ItemInfo: FC<ItemInfoProps> = memo(({ value, onChange, data }) => {
   const { status = 'add', number } = useMemo(
     () => value || { status: 'add', number: undefined },
     [value]
@@ -48,20 +51,73 @@ const ItemInfo: FC<ItemInfoProps> = memo(({ value, onChange }) => {
       className='com-pop-balance-detail--modal-balance--input'
       value={number}
       onChange={handleInput}
+      min={0}
+      precision={2}
     />
-    <p className='com-pop-balance-detail--modal-balance--unit'>小时</p>
+    <p className='com-pop-balance-detail--modal-balance--unit'>
+      {
+        `${
+          data.durationType === 0 ? '天' : '小时'
+        }`
+      }
+    </p>
   </div>
 })
 
 interface ModalBalanceProps {
   visible: boolean
   onCancel: VoidFunction
+  onConfirm: VoidFunction
+  data: { durationType?: 0 | 2, duration?: number }
+  ruleId: string
+  item: any
 }
 
-const ModalBalance: FC<ModalBalanceProps> = ({ visible, onCancel }) => {
-  const handleConfirm = () => {
-    console.log('save')
-  }
+const ModalBalance: FC<ModalBalanceProps> = ({
+  visible, onCancel, onConfirm, ruleId, data, item
+}) => {
+  const [form] = useForm()
+  const handleConfirm = useCallback(
+    () => {
+      form.validateFields().then(
+        values => {
+          const { status, number } = values.rest
+          if (!number) {
+            errMsg('请输入余额')
+          } else {
+            updateBalance({
+              balanceEditType: status === 'add' ? 1 : 2,
+              editValue: number * 100,
+              ruleId,
+              userId: item.userId
+            }).then(d => {
+              if (d && d[0]) {
+                msg('操作成功')
+                onConfirm()
+              }
+            })
+          }
+        }
+      ).catch(e => {
+          const { errorFields = [] } = e;
+          if (errorFields[0] && errorFields[0].errors) {
+            const errors = errorFields[0].errors || []
+            errMsg(errors[0] || '参数错误，请检查')
+          } else {
+            errMsg(e)
+          }
+        })
+    },
+    [form, ruleId, item, onConfirm]
+  )
+  useEffect(
+    () => {
+      if (visible) {
+        form.resetFields()
+      }
+    },
+    [visible, form]
+  )
   return <CommonModal
     className='com-pop-balance-detail--modal-balance'
     title='修改余额'
@@ -75,17 +131,23 @@ const ModalBalance: FC<ModalBalanceProps> = ({ visible, onCancel }) => {
         当前调休假余额：
       </p>
       <p className='com-pop-balance-detail--modal-balance--number'>
-        10.54小时
+        {
+          `${
+            (data.duration || 0) / 100
+          }${
+            data.durationType === 0 ? '天' : '小时'
+          }`
+        }
       </p>
     </div>
-    <Form layout='vertical'>
+    <Form layout='vertical' form={form}>
       <Item
         className='com-pop-balance-detail--modal-balance--item-wrap'
         label='修改余额'
         name='rest'
         rules={[{ required: true, message: '请输入余额' }]}
       >
-        <ItemInfo />
+        <ItemInfo data={data} />
       </Item>
     </Form>
   </CommonModal>
