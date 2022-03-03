@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import type { FC } from 'react';
 import { useSelector, useDispatch } from 'dva';
 import Button from '@/components/buttons/Button';
@@ -299,14 +299,14 @@ const AddRulePop: FC = () => {
     submitTimeRule: {
       timeType: 'none',
       timeUnit: 'day',
-      timeValue: 0,
+      timeValue: 1,
     },
     // 请假证明
     leaveCertificate: {
-      enable: 0,
+      enable: false,
       promptInformation: '',
       unit: 'day',
-      duration: 0,
+      duration: 1,
     },
     // 假期额度配置
     vacationIssueRule: {
@@ -314,25 +314,35 @@ const AddRulePop: FC = () => {
       timeRule: {
         issueType: 'annual',
         issueTimeType: 'first_day_year',
-        issueDayOfMonth: 0,
+        issueDayOfMonth: 1,
         issueDayOfYear: '',
       },
       targetRule: {
         targetType: 'probational_normal',
         sex: 0,
-        maxAge: 0,
+        maxAge: 2,
         minAge: 0,
       },
       expireRule: {
         expireType: 'permanent',
         extendedTime: 0,
         fixedTime: 0,
+        specifyDay: '',
+        untilDay: '',
       },
       quotaRule: {
         quotaType: 'fixed',
         fixedQuota: 0.0,
         averageType: 'none',
         roundType: 'none',
+        ageRules: [
+          {
+            maxAge: 1,
+            minAge: 0,
+            quota: 1,
+            type: 'work_age',
+          },
+        ],
       },
     },
     // 是否限制最大请假时间
@@ -340,6 +350,8 @@ const AddRulePop: FC = () => {
   });
   const [issueTimeTypeOpts, setIssueTimeTypeOpts] = useState(IssueTimeTypeMap.annual);
   const [isShowLoading, setIsShowLoading] = useState(false);
+  const workAgeRef = useRef();
+  const entryAgeRef = useRef();
 
   // 关init闭弹窗
   const close = () => {
@@ -350,10 +362,10 @@ const AddRulePop: FC = () => {
   };
 
   // 初始化
-  const init = () => {
+  const init = (): void => {
     if (editInfo) {
-      const { vacationTypeRule, vacationIssueRule } = editInfo;
-      const editData = {
+      const { vacationTypeRule, vacationIssueRule } = __merge({}, editInfo, true);
+      const editData: any = {
         ...vacationTypeRule,
         APPLICATION_RANGE: vacationTypeRule.visibilityRules.length === 0 ? 1 : 2, // 适用范围
         hoursInPerDay: vacationTypeRule.hoursInPerDay / 100,
@@ -368,17 +380,49 @@ const AddRulePop: FC = () => {
               ? moment(vacationIssueRule.expireRule.untilDay)
               : null,
           },
+          timeRule: {
+            ...vacationIssueRule.timeRule,
+            issueDayOfYear: vacationIssueRule?.timeRule?.issueDayOfYear
+              ? moment(vacationIssueRule.timeRule.issueDayOfYear)
+              : null,
+          },
           freedomLeave: !vacationIssueRule.freedomLeave,
         },
       };
 
       if (vacationTypeRule.visibilityRules && vacationTypeRule.visibilityRules.length > 0) {
-        // const departments = vacationTypeRule.visibilityRules.find((item) => item.type === 'dept');
-        // const users = vacationTypeRule.visibilityRules.find((item) => item.type === 'staff');
+        const departments =
+          vacationTypeRule.visibilityRules.find((item) => item.type === 'dept') || {};
+        const users = vacationTypeRule.visibilityRules.find((item) => item.type === 'staff') || {};
+        editData.chooseUsers = {
+          departments: departments?.details,
+          users: users?.details.map(({ id, name }) => {
+            return {
+              emplId: id,
+              name,
+            };
+          }),
+        };
+      }
+      if (
+        vacationIssueRule?.quotaRule?.ageRules &&
+        vacationIssueRule?.quotaRule?.ageRules.length > 0
+      ) {
+        if (
+          vacationIssueRule?.quotaRule.quotaType == 'max_work_entry_age' ||
+          vacationIssueRule?.quotaRule.quotaType == 'sum_work_entry_age'
+        ) {
+          const ageRules = vacationIssueRule?.quotaRule.ageRules;
+          editData.vacationIssueRule.quotaRule.ageRules_two = ageRules.filter(
+            (item: any) => item.type === 'entry_age',
+          );
+          editData.vacationIssueRule.quotaRule.ageRules = ageRules.filter(
+            (item: any) => item.type === 'work_age',
+          );
+        }
       }
       console.log(editData);
       onChange_value({}, editData);
-      form.setFieldsValue(editData);
     } else {
       form.setFieldsValue({
         ...formData,
@@ -391,27 +435,55 @@ const AddRulePop: FC = () => {
   }, [form]);
 
   const onChange_value = (changedValues: any, allVal: any) => {
-    console.log(allVal);
     const result = __merge(formData, allVal, true);
+    console.log(allVal, 'allVal');
+    console.log(result, 'result');
     if (changedValues?.vacationIssueRule?.timeRule?.issueType === 'month_day') {
       result.vacationIssueRule.timeRule.issueTimeType = 'fixed_day';
-      form.setFieldsValue({
-        vacationIssueRule: {
-          timeRule: {
-            issueTimeType: 'fixed_day',
-          },
-        },
-      });
     }
     if (changedValues.bizType === 'lieu_leave') {
       result.vacationIssueRule.freedomLeave = false;
-      form.setFieldsValue({
-        vacationIssueRule: {
-          freedomLeave: false,
-        },
-      });
     }
-    console.log(result);
+    if (changedValues?.vacationIssueRule?.quotaRule?.ageRules) {
+      result.vacationIssueRule.quotaRule.ageRules =
+        changedValues.vacationIssueRule.quotaRule.ageRules;
+    }
+    if (changedValues?.vacationIssueRule?.quotaRule?.ageRules_two) {
+      result.vacationIssueRule.quotaRule.ageRules_two =
+        changedValues.vacationIssueRule.quotaRule.ageRules_two;
+    }
+    if (changedValues?.chooseUsers) {
+      result.chooseUsers = changedValues?.chooseUsers;
+    }
+    if (changedValues?.vacationIssueRule?.timeRule?.issueDayOfYear) {
+      result.vacationIssueRule.timeRule.issueDayOfYear =
+        changedValues.vacationIssueRule.timeRule.issueDayOfYear;
+    }
+    if (changedValues?.vacationIssueRule?.quotaRule?.quotaType) {
+      result.vacationIssueRule.quotaRule.ageRules_two = [
+        {
+          maxAge: 1,
+          minAge: 0,
+          quota: 1,
+          type: 'work_age',
+        },
+      ];
+      result.vacationIssueRule.quotaRule.ageRules = [
+        {
+          maxAge: 1,
+          minAge: 0,
+          quota: 1,
+          type: 'entry_age',
+        },
+      ];
+    }
+    // if (changedValues?.vacationIssueRule?.expireRule?.specifyDay) {
+    //   result.vacationIssueRule.expireRule.specifyDay =
+    //     changedValues.vacationIssueRule.expireRule.specifyDay;
+    // }
+
+    console.log(changedValues, result, '-----');
+    form.setFieldsValue({ ...result });
     setFormData({ ...result });
   };
 
@@ -482,7 +554,7 @@ const AddRulePop: FC = () => {
           },
           vacationIssueRule: {
             ...values.vacationIssueRule,
-            freedomLeave: !values.vacationIssueRule.freedomLeave,
+            freedomLeave: !values.vacationIssueRule.freedomLeave, // 开关
           }, // 假期额度设置
         };
         // 如果开启了限制单次最大请假时间
@@ -494,6 +566,29 @@ const AddRulePop: FC = () => {
           params.vacationTypeRule.leaveHourCeil = values.leaveHourCeil; // 设置取整类型
           params.vacationTypeRule.leaveTimeCeilMinUnit = values.leaveTimeCeilMinUnit; // 设置取整大小
         }
+        if (values.vacationIssueRule?.quotaRule?.ageRules_two) {
+          params.vacationIssueRule.quotaRule.ageRules =
+            values.vacationIssueRule.quotaRule.ageRules.concat(
+              values.vacationIssueRule.quotaRule.ageRules_two,
+            );
+          delete params.vacationIssueRule.quotaRule.ageRules_two;
+        }
+        if (values.vacationIssueRule?.expireRule?.specifyDay) {
+          params.vacationIssueRule.expireRule.specifyDay = moment(
+            values.vacationIssueRule.expireRule.specifyDay,
+          ).format('yyyy-MM-DD');
+        }
+        if (values.vacationIssueRule?.expireRule?.untilDay) {
+          params.vacationIssueRule.expireRule.untilDay = moment(
+            values.vacationIssueRule.expireRule.untilDay,
+          ).format('yyyy-MM-DD');
+        }
+        if (values.vacationIssueRule?.timeRule?.issueDayOfYear) {
+          params.vacationIssueRule.timeRule.issueDayOfYear = moment(
+            values.vacationIssueRule.timeRule.issueDayOfYear,
+          ).format('MM-DD');
+        }
+
         // 编辑的时候多增加的信息
         if (editInfo) {
           params.id = editInfo.id;
@@ -525,8 +620,10 @@ const AddRulePop: FC = () => {
         }
       })
       .finally(() => {
-        loading.hide();
-        setIsShowLoading(false);
+        setTimeout(() => {
+          loading.hide();
+          setIsShowLoading(false);
+        }, 300);
       });
   };
 
@@ -686,7 +783,7 @@ const AddRulePop: FC = () => {
               >
                 <Select onChange={() => {}} options={PROVE} />
               </Item>
-              {formData.leaveCertificate.enable === 1 && (
+              {formData.leaveCertificate.enable && (
                 <Item
                   label=""
                   style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
@@ -790,6 +887,12 @@ const AddRulePop: FC = () => {
           <div className="base_info">
             <div className="title-wrap" style={{ display: 'flex', alignItems: 'center' }}>
               <div className="title">假期额度设置</div>
+              <Tooltip
+                overlayClassName="leave-unit--tooltip"
+                title={'开启后，可设置假期额度，例如年假每年5天；关闭则不限制假期额度。'}
+              >
+                <Icon type="icon-tishi" className={'tips'} />
+              </Tooltip>
               <Item
                 style={{
                   display: 'inline-block',
@@ -829,16 +932,28 @@ const AddRulePop: FC = () => {
                       options={issueTimeTypeOpts}
                     />
                   </Item>
-                  {showChooseDay() && (
+                  {showChooseDay() &&
+                    formData.vacationIssueRule?.timeRule?.issueType === 'month_day' && (
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block' }}
+                        className="w-120 m-r-8"
+                        name={['vacationIssueRule', 'timeRule', 'issueDayOfMonth']}
+                      >
+                        <InputNumber min={1} max={28} />
+                      </Item>
+                    )}
+                  {showChooseDay() && formData.vacationIssueRule?.timeRule?.issueType === 'annual' && (
                     <Item
                       label=""
                       style={{ display: 'inline-block' }}
                       className="w-120 m-r-8"
-                      name={['vacationIssueRule', 'timeRule', 'issueDayOfMonth']}
+                      name={['vacationIssueRule', 'timeRule', 'issueDayOfYear']}
                     >
-                      <DatePicker showTime />
+                      <DatePicker format={'MM-DD'} />
                     </Item>
                   )}
+
                   <span className="hour-text">自动发放</span>
                 </Item>
 
@@ -870,7 +985,7 @@ const AddRulePop: FC = () => {
                           name={['vacationIssueRule', 'targetRule', 'minAge']}
                           rules={[{ required: true, message: '' }]}
                         >
-                          <InputNumber onChange={(e) => {}} />
+                          <InputNumber min={0} onChange={(e) => {}} />
                         </Item>
                         <span>-</span>
                         <Item
@@ -879,7 +994,7 @@ const AddRulePop: FC = () => {
                           name={['vacationIssueRule', 'targetRule', 'maxAge']}
                           rules={[{ required: true, message: '' }]}
                         >
-                          <InputNumber onChange={(e) => {}} />{' '}
+                          <InputNumber min={1} onChange={(e) => {}} />{' '}
                         </Item>
                       </div>
                     )}
@@ -933,7 +1048,7 @@ const AddRulePop: FC = () => {
                       style={{ display: 'inline-block' }}
                       // className="w-120"
                       name={['vacationIssueRule', 'expireRule', 'specifyDay']}
-                      rules={[{ required: true, message: '请选择日期' }]}
+                      // rules={[{ required: true, message: '请选择日期' }]}
                     >
                       <DatePicker />
                     </Item>
@@ -971,10 +1086,22 @@ const AddRulePop: FC = () => {
                   </Item>
                 </Item>
                 <div className={'quota-rule'}>
-                  <Item label="额度配置" style={{ marginBottom: 0 }}>
+                  <Item
+                    label={
+                      <div>
+                        <span>额度配置</span>
+                        <Tooltip
+                          title={'开启后，可设置假期额度，例如年假每年5天；关闭则不限制假期额度。'}
+                        >
+                          <Icon type="icon-tishi" className={'tips'} />
+                        </Tooltip>
+                      </div>
+                    }
+                    style={{ marginBottom: 0 }}
+                  >
                     <Item
                       label=""
-                      style={{ display: 'inline-block', width: 320 }}
+                      style={{ display: 'inline-block', width: 320, marginBottom: 0 }}
                       className=" m-r-8"
                       name={['vacationIssueRule', 'quotaRule', 'quotaType']}
                     >
@@ -997,8 +1124,91 @@ const AddRulePop: FC = () => {
                     {/*额度配置 - 按社会工龄*/}
                     {formData.vacationIssueRule.quotaRule?.quotaType === 'work_age' && (
                       <>
-                        <span className="add-rule-btn">添加规则</span>
-                        <QuotaRule />
+                        <span
+                          className="add-rule-btn"
+                          onClick={() => {
+                            workAgeRef.current.add();
+                          }}
+                        >
+                          添加规则
+                        </span>
+                        <Item
+                          label=""
+                          style={{ display: 'block' }}
+                          className="w-120"
+                          name={['vacationIssueRule', 'quotaRule', 'ageRules']}
+                        >
+                          <QuotaRule cRef={workAgeRef} type={'work_age'} />
+                        </Item>
+                      </>
+                    )}
+                    {/*额度配置 - 按社会工龄*/}
+                    {formData.vacationIssueRule.quotaRule?.quotaType === 'entry_age' && (
+                      <>
+                        <span
+                          className="add-rule-btn"
+                          onClick={() => {
+                            workAgeRef.current.add();
+                          }}
+                        >
+                          添加规则
+                        </span>
+                        <Item
+                          label=""
+                          style={{ display: 'block' }}
+                          className="w-120"
+                          name={['vacationIssueRule', 'quotaRule', 'ageRules']}
+                        >
+                          <QuotaRule cRef={workAgeRef} type={'entry_age'} />
+                        </Item>
+                      </>
+                    )}
+                    {/*额度配置 - 按照工龄、司龄相加*/}
+                    {(formData.vacationIssueRule.quotaRule?.quotaType === 'sum_work_entry_age' ||
+                      formData.vacationIssueRule.quotaRule?.quotaType === 'max_work_entry_age') && (
+                      <>
+                        <div className={'sum_work_entry_age'}>
+                          <div className={'top-wrap'}>
+                            <span className={'sub-title'}>社会工龄配额</span>
+                            <span
+                              className="add-rule-btn"
+                              onClick={() => {
+                                workAgeRef.current.add();
+                              }}
+                            >
+                              添加规则
+                            </span>
+                          </div>
+                          <Item
+                            label=""
+                            style={{ display: 'block', marginBottom: 0 }}
+                            className="w-120"
+                            name={['vacationIssueRule', 'quotaRule', 'ageRules']}
+                          >
+                            <QuotaRule cRef={workAgeRef} type={'work_age'} />
+                          </Item>
+                        </div>
+                        <div className={'sum_work_entry_age'}>
+                          <div className={'top-wrap'}>
+                            <span className={'sub-title'}>司龄配额</span>
+                            <span
+                              className="add-rule-btn"
+                              onClick={() => {
+                                entryAgeRef.current.add();
+                              }}
+                            >
+                              添加规则
+                            </span>
+                          </div>
+                          <Item
+                            label=""
+                            style={{ display: 'block', marginBottom: 0 }}
+                            className="w-120"
+                            name={['vacationIssueRule', 'quotaRule', 'ageRules_two']}
+                          >
+                            <QuotaRule cRef={entryAgeRef} type={'entry_age'} />
+                          </Item>
+                        </div>
                       </>
                     )}
                   </Item>

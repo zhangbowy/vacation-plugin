@@ -160,9 +160,10 @@ const defaultColumns = [
 
 const Rules: FC = () => {
   const dispatch = useDispatch();
-  const { isShowAddPop } = useSelector((state) => ({
+  const { isShowAddPop, total } = useSelector((state) => ({
     isShowAddPop: state.rules.isShowAddPop,
     editInfo: state.rules.editInfo,
+    total: state.table.total,
   }));
   useEffect(() => {
     dispatch({
@@ -252,12 +253,11 @@ const Rules: FC = () => {
   return (
     <PageContent className="pg-rules" hasPadding>
       <Header />
-      {false ? (
+      {!total ? (
         <Empty />
       ) : (
         <>
           <div className="pg-rules--options">
-            {/*<Filters />*/}
             <Buttons />
           </div>
           <StoreTable name="rule" rowKey="id" withFooterPagination />
