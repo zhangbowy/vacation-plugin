@@ -13,7 +13,6 @@ import { Group } from '@/components/form/Radio';
 import Radio from '@/components/form/Radio/Radio';
 import InputNumber from '@/components/form/InputNumber';
 import DatePicker from '@/components/form/DatePicker';
-import RangePicker from '@/components/form/RangePicker';
 import { Space, Switch } from 'antd';
 import UserSelect from '@/components/form/UserSelect/UserSelect';
 import { addRule, editRule } from '@/services/rules';
@@ -353,7 +352,7 @@ const AddRulePop: FC = () => {
   const workAgeRef = useRef();
   const entryAgeRef = useRef();
 
-  // 关init闭弹窗
+  // 关闭弹窗
   const close = () => {
     dispatch({
       type: 'rules/updateState',

@@ -3,38 +3,6 @@ import type { FC } from 'react';
 import classnames from 'classnames';
 import './QuotaRule.less';
 import InputNumber from '@/components/form/InputNumber';
-//
-// const QuotaRule: FC<any> = ({
-//   className,
-//   value,
-//   onChange,
-//   options = {},
-//   placeholder = '选择成员',
-// }) => {
-//   const cName = useMemo(() => classnames('rules-quota-rule', className), [className]);
-//   const handleClear = useCallback(
-//     (e) => {
-//       e.stopPropagation();
-//       if (onChange) {
-//         onChange([]);
-//       }
-//     },
-//     [onChange],
-//   );
-//   return (
-//     <div className={cName}>
-//       <div className="rule-list">
-//         <div className="rule-list-row">
-//           <InputNumber />
-//           <InputNumber />
-//           <InputNumber />
-//           <span>天假期</span>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
 import { Form, Input, Button, Space } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useForm } from '@/components/form/Form';
