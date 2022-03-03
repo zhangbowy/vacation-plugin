@@ -104,6 +104,7 @@ interface VacationIssueRule {
 }
 
 interface VacationTypeRule {
+  visibilityRulesStr: string;
   leaveCode: string;
   bizType: string;
   leaveName: string;
@@ -159,9 +160,7 @@ const defaultColumns = [
     title: '适用范围',
     dataIndex: 'vacationTypeRule',
     render: (d: VacationTypeRule) => {
-      // if (d.visibilityRules && d.visibilityRules.length === 0) {
-      //   return '全员';
-      // }
+      return d.visibilityRulesStr;
     },
   },
 ];
@@ -192,15 +191,32 @@ const Rules: FC = () => {
           return {
             list: list.map((v: any, i: number) => {
               const visibilityRules = v.vacationTypeRule.visibilityRules;
-              // if (visibilityRules && visibilityRules.length > 0) {
-              //
-              // }
+              let visibilityRulesStr = '全员';
+              let visibilityRulesStrHover = '全员';
+              if (visibilityRules && visibilityRules.length > 0) {
+                visibilityRulesStr = '';
+                visibilityRulesStrHover = '';
+                visibilityRules.forEach(({ type, visible = [], details = [] }) => {
+                  if (type === 'dept') {
+                    visibilityRulesStr = visibilityRulesStr + `${visible}个部门`;
+                    visibilityRulesStrHover =
+                      visibilityRulesStrHover + details.map((item) => item.name).join(',');
+                  }
+                  if (type === 'staff') {
+                    visibilityRulesStr = visibilityRulesStr + `, ${visible}个人`;
+                    visibilityRulesStrHover =
+                      visibilityRulesStrHover + details.map((item) => item.name).join(',');
+                  }
+                });
+              }
               return {
                 ...v,
                 key: i,
-                // vacationTypeRule: {
-                //   ...v.visibilityRules,
-                // },
+                vacationTypeRule: {
+                  ...v.vacationTypeRule,
+                  visibilityRulesStr,
+                  visibilityRulesStrHover,
+                },
               };
             }),
             ...rest,
