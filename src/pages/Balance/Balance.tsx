@@ -60,15 +60,14 @@ const Balance: FC = () => {
   const handleOpenDetail = useCallback(
     (item: any) => {
       const { balanceDetails = [] } = item
-      console.log('balanceDetail', balanceDetails)
       setDetailInfo({
         visible: true,
         item,
-        tabs: getTabs(
-          balanceDetails.filter(
+        tabs: getTabs({
+          balanceDetails: balanceDetails.filter(
             ({ suitable }: { suitable: number | boolean }) => suitable
           )
-        )
+        })
       })
     },
     []
@@ -111,7 +110,7 @@ const Balance: FC = () => {
             if (r && r.list) {
               return {
                 ...r,
-                ...r.list.map((
+                list: r.list.map((
                   { balanceDetails, ...rest }: {
                     balanceDetails: { ruleId: number, balance: number }[]
                   }
