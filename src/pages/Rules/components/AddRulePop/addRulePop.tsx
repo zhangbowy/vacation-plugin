@@ -215,10 +215,10 @@ const quotaTypeMap = [
     value: 'fixed',
     label: '固定额度',
   },
-  {
-    value: '222',
-    label: '按工作地点',
-  },
+  // {
+  //   value: '222',
+  //   label: '按工作地点',
+  // },
   {
     value: 'work_age',
     label: '按社会工龄',
