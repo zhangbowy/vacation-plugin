@@ -28,7 +28,10 @@ const getColumns = (cells?: any) => {
             ruleId: number, ruleName: string, unit: string
           }
         ) => ({
-          title: `${ruleName}(${unit})`, dataIndex: ruleId, width: 102
+          title: `${ruleName}(${unit})`,
+          dataIndex: ruleId,
+          width: 102,
+          render: (v: number | string) => v === 0 || v ? v : '-'
         })
       )
     ]
@@ -60,15 +63,14 @@ const Balance: FC = () => {
   const handleOpenDetail = useCallback(
     (item: any) => {
       const { balanceDetails = [] } = item
-      console.log('balanceDetail', balanceDetails)
       setDetailInfo({
         visible: true,
         item,
-        tabs: getTabs(
-          balanceDetails.filter(
+        tabs: getTabs({
+          balanceDetails: balanceDetails.filter(
             ({ suitable }: { suitable: number | boolean }) => suitable
           )
-        )
+        })
       })
     },
     []
@@ -111,7 +113,7 @@ const Balance: FC = () => {
             if (r && r.list) {
               return {
                 ...r,
-                ...r.list.map((
+                list: r.list.map((
                   { balanceDetails, ...rest }: {
                     balanceDetails: { ruleId: number, balance: number }[]
                   }
