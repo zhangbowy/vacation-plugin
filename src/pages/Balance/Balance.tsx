@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState, useCallback } from 'react'
 import type { FC } from 'react'
 import PageContent from '@/components/structure/PageContent'
 import StoreTable from '@/components/table/StoreTable'
@@ -35,16 +35,54 @@ const getColumns = (cells?: any) => {
   }
   return defaultColumns
 }
+const getTabs = (cell?: any) => {
+  if (cell && cell.balanceDetails) {
+    return [
+      ...cell.balanceDetails.map(
+        (
+          { ruleId, ruleName }: {
+            ruleId: number, ruleName: string, unit: string
+          }
+        ) => ({
+          tab: ruleName, key: ruleId
+        })
+      )
+    ]
+  }
+  return []
+}
 
 const Balance: FC = () => {
   const updateData = useTableStoreActiveColumn(getColumns)
-  const [visible, setVisible] = useState<boolean>(false)
-  const handleCloseDetail = () => { setVisible(false) }
-  const handleOpenDetail = (item: any) => {
-    console.log('item', item)
-    setVisible(true)
-  }
+  const [detailInfo, setDetailInfo] = useState<{
+    visible: boolean, item: any, tabs: Tab[]
+  }>({ visible: false, item: null, tabs: [] })
+  const handleOpenDetail = useCallback(
+    (item: any) => {
+      const { balanceDetails = [] } = item
+      console.log('balanceDetail', balanceDetails)
+      setDetailInfo({
+        visible: true,
+        item,
+        tabs: getTabs(
+          balanceDetails.filter(
+            ({ suitable }: { suitable: number | boolean }) => suitable
+          )
+        )
+      })
+    },
+    []
+  )
   const dispatch = useDispatch()
+  const handleCloseDetail = useCallback(
+    (refreshed: boolean) => {
+      if (refreshed) {
+        dispatch({ type: 'table/refreshTable' })
+      }
+      setDetailInfo({ visible: false, item: null, tabs: [] })
+    },
+    [dispatch]
+  )
   useEffect(
     () => {
       dispatch({
@@ -69,8 +107,8 @@ const Balance: FC = () => {
           resultHandle: (r: any, _: number, pageSize: number) => {
             const { page } = r || {}
             const { currentPage = 1, total = 0 } = page
+            updateData(r && r.list)
             if (r && r.list) {
-              updateData(r.list)
               return {
                 ...r,
                 ...r.list.map((
@@ -121,7 +159,10 @@ const Balance: FC = () => {
       scroll={scroll}
       onRow={(item: any) => ({ onClick: () => handleOpenDetail(item) })}
     />
-    <BalanceDetail visible={visible} onClose={handleCloseDetail} />
+    <BalanceDetail
+      onClose={handleCloseDetail}
+      info={detailInfo}
+    />
   </PageContent>
 }
 

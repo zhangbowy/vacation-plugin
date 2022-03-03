@@ -3,3 +3,6 @@ declare interface Resource {
   resourceName: string,
   children: Resource[]
 }
+declare interface Tab {
+  tab: string, key: string
+}
