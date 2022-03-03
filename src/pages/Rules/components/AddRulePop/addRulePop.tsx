@@ -421,7 +421,6 @@ const AddRulePop: FC = () => {
           );
         }
       }
-      console.log(editData);
       onChange_value({}, editData);
     } else {
       form.setFieldsValue({
@@ -436,8 +435,6 @@ const AddRulePop: FC = () => {
 
   const onChange_value = (changedValues: any, allVal: any) => {
     const result = __merge(formData, allVal, true);
-    console.log(allVal, 'allVal');
-    console.log(result, 'result');
     if (changedValues?.vacationIssueRule?.timeRule?.issueType === 'month_day') {
       result.vacationIssueRule.timeRule.issueTimeType = 'fixed_day';
     }
@@ -477,12 +474,6 @@ const AddRulePop: FC = () => {
         },
       ];
     }
-    // if (changedValues?.vacationIssueRule?.expireRule?.specifyDay) {
-    //   result.vacationIssueRule.expireRule.specifyDay =
-    //     changedValues.vacationIssueRule.expireRule.specifyDay;
-    // }
-
-    console.log(changedValues, result, '-----');
     form.setFieldsValue({ ...result });
     setFormData({ ...result });
   };
@@ -505,7 +496,6 @@ const AddRulePop: FC = () => {
     form
       .validateFields()
       .then((values) => {
-        console.log(values);
         const chooseUsers = values.chooseUsers;
         const { departments, users } = chooseUsers || {};
         const visibilityRules = [];
