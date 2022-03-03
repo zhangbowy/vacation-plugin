@@ -155,7 +155,15 @@ const defaultColumns = [
       return d?.paidLeave ? '是' : '否';
     },
   },
-  { title: '适用范围', dataIndex: 'job' },
+  {
+    title: '适用范围',
+    dataIndex: 'vacationTypeRule',
+    render: (d: VacationTypeRule) => {
+      // if (d.visibilityRules && d.visibilityRules.length === 0) {
+      //   return '全员';
+      // }
+    },
+  },
 ];
 
 const Rules: FC = () => {
@@ -182,7 +190,19 @@ const Rules: FC = () => {
           const { page = {}, list, ...rest } = fetchResult || {};
           const { currentPage = 1, total = 0 } = page;
           return {
-            list: list.map((v: any, i: number) => ({ ...v, key: i })),
+            list: list.map((v: any, i: number) => {
+              const visibilityRules = v.vacationTypeRule.visibilityRules;
+              // if (visibilityRules && visibilityRules.length > 0) {
+              //
+              // }
+              return {
+                ...v,
+                key: i,
+                // vacationTypeRule: {
+                //   ...v.visibilityRules,
+                // },
+              };
+            }),
             ...rest,
             total,
             pageNo: currentPage,
