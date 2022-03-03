@@ -91,6 +91,19 @@ const BalanceDetail: FC<BalanceDetailProps> = ({ info, onClose }) => {
     },
     [onClose]
   )
+  const title = useMemo(
+    () => {
+      if (info && info.tabs && activeKey) {
+        const tar = info.tabs.find(v => v.key === activeKey)
+        if (tar) {
+          return tar.tab
+        }
+      }
+      return ''
+    },
+    [info, activeKey]
+  )
+  console.log('title', title)
   return <Drawer
     className='com-pop-balance-detail'
     visible={info.visible}
@@ -104,11 +117,21 @@ const BalanceDetail: FC<BalanceDetailProps> = ({ info, onClose }) => {
     }
     onClose={handleClose}
   >
-    <Rest onModalOpen={onModalOpen} data={recordInfo.data} />
     {
-      recordInfo.list.length
-        ? <Item list={recordInfo.list} />
-        : <Empty text='暂无使用记录' />
+      activeKey
+        ? <>
+          <Rest
+            onModalOpen={onModalOpen}
+            data={recordInfo.data}
+            title={title}
+          />
+          {
+            recordInfo.list.length
+              ? <Item list={recordInfo.list} />
+              : <Empty text='暂无使用记录' />
+          }
+        </>
+        : <Empty text='暂无适用假期' />
     }
     <ModalBalance
       visible={modalVisible}

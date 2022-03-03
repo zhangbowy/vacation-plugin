@@ -35,10 +35,10 @@ const getColumns = (cells?: any) => {
   }
   return defaultColumns
 }
-const getTabs = (cells?: any) => {
-  if (cells && cells[0] && cells[0].balanceDetails) {
+const getTabs = (cell?: any) => {
+  if (cell && cell.balanceDetails) {
     return [
-      ...cells[0].balanceDetails.map(
+      ...cell.balanceDetails.map(
         (
           { ruleId, ruleName }: {
             ruleId: number, ruleName: string, unit: string
@@ -53,18 +53,25 @@ const getTabs = (cells?: any) => {
 }
 
 const Balance: FC = () => {
-  const [tabs, setTabs] = useState<Tab[]>([])
   const updateData = useTableStoreActiveColumn(getColumns)
   const [detailInfo, setDetailInfo] = useState<{
     visible: boolean, item: any, tabs: Tab[]
   }>({ visible: false, item: null, tabs: [] })
   const handleOpenDetail = useCallback(
     (item: any) => {
+      const { balanceDetails = [] } = item
+      console.log('balanceDetail', balanceDetails)
       setDetailInfo({
-        visible: true, item, tabs
+        visible: true,
+        item,
+        tabs: getTabs(
+          balanceDetails.filter(
+            ({ suitable }: { suitable: number | boolean }) => suitable
+          )
+        )
       })
     },
-    [tabs]
+    []
   )
   const dispatch = useDispatch()
   const handleCloseDetail = useCallback(
@@ -100,7 +107,6 @@ const Balance: FC = () => {
           resultHandle: (r: any, _: number, pageSize: number) => {
             const { page } = r || {}
             const { currentPage = 1, total = 0 } = page
-            setTabs((r && r.list) ? getTabs(r.list) : [])
             updateData(r && r.list)
             if (r && r.list) {
               return {

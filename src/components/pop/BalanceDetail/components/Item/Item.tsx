@@ -12,28 +12,54 @@ const getContext = (item: any) => {
     createUserName,
     userName,
     startTime,
-    endTime
+    endTime,
+    sumDuration
   } = item
+  const unit = changeDurationType === 0 ? '天' : '小时'
   if (changeType === 4) {
     return `${
       userName ? `${userName} ` : ''
     }使用了${
       (changeDuration || 0) / 100
-    }${
-      changeDurationType === 0 ? '天' : '小时'
-    }调休假`
+    }${unit}的假期，当前剩余${
+      (sumDuration || 0) / 100
+    }${unit}`
   }
-  return `${
-    createUserName ? `${createUserName} 为 `: ''
-  }${
-    userName ? `${userName} ` : ''
-  }${
-    changeType === 0 || changeType === 1
-      ? '增加了'
-      : '减少了'
-  }${
+  if (changeType === 3) {
+    return `假期过期${
+      (changeDuration || 0) / 100
+    }${unit}，当前剩余${
+      (sumDuration || 0) / 100
+    }${unit}`
+  }
+  if (changeType === 1 || changeType === 2) {
+    return `${
+      createUserName ? `${createUserName} 为 `: ''
+    }${
+      userName ? `${userName} ` : ''
+    }${
+      changeType === 1
+        ? '增加了'
+        : '减少了'
+    }${
+      (changeDuration || 0) / 100
+    }${unit}的假期余额，当前剩余${
+      (sumDuration || 0) / 100
+    }${unit}${
+      startTime && endTime
+        ? `，${
+          moment(startTime).format('YYYY-MM-DD')
+        }至${
+          moment(endTime).format('YYYY-MM-DD')
+        }有效`
+        : ''
+    }`
+  }
+  return `系统按照规则自动${ changeType === 0 ? '增加了' : '减少了' }${
     (changeDuration || 0) / 100
-  }${changeDurationType === 0 ? '天' : '小时'}调休假${
+  }${unit}的假期余额，当前剩余${
+    (sumDuration || 0) / 100
+  }${unit}${
     startTime && endTime
       ? `，${
         moment(startTime).format('YYYY-MM-DD')
