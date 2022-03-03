@@ -12,7 +12,7 @@ interface RestProps {
 const Rest: FC<RestProps> = ({ onModalOpen, data, title }) =>
   <div className='com-pop-balance-detail--rest'>
     <span className='com-pop-balance-detail--rest--title'>
-      { `当前${title || '调休假'}余额：` }
+      { `当前${title}余额：` }
     </span>
     <span className='com-pop-balance-detail--rest--count'>
       {

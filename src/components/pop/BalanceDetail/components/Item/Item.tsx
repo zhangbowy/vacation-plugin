@@ -4,7 +4,7 @@ import './Item.less'
 import moment from 'moment'
 import Icon from '@/components/Icon'
 
-const getContext = (item: any) => {
+const getContext = (item: any, title: string) => {
   const {
     changeType,
     changeDurationType,
@@ -23,14 +23,30 @@ const getContext = (item: any) => {
       (changeDuration || 0) / 100
     }${unit}的假期，当前剩余${
       (sumDuration || 0) / 100
-    }${unit}`
+    }${unit}${
+      startTime && endTime
+        ? `，${
+          moment(startTime).format('YYYY-MM-DD')
+        }至${
+          moment(endTime).format('YYYY-MM-DD')
+        }有效`
+        : ''
+    }`
   }
   if (changeType === 3) {
     return `假期过期${
       (changeDuration || 0) / 100
     }${unit}，当前剩余${
       (sumDuration || 0) / 100
-    }${unit}`
+    }${unit}${
+      startTime && endTime
+        ? `，${
+          moment(startTime).format('YYYY-MM-DD')
+        }至${
+          moment(endTime).format('YYYY-MM-DD')
+        }有效`
+        : ''
+    }`
   }
   if (changeType === 1 || changeType === 2) {
     return `${
@@ -43,7 +59,7 @@ const getContext = (item: any) => {
         : '减少了'
     }${
       (changeDuration || 0) / 100
-    }${unit}的假期余额，当前剩余${
+    }${unit}的${title}，当前剩余${
       (sumDuration || 0) / 100
     }${unit}${
       startTime && endTime
@@ -57,7 +73,7 @@ const getContext = (item: any) => {
   }
   return `系统按照规则自动${ changeType === 0 ? '增加了' : '减少了' }${
     (changeDuration || 0) / 100
-  }${unit}的假期余额，当前剩余${
+  }${unit}的${title}，当前剩余${
     (sumDuration || 0) / 100
   }${unit}${
     startTime && endTime
@@ -70,7 +86,7 @@ const getContext = (item: any) => {
   }`
 }
 
-const Item: FC<{ list: any[] }> = ({ list }) => <>
+const Item: FC<{ list: any[], title: string }> = ({ list, title }) => <>
   {
     list.map(
       v => {
@@ -110,7 +126,7 @@ const Item: FC<{ list: any[] }> = ({ list }) => <>
               }
             </p>
             <p className='com-pop-balance-detail--item--description'>
-              { getContext(v) }
+              { getContext(v, title) }
             </p>
           </div>
         </div>
