@@ -65,7 +65,6 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
   }, [value]);
 
   useEffect(() => {
-    console.log(value, 'vaule');
     if (value) {
       form.setFieldsValue({ ageRules: value });
     } else {
@@ -81,16 +80,13 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
     },
   }));
 
-  const onFinish = (values) => {
-    console.log('Received values of form:', values);
-  };
+  const onFinish = (values) => {};
 
   const onClick_add = () => {
     form
       .validateFields()
       .then((values) => {
         addFn(addDefaultValue);
-        console.log(values);
       })
       .catch(() => {
         message.warn('未填写完整');
@@ -134,7 +130,6 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
     form.setFieldsValue(result);
     setCurrentData(result);
     onChange(result);
-    // console.log(current, all);
   };
 
   return (
@@ -149,7 +144,6 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
         <Form.List name="ageRules">
           {(fields, { add, remove }) => {
             addFn = add;
-            console.log(fields, 'fields');
             return (
               <div className="rule-list">
                 {fields.map(({ key, name, ...restField }) => (
