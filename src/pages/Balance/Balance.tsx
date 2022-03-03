@@ -28,7 +28,10 @@ const getColumns = (cells?: any) => {
             ruleId: number, ruleName: string, unit: string
           }
         ) => ({
-          title: `${ruleName}(${unit})`, dataIndex: ruleId, width: 102
+          title: `${ruleName}(${unit})`,
+          dataIndex: ruleId,
+          width: 102,
+          render: (v: number | string) => v === 0 || v ? v : '-'
         })
       )
     ]
