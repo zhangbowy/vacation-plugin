@@ -128,7 +128,7 @@ const ModalBalance: FC<ModalBalanceProps> = ({
   >
     <div className='com-pop-balance-detail--modal-balance--texts'>
       <p className='com-pop-balance-detail--modal-balance--topic'>
-        当前调休假余额：
+        当前假期余额：
       </p>
       <p className='com-pop-balance-detail--modal-balance--number'>
         {
