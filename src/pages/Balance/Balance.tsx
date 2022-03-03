@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useState, useCallback } from 'react'
 import type { FC } from 'react'
 import PageContent from '@/components/structure/PageContent'
 import StoreTable from '@/components/table/StoreTable'
@@ -56,18 +56,26 @@ const Balance: FC = () => {
   const [tabs, setTabs] = useState<Tab[]>([])
   const updateData = useTableStoreActiveColumn(getColumns)
   const [detailInfo, setDetailInfo] = useState<{
-    visible: boolean, item: any
-  }>({ visible: false, item: null })
-  const handleCloseDetail = () => {
-    setDetailInfo({ visible: false, item: null })
-  }
-  const handleOpenDetail = (item: any) => {
-    console.log('item', item)
-    setDetailInfo({
-      visible: true, item
-    })
-  }
+    visible: boolean, item: any, tabs: Tab[]
+  }>({ visible: false, item: null, tabs: [] })
+  const handleOpenDetail = useCallback(
+    (item: any) => {
+      setDetailInfo({
+        visible: true, item, tabs
+      })
+    },
+    [tabs]
+  )
   const dispatch = useDispatch()
+  const handleCloseDetail = useCallback(
+    (refreshed: boolean) => {
+      if (refreshed) {
+        dispatch({ type: 'table/refreshTable' })
+      }
+      setDetailInfo({ visible: false, item: null, tabs: [] })
+    },
+    [dispatch]
+  )
   useEffect(
     () => {
       dispatch({
@@ -146,7 +154,6 @@ const Balance: FC = () => {
       onRow={(item: any) => ({ onClick: () => handleOpenDetail(item) })}
     />
     <BalanceDetail
-      tabs={tabs}
       onClose={handleCloseDetail}
       info={detailInfo}
     />
