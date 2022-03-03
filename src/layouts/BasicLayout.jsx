@@ -9,16 +9,14 @@ import React, { useEffect, useState } from 'react';
 import cs from 'classnames';
 import { connect, history } from 'umi';
 import { RightOutlined } from '@ant-design/icons';
-import useStoreContentSize from '@/hooks/useStoreContentSize'
+import useStoreContentSize from '@/hooks/useStoreContentSize';
 // import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 import './BasicLayout.less';
 import styles from './index.less';
 
 const BasicLayout = (props) => {
-  useStoreContentSize()
-  const {
-    children, settings, location = { pathname: '/' },
-  } = props;
+  useStoreContentSize();
+  const { children, settings, location = { pathname: '/' } } = props;
 
   const { pathname } = location;
 
@@ -38,9 +36,12 @@ const BasicLayout = (props) => {
       style={{ height: '100%', margin: 0, padding: 0 }}
     >
       <ProLayout
-        className={cs({
-          [styles.proLayoutCollapsed]: collapsed
-        }, 'lay-content')}
+        className={cs(
+          {
+            [styles.proLayoutCollapsed]: collapsed,
+          },
+          'lay-content',
+        )}
         logo={false}
         title=""
         {...props}
@@ -57,7 +58,7 @@ const BasicLayout = (props) => {
             <div className={cs(styles.menu, { [styles.collapsedMenu]: collapsed })}>
               <div
                 className={cs(styles.collapseContainer, 'position-fixed t-0 h-100p z-index-101', {
-                  'l-190': !collapsed,
+                  'l-160': !collapsed,
                   'l-64': collapsed,
                 })}
               >

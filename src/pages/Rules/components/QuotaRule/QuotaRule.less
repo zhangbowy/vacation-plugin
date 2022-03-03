@@ -1,11 +1,22 @@
 .rules-quota-rule {
   .rule-list {
     .rule-list-row {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
       width: 560px;
       height: 48px;
       background: rgba(23, 26, 29, 0.04);
       border-radius: 6px;
-      margin: 8px 12px
+      padding: 8px 12px;
+      align-items: baseline;
+      margin-top: 8px;
+    }
+    .rule-list-inner {
     }
   }
+
+   .ant-input-number {
+     width: 80px!important;
+   }
 }
