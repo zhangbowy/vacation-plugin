@@ -898,6 +898,57 @@ const AddRulePop: FC = () => {
                 />
               </Item>
             </div>
+            {formData.vacationIssueRule.freedomLeave === false && (
+              <Item label="额度有效期" style={{ marginBottom: 0 }}>
+                <Item
+                  label=""
+                  style={{ display: 'block', width: 200 }}
+                  className="m-r-8"
+                  name={['vacationIssueRule', 'expireRule', 'expireType']}
+                >
+                  <Select onChange={(e) => {}} options={expireTypeMap} />
+                </Item>
+                {/*固定时间段*/}
+                {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
+                  <>
+                    <span className="hour-text m-r-8">自发起日起</span>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block' }}
+                      // className="w-120"
+                      name={['vacationIssueRule', 'expireRule', 'fixedTime']}
+                    >
+                      <InputNumber />
+                    </Item>
+                    <span className="hour-text m-l-8">天有效</span>
+                  </>
+                )}
+                {/*指定某天*/}
+                {formData.vacationIssueRule.expireRule?.expireType === 'specify_day' && (
+                  <Item
+                    label=""
+                    style={{ display: 'inline-block' }}
+                    // className="w-120"
+                    name={['vacationIssueRule', 'expireRule', 'specifyDay']}
+                    // rules={[{ required: true, message: '请选择日期' }]}
+                  >
+                    <DatePicker />
+                  </Item>
+                )}
+                {/*直到某天*/}
+                {formData.vacationIssueRule.expireRule?.expireType === 'until_day' && (
+                  <Item
+                    label=""
+                    style={{ display: 'inline-block' }}
+                    // className="w-120"
+                    name={['vacationIssueRule', 'expireRule', 'untilDay']}
+                    rules={[{ required: true, message: '请选择日期' }]}
+                  >
+                    <DatePicker />
+                  </Item>
+                )}
+              </Item>
+            )}
             {formData.vacationIssueRule.freedomLeave && (
               <div>
                 <Item label="额度发放方式" style={{ marginBottom: 0 }}>
