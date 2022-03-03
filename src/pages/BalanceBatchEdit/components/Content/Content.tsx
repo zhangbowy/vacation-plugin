@@ -14,6 +14,9 @@ type DepartmentsType = { id: string | number, name: string, number: number }[]
 
 const Content: FC = () => {
   const refDestroyed = useRef(false)
+  const [fileInfo, setFileInfo] = useState<{
+    file: File | null, fileList: File[]
+  }>({ file: null, fileList: [] })
   const [ruleOptions, setRuleOptionss] = useState([])
   const [depts, setDepts] = useState<DepartmentsType>([])
   const [checkAllInfo, setCheckAllInfo] = useState({
@@ -114,6 +117,20 @@ const Content: FC = () => {
     [depts, checkedValue]
   )
   console.log(handleSuccess, handleError)
+  const handleChange = ({ file, fileList }: { file: any, fileList: any[] }) => {
+    setFileInfo({ file, fileList })
+    if (file) {
+      const { status } = file
+      if (status === 'error' || status === 'success' || status === 'done') {
+        console.log('file', file)
+        console.log('aaa')
+        const { response = {} } = file
+        if (response.success) {
+          console.log('xxx')
+        }
+      }
+    }
+  }
   return <>
     <div className='pg-balance-batch-edit--content--info'>
       <div className='pg-balance-batch-edit--content--header'>
@@ -196,12 +213,13 @@ const Content: FC = () => {
           headers={{ token: config.token }}
           name='uploadFile'
           maxCount={1}
+          onChange={handleChange}
         >
           <Button
             className='pg-balance-batch-edit--content--button'
             type='primary'
           >
-            上传文件
+            { fileInfo.fileList.length > 0 ? '重新上传' : '上传文件' }
           </Button>
         </Upload>
       </div>

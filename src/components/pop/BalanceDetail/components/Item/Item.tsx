@@ -18,7 +18,7 @@ const getContext = (item: any) => {
     return `${
       userName ? `${userName} ` : ''
     }使用了${
-      Math.abs(changeDuration || 0) / 100
+      (changeDuration || 0) / 100
     }${
       changeDurationType === 0 ? '天' : '小时'
     }调休假`
@@ -28,11 +28,11 @@ const getContext = (item: any) => {
   }${
     userName ? `${userName} ` : ''
   }${
-    changeDuration < 0
-      ? `减少了`
-      : `增加了`
+    changeType === 0 || changeType === 1
+      ? '增加了'
+      : '减少了'
   }${
-    Math.abs(changeDuration || 0) / 100
+    (changeDuration || 0) / 100
   }${changeDurationType === 0 ? '天' : '小时'}调休假${
     startTime && endTime
       ? `，${
@@ -51,6 +51,7 @@ const Item: FC<{ list: any[] }> = ({ list }) => <>
         const {
           createTime,
           id,
+          changeType,
           changeDurationType,
           changeDuration
         } = v
@@ -72,6 +73,10 @@ const Item: FC<{ list: any[] }> = ({ list }) => <>
             <p className='com-pop-balance-detail--item--change font-bolder'>
               {
                 `${
+                  !changeDuration || changeType === 0 || changeType === 1
+                    ? ''
+                    : '-'
+                }${
                   (changeDuration || 0) / 100
                 }${
                   changeDurationType === 0 ? '天' : '小时'
