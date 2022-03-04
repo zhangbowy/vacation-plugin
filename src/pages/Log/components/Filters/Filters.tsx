@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState, useMemo } from 'react'
 import type { FC } from 'react'
 import Icon from '@/components/Icon'
 import Select from '@/components/form/Select'
@@ -8,14 +8,16 @@ import InputModel from '@/components/form/InputModel'
 import { getLogModules } from '@/services/operateLog'
 import './Filters.less'
 
-const FilterSelect = hocFilter(
-  Select, { name: 'operateTypes' }
-)
-const FilterRangePicker = hocFilter(
-  RangePicker, { name: 'rangeTime' }
-)
+const getFilters = (tableName: string) => ({
+  FilterSelect: hocFilter(
+    Select, { name: 'operateTypes', tableName }
+  ),
+  FilterRangePicker: hocFilter(
+    RangePicker, { name: 'rangeTime', tableName }
+  )
+})
 
-const Filters: FC = () => {
+const Filters: FC<{ tableName: string }> = ({ tableName }) => {
   const [moduleOptions, setModuleOptions] = useState([])
   const refDestroyed = useRef(false)
   useEffect(
@@ -38,10 +40,14 @@ const Filters: FC = () => {
     },
     []
   )
+  const {
+    FilterSelect, FilterRangePicker
+  } = useMemo(() => getFilters(tableName), [tableName])
   return <div className='pg-log--filters'>
     <InputModel
       className='pg-log--filters--name'
       placeholder='搜索人员姓名'
+      tableName={tableName}
       name='operateUserName'
       prefix={<Icon type='icon-sousuo' />}
     />

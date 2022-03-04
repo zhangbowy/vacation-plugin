@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import type { FC } from 'react'
 import { useSelector, useDispatch } from 'dva'
 import moment from 'moment'
@@ -12,17 +12,27 @@ const options = [
   { label: '按年', value: 'year' }, { label: '按月', value: 'month' }
 ]
 
-const CombineDatePicker: FC = () => {
+const CombineDatePicker: FC<{ tableName: string }> = ({ tableName }) => {
   const dispatch = useDispatch()
-  const { pickerMode, date } = useSelector(
+  const { pickerMode, date, currentTableName } = useSelector(
     (
       state: {
-        table: { params: { pickerMode?: 'year' | 'month', date: Moment } }
+        table: {
+          params: { pickerMode?: 'year' | 'month', date: Moment },
+          name: string
+        }
       }
     ) => ({
       pickerMode: state.table.params.pickerMode || 'year',
-      date: state.table.params.date
+      date: state.table.params.date,
+      currentTableName: state.table.name
     })
+  )
+  const { dateValue, pcikerModeValue } = useMemo(
+    () => !tableName || currentTableName === tableName
+      ? { dateValue: date, pcikerModeValue: pickerMode }
+      : { dateValue: undefined, pcikerModeValue: undefined },
+    [tableName, currentTableName, date, pickerMode]
   )
   const handleUpdatePickerMode = (newPickerMode: 'year' | 'month') => {
     dispatch({
@@ -41,14 +51,14 @@ const CombineDatePicker: FC = () => {
     <Select
       className='pg-statistics--combine-date-picker--select'
       options={options}
-      value={pickerMode}
+      value={pcikerModeValue}
       onChange={handleUpdatePickerMode}
     />
     <DatePicker
       className='pg-statistics--combine-date-picker--picker'
       placeholder='请选择'
       picker={pickerMode}
-      value={date}
+      value={dateValue}
       onChange={handleUpdateDate}
       disabledDate={disabledDate}
       allowClear={false}
