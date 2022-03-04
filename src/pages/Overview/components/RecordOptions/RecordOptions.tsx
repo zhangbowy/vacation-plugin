@@ -22,7 +22,7 @@ const getFilters = (tableName: string) => ({
 })
 
 interface RecordOptionsProps {
-  ruleOptions: { value: string, label: string | number }[]
+  ruleOptions: OptionProps[]
   tableName: string
 }
 
