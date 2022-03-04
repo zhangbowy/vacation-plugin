@@ -35,10 +35,10 @@ const Overview: FC = () => {
       refDestroyed.current = false
       getDropdownList().then(
         d => {
-          const [success, result = []] = d
+          const [success, result] = d
           if (success && !refDestroyed.current) {
             setRuleOptionss(
-              result.map(
+              (result || []).map(
                 ({ id, name }: { id: string | number, name: string }) =>
                   ({ label: name, value: id })
               )

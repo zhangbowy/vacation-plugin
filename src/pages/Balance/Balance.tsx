@@ -12,6 +12,8 @@ import Filters from './components/Filters'
 import Buttons from './components/Buttons'
 import './Balance.less'
 
+const tableName = 'balance'
+
 const defaultColumns = [
   { title: '姓名', dataIndex: 'userName', width: 111 },
   { title: '工号', dataIndex: 'jobNumber', width: 114 },
@@ -159,11 +161,11 @@ const Balance: FC = () => {
   return <PageContent className='pg-balance' hasPadding>
     <Header />
     <div className='pg-balance--options'>
-      <Filters />
+      <Filters tableName={tableName} />
       <Buttons />
     </div>
     <StoreTable
-      name='balance'
+      name={tableName}
       rowKey='userId'
       withFooterPagination
       scroll={scroll}
