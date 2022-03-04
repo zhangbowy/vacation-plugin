@@ -3,14 +3,13 @@ import type { FC } from 'react';
 import PageContent from '@/components/structure/PageContent';
 import StoreTable from '@/components/table/StoreTable';
 import { useDispatch, useSelector } from 'dva';
-import { getBalanceList } from '@/services/balance';
 import Header from './components/Header';
 // import Filters from './components/Filters'
 import Buttons from './components/Buttons';
 import Empty from './components/Empty';
 import AddRulePop from './components/AddRulePop';
 import './Rules.less';
-import { getRulesList, delRule, addRule } from '@/services/rules';
+import { getRulesList, delRule } from '@/services/rules';
 import getActions from '@/components/table/getAction';
 import checkAuth from '@/utils/checkAuth';
 import { confirm } from '@/components/pop/Modal';
@@ -18,7 +17,6 @@ import loading from '@/components/pop/loading';
 import { msg } from '@/components/pop';
 import { leaveViewUnit } from '@/constant/rule';
 import Tooltip from '@/components/pop/Tooltip/Tooltip';
-import Icon from '@/components/Icon/Icon';
 interface AgeRules {
   type: string;
   minAge: number;
@@ -135,7 +133,12 @@ const defaultColumns = [
     title: '假期名称',
     dataIndex: 'vacationTypeRule',
     render: (d: VacationTypeRule) => {
-      return d.leaveName || '-';
+      return (
+        <>
+          <span>{d.leaveName}</span>
+          {d.bizType === 'lieu_leave' && <span className={'lieu-title'}>调休假</span>}
+        </>
+      );
     },
   },
   {
