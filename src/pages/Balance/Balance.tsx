@@ -31,7 +31,10 @@ const getColumns = (cells?: any) => {
           title: `${ruleName}(${unit})`,
           dataIndex: ruleId,
           width: 102,
-          render: (v: number | string) => v === 0 || v ? v : '-'
+          render: (v: number | string) =>
+            (typeof v === 'number' && !Number.isNaN(v))
+              ? v / 100
+              : v || '-'
         })
       )
     ]
@@ -115,15 +118,20 @@ const Balance: FC = () => {
                 ...r,
                 list: r.list.map((
                   { balanceDetails, ...rest }: {
-                    balanceDetails: { ruleId: number, balance: number }[]
+                    balanceDetails: {
+                      suitable: boolean, ruleId: number, balance: number
+                    }[]
                   }
                 ) => {
                   if (balanceDetails && Array.isArray(balanceDetails)) {
                     const extra = {}
                     balanceDetails.forEach(
-                      ({ ruleId, balance }) => extra[ruleId] = balance
+                      ({ ruleId, balance, suitable }) => {
+                        extra[ruleId] = suitable ? balance : '不适用'
+                      }
                     )
                     return {
+                      balanceDetails,
                       ...rest,
                       ...extra
                     }
