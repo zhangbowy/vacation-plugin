@@ -1,38 +1,27 @@
-import { memo, useMemo } from 'react'
+import { memo } from 'react'
 import type { FC } from 'react'
-import { useSelector, useDispatch } from 'dva'
+import { useDispatch } from 'dva'
 import moment from 'moment'
 import type { Moment } from 'moment'
 import './CombineDatePicker.less'
 import Select from '@/components/form/Select'
 import DatePicker from '@/components/form/DatePicker'
+import useTableParams from '@/hooks/useTableParams'
 
 const disabledDate = (c: Moment) => c > moment().endOf('day')
 const options = [
   { label: '按年', value: 'year' }, { label: '按月', value: 'month' }
 ]
 
+interface CombineDatePickerParams {
+  pickerMode?: 'year' | 'month',
+  date?: Moment
+}
+
 const CombineDatePicker: FC<{ tableName: string }> = ({ tableName }) => {
   const dispatch = useDispatch()
-  const { pickerMode, date, currentTableName } = useSelector(
-    (
-      state: {
-        table: {
-          params: { pickerMode?: 'year' | 'month', date: Moment },
-          name: string
-        }
-      }
-    ) => ({
-      pickerMode: state.table.params.pickerMode || 'year',
-      date: state.table.params.date,
-      currentTableName: state.table.name
-    })
-  )
-  const { dateValue, pcikerModeValue } = useMemo(
-    () => !tableName || currentTableName === tableName
-      ? { dateValue: date, pcikerModeValue: pickerMode }
-      : { dateValue: undefined, pcikerModeValue: undefined },
-    [tableName, currentTableName, date, pickerMode]
+  const { pickerMode, date }: CombineDatePickerParams = useTableParams(
+    ['pickerMode', 'date'], tableName
   )
   const handleUpdatePickerMode = (newPickerMode: 'year' | 'month') => {
     dispatch({
@@ -51,14 +40,14 @@ const CombineDatePicker: FC<{ tableName: string }> = ({ tableName }) => {
     <Select
       className='pg-statistics--combine-date-picker--select'
       options={options}
-      value={pcikerModeValue}
+      value={pickerMode || 'year'}
       onChange={handleUpdatePickerMode}
     />
     <DatePicker
       className='pg-statistics--combine-date-picker--picker'
       placeholder='请选择'
       picker={pickerMode}
-      value={dateValue}
+      value={date}
       onChange={handleUpdateDate}
       disabledDate={disabledDate}
       allowClear={false}
