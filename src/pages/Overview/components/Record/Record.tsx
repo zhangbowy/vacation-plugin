@@ -71,7 +71,7 @@ const columns = [
 
 interface RecordProps {
   refDates: { current: [Moment, Moment] | null }
-  ruleOptions: { value: string, label: string | number }[]
+  ruleOptions: OptionProps[]
 }
 
 const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
