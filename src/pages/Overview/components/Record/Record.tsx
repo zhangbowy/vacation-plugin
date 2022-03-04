@@ -9,6 +9,8 @@ import useTableStoreScroll from '@/hooks/useTableStoreScroll'
 import './Record.less'
 import RecordOptions from '../RecordOptions'
 
+const tableName = 'record'
+
 const columns = [
   {
     title: '姓名',
@@ -106,9 +108,9 @@ const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
   )
   const scroll = useTableStoreScroll()
   return <>
-    <RecordOptions ruleOptions={ruleOptions} />
+    <RecordOptions ruleOptions={ruleOptions} tableName={tableName} />
     <StoreTable
-      name='record'
+      name={tableName}
       rowKey='id'
       scroll={scroll}
       withFooterPagination
