@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
-import { useSelector, useDispatch } from 'dva'
+import { useDispatch } from 'dva'
 import type { ComponentType } from 'react'
+import useTableParam from '@/hooks/useTableParam'
 
 const defaultGetValue = (type: string, e: any) => {
   if (type === 'targetValue') {
@@ -29,12 +30,6 @@ const hocFilter = <P extends object>(
 ) =>
   (props: any) => {
     const dispatch = useDispatch()
-    const { value, currentTableName } = useSelector(
-      state => ({
-        value: state.table.params[name],
-        currentTableName: state.table.name
-      })
-    )
     const handleChange = useCallback(
       (v: any) => {
         const newValue = getValue
@@ -47,14 +42,13 @@ const hocFilter = <P extends object>(
       },
       [dispatch]
     )
+    const value = useTableParam(name, tableName)
     const otherProps = useMemo(
       () => ({
-        [propValue]: !tableName || tableName === currentTableName
-          ? value
-          : undefined,
+        [propValue]: value,
         [propOnChange]: handleChange
       }),
-      [value, handleChange, currentTableName]
+      [value, handleChange]
     )
     return <WrappedComponent {...props} {...otherProps} />
   }
