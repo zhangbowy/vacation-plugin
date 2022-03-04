@@ -85,6 +85,9 @@ const UserSelect: FC<UserSelectProps> = ({
         text = text + departments.map(({ name }) => name).join('，');
       }
       if (users && users.length > 0) {
+        if (text) {
+          text = text + ',';
+        }
         text = text + users.map(({ name }) => name).join('，');
       }
       return text;

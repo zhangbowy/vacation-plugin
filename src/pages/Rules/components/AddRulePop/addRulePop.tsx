@@ -515,7 +515,7 @@ const AddRulePop: FC = () => {
             visibilityRules.push({
               type: 'staff',
               visible: users ? users.map(({ emplId }) => emplId) : [],
-              details: departments.map(({ id, name }) => {
+              details: users.map(({ id, name }) => {
                 return {
                   id,
                   name,

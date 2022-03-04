@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import type { FC } from 'react';
 import PageContent from '@/components/structure/PageContent';
 import StoreTable from '@/components/table/StoreTable';
@@ -17,6 +17,8 @@ import { confirm } from '@/components/pop/Modal';
 import loading from '@/components/pop/loading';
 import { msg } from '@/components/pop';
 import { leaveViewUnit } from '@/constant/rule';
+import Tooltip from '@/components/pop/Tooltip/Tooltip';
+import Icon from '@/components/Icon/Icon';
 interface AgeRules {
   type: string;
   minAge: number;
@@ -104,6 +106,7 @@ interface VacationIssueRule {
 }
 
 interface VacationTypeRule {
+  visibilityRulesStrHover: string;
   visibilityRulesStr: string;
   leaveCode: string;
   bizType: string;
@@ -160,7 +163,11 @@ const defaultColumns = [
     title: '适用范围',
     dataIndex: 'vacationTypeRule',
     render: (d: VacationTypeRule) => {
-      return d.visibilityRulesStr;
+      return (
+        <Tooltip overlayClassName="leave-unit--tooltip" title={d.visibilityRulesStrHover}>
+          <span>{d.visibilityRulesStr}</span>
+        </Tooltip>
+      );
     },
   },
 ];
@@ -198,12 +205,16 @@ const Rules: FC = () => {
                 visibilityRulesStrHover = '';
                 visibilityRules.forEach(({ type, visible = [], details = [] }) => {
                   if (type === 'dept') {
-                    visibilityRulesStr = visibilityRulesStr + `${visible}个部门`;
+                    visibilityRulesStr = visibilityRulesStr + `${visible.length}个部门`;
                     visibilityRulesStrHover =
                       visibilityRulesStrHover + details.map((item) => item.name).join(',');
                   }
                   if (type === 'staff') {
-                    visibilityRulesStr = visibilityRulesStr + `, ${visible}个人`;
+                    if (visibilityRulesStr) {
+                      visibilityRulesStr = visibilityRulesStr + ',';
+                      visibilityRulesStrHover = visibilityRulesStrHover + ',';
+                    }
+                    visibilityRulesStr = visibilityRulesStr + `${visible.length}个人`;
                     visibilityRulesStrHover =
                       visibilityRulesStrHover + details.map((item) => item.name).join(',');
                   }
