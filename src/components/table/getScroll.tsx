@@ -3,19 +3,21 @@ export default (
   init?: number
 ) => {
   let x = init || 0
-  columns.forEach(
-    ({ width, children }) => {
-      if (width) {
-        // eslint-disable-next-line
-        x += width
-      }
-      if (children) {
-        children.forEach(({ width: childWidth }: { width: number }) => {
+  if (columns && Array.isArray(columns)) {
+    columns.forEach(
+      ({ width, children }) => {
+        if (width) {
           // eslint-disable-next-line
-          x += childWidth
-        })
+          x += width
+        }
+        if (children && Array.isArray(children)) {
+          children.forEach(({ width: childWidth }: { width: number }) => {
+            // eslint-disable-next-line
+            x += childWidth
+          })
+        }
       }
-    }
-  )
+    )
+  }
   return x
 }
