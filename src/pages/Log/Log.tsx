@@ -8,6 +8,8 @@ import { getLogList } from '@/services/operateLog'
 import Header from './components/Header'
 import Filters from './components/Filters'
 
+const tableName = 'log'
+
 const operateTypeMap = {
   1: '假期规则', 2: '假期余额', 3: '统计报表', 4: '休假总览', 5: '权限设置'
 }
@@ -114,8 +116,8 @@ const Log: FC = () => {
   )
   return <PageContent className='pg-auth' hasPadding>
     <Header />
-    <Filters />
-    <StoreTable name='log' rowKey='key' withFooterPagination />
+    <Filters tableName={tableName} />
+    <StoreTable name={tableName} rowKey='key' withFooterPagination />
   </PageContent>
 }
 

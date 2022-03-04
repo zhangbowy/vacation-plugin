@@ -16,19 +16,24 @@ const hocFilter = <P extends object>(
     getValue,
     getValueType,
     propValue = 'value',
-    propOnChange = 'onChange'
+    propOnChange = 'onChange',
+    tableName
   }: {
     name: string,
     getValue?: (v: any) => void,
     getValueType?: string,
     propValue?: string,
-    propOnChange?: string
+    propOnChange?: string,
+    tableName?: string
   }
 ) =>
   (props: any) => {
     const dispatch = useDispatch()
-    const value = useSelector(
-      state => state.table.params[name]
+    const { value, currentTableName } = useSelector(
+      state => ({
+        value: state.table.params[name],
+        currentTableName: state.table.name
+      })
     )
     const handleChange = useCallback(
       (v: any) => {
@@ -44,10 +49,12 @@ const hocFilter = <P extends object>(
     )
     const otherProps = useMemo(
       () => ({
-        [propValue]: value,
+        [propValue]: !tableName || tableName === currentTableName
+          ? value
+          : undefined,
         [propOnChange]: handleChange
       }),
-      [value, handleChange]
+      [value, handleChange, currentTableName]
     )
     return <WrappedComponent {...props} {...otherProps} />
   }

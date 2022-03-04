@@ -11,12 +11,19 @@ const isLegalValue = {
   number: true, string: true
 }
 
-const InputModel: FC<InputProps> = ({ className, name, ...rest }) => {
+interface InputModelProps extends InputProps {
+  tableName?: string
+}
+
+const InputModel: FC<InputModelProps> = ({ className, name, tableName, ...rest }) => {
   const refInputValue = useRef('')
   const dispatch = useDispatch()
   const [inputValue, setInputValue] = useState<string>('')
-  const storeValue = useSelector(
-    state => name ? state.table.params[name] : ''
+  const { storeValue, currentTableName } = useSelector(
+    state => ({
+      storeValue: name ? state.table.params[name] : '',
+      currentTableName: state.table.name
+    })
   )
   const { run, flush } = useDebounceFn(
     (propName: string | undefined, value: string) => {
@@ -31,21 +38,24 @@ const InputModel: FC<InputProps> = ({ className, name, ...rest }) => {
   )
   useEffect(
     () => {
-      const vType =  typeof storeValue
+      const value = !tableName || tableName === currentTableName
+        ? storeValue
+        : undefined
+      const vType =  typeof value
       if (
         isLegalValue[vType] &&
-        refInputValue.current !== storeValue
+        refInputValue.current !== value
       ) {
         const newValue = vType === 'number'
           // @ts-ignore
-          ? storeValue.toString()
-          : storeValue
+          ? value.toString()
+          : value
         refInputValue.current = newValue
         setInputValue(newValue)
         run(name, newValue)
       }
     },
-    [storeValue, name, run]
+    [storeValue, name, run, tableName, currentTableName]
   )
   const handleChange = useCallback(
     (e: any) => {
