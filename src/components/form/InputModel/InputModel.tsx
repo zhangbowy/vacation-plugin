@@ -4,8 +4,9 @@ import './InputModel.less'
 import classnames from 'classnames'
 import Input from '@/components/form/Input'
 import { useDebounceFn } from 'ahooks';
-import { useSelector, useDispatch } from 'dva'
+import { useDispatch } from 'dva'
 import type { InputProps } from 'antd'
+import useTableParam from '@/hooks/useTableParam'
 
 const isLegalValue = {
   number: true, string: true
@@ -19,12 +20,6 @@ const InputModel: FC<InputModelProps> = ({ className, name, tableName, ...rest }
   const refInputValue = useRef('')
   const dispatch = useDispatch()
   const [inputValue, setInputValue] = useState<string>('')
-  const { storeValue, currentTableName } = useSelector(
-    state => ({
-      storeValue: name ? state.table.params[name] : '',
-      currentTableName: state.table.name
-    })
-  )
   const { run, flush } = useDebounceFn(
     (propName: string | undefined, value: string) => {
       if (propName) {
@@ -36,26 +31,24 @@ const InputModel: FC<InputModelProps> = ({ className, name, tableName, ...rest }
     },
     { wait: 1000 }
   )
+  const storeValue = useTableParam(name, tableName)
   useEffect(
     () => {
-      const value = !tableName || tableName === currentTableName
-        ? storeValue
-        : undefined
-      const vType =  typeof value
+      const vType =  typeof storeValue
       if (
         isLegalValue[vType] &&
-        refInputValue.current !== value
+        refInputValue.current !== storeValue
       ) {
         const newValue = vType === 'number'
           // @ts-ignore
-          ? value.toString()
-          : value
+          ? storeValue.toString()
+          : storeValue
         refInputValue.current = newValue
         setInputValue(newValue)
         run(name, newValue)
       }
     },
-    [storeValue, name, run, tableName, currentTableName]
+    [storeValue, name, run, tableName]
   )
   const handleChange = useCallback(
     (e: any) => {
