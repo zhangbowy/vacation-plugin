@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import type { FC } from 'react';
 import { useSelector, useDispatch } from 'dva';
 import Button from '@/components/buttons/Button';
@@ -489,6 +489,18 @@ const AddRulePop: FC = () => {
     );
   };
 
+  const showCount = useMemo(
+    () => ({
+      formatter: ({ count, maxLength }: { count: number; maxLength?: number }) => (
+        <p>
+          <span className="pg-auth--edit--count">{count}</span>
+          <span className="pg-auth--edit--max-count">{`/${maxLength}`}</span>
+        </p>
+      ),
+    }),
+    [],
+  );
+
   const onClick_save = () => {
     loading.show();
     setIsShowLoading(true);
@@ -678,7 +690,7 @@ const AddRulePop: FC = () => {
               name="leaveName"
               rules={[{ required: true, message: '请输入规则名称' }]}
             >
-              <Input placeholder="请输入规则名称" showCount={true} maxLength={30} />
+              <Input placeholder="请输入规则名称" showCount={showCount} maxLength={30} />
             </Item>
             <Item
               label="假期规则类型"
@@ -902,7 +914,7 @@ const AddRulePop: FC = () => {
               <Item label="额度有效期" style={{ marginBottom: 0 }}>
                 <Item
                   label=""
-                  style={{ display: 'block', width: 200 }}
+                  style={{ display: 'inline-block', width: 200 }}
                   className="m-r-8"
                   name={['vacationIssueRule', 'expireRule', 'expireType']}
                 >
@@ -930,7 +942,7 @@ const AddRulePop: FC = () => {
                     style={{ display: 'inline-block' }}
                     // className="w-120"
                     name={['vacationIssueRule', 'expireRule', 'specifyDay']}
-                    // rules={[{ required: true, message: '请选择日期' }]}
+                    rules={[{ required: true, message: '请选择日期' }]}
                   >
                     <DatePicker />
                   </Item>
@@ -989,6 +1001,7 @@ const AddRulePop: FC = () => {
                       style={{ display: 'inline-block' }}
                       className="w-120 m-r-8"
                       name={['vacationIssueRule', 'timeRule', 'issueDayOfYear']}
+                      rules={[{ required: true, message: '请选择日期' }]}
                     >
                       <DatePicker format={'MM-DD'} />
                     </Item>
@@ -1060,7 +1073,7 @@ const AddRulePop: FC = () => {
                 <Item label="额度有效期" style={{ marginBottom: 0 }}>
                   <Item
                     label=""
-                    style={{ display: 'block', width: 200 }}
+                    style={{ display: 'inline-block', width: 200 }}
                     className="m-r-8"
                     name={['vacationIssueRule', 'expireRule', 'expireType']}
                   >
@@ -1088,7 +1101,7 @@ const AddRulePop: FC = () => {
                       style={{ display: 'inline-block' }}
                       // className="w-120"
                       name={['vacationIssueRule', 'expireRule', 'specifyDay']}
-                      // rules={[{ required: true, message: '请选择日期' }]}
+                      rules={[{ required: true, message: '请选择日期' }]}
                     >
                       <DatePicker />
                     </Item>
