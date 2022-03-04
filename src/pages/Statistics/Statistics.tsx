@@ -13,6 +13,8 @@ import Header from './components/Header'
 import Filters from './components/Filters'
 import Buttons from './components/Buttons'
 
+const tableName = 'statistics'
+
 interface Column {
   dataIndex?: string,
   title: string,
@@ -145,12 +147,12 @@ const Statistics: FC = () => {
   return <PageContent className='pg-statistics' hasPadding>
     <Header />
     <div className='pg-statistics--options'>
-      <Filters />
+      <Filters tableName={tableName} />
       { checkAuth(3002) && <Buttons /> }
     </div>
     <StoreTable
       rowKey='id'
-      name='statistics'
+      name={tableName}
       withFooterPagination
       bordered
       scroll={scroll}

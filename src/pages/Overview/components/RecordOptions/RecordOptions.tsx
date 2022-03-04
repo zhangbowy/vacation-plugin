@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import type { FC } from 'react'
 import './RecordOptions.less'
 import { useSelector } from 'dva'
@@ -12,18 +12,21 @@ import hocFilter from '@/hoc/tableModel/hocFilter'
 import { exportLeaveRecord } from '@/services/leave'
 import checkAuth from '@/utils/checkAuth'
 
-const FilterSelect = hocFilter(
-  Select, { name: 'ruleId' }
-)
-const FilterRangePicker = hocFilter(
-  RangePicker, { name: 'date' }
-)
+const getFilters = (tableName: string) => ({
+  FilterSelect: hocFilter(
+    Select, { name: 'ruleId', tableName }
+  ),
+  FilterRangePicker: hocFilter(
+    RangePicker, { name: 'date', tableName }
+  )
+})
 
 interface RecordOptionsProps {
   ruleOptions: { value: string, label: string | number }[]
+  tableName: string
 }
 
-const RecordOptions: FC<RecordOptionsProps> = ({ ruleOptions }) => {
+const RecordOptions: FC<RecordOptionsProps> = ({ ruleOptions, tableName }) => {
   const { params, paramsHandle } = useSelector(state => ({
     params: state.table.params,
     paramsHandle: state.table.paramsHandle
@@ -34,12 +37,19 @@ const RecordOptions: FC<RecordOptionsProps> = ({ ruleOptions }) => {
     delete p.pageSize
     exportLeaveRecord(p)
   }
+  const {
+    FilterSelect, FilterRangePicker
+  } = useMemo(
+    () => getFilters(tableName),
+    [tableName]
+  )
   return <div className='pg-overview--record-options'>
     <div className='pg-overview--record-options--filters'>
       <InputModel
         className='pg-overview--record-options--filters-name'
         placeholder='搜索人员姓名'
         prefix={<Icon type='icon-sousuo' />}
+        tableName={tableName}
         name='search'
       />
       <FilterSelect
