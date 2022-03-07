@@ -20,6 +20,6 @@ export const updateBalance = params =>
   post('/balance/editSingleBalance', params)
 
 export const batchUpload = params =>
-  post('balance/batchEditUpload', params, { upload: true })
+  post('/balance/batchEditUpload', params, { upload: true })
 
 export default null
