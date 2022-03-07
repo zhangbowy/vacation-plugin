@@ -13,6 +13,7 @@ import useStoreContentSize from '@/hooks/useStoreContentSize';
 // import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 import './BasicLayout.less';
 import styles from './index.less';
+import { useLocation } from 'umi';
 
 const BasicLayout = (props) => {
   useStoreContentSize();
@@ -22,11 +23,19 @@ const BasicLayout = (props) => {
 
   const [collapsed, setSetcollapsed] = useState(false);
   const [isAdminHeaderTip] = useState(false);
+  const locations = useLocation();
 
   // 切换路由 滚动回到顶部
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+
+  useEffect(() => {
+    const isPage = props.route.routes.find((item) => item.path === pathname);
+    if (!isPage && pathname != '/') {
+      history.push('/');
+    }
+  }, [locations]);
 
   return (
     <div
@@ -54,7 +63,8 @@ const BasicLayout = (props) => {
         headerHeight={64}
         collapsed={collapsed}
         menuRender={(_props, defaultDom) => {
-          return (
+          const hasPermission = _props.menuData.find((item) => item.permissionId);
+          return hasPermission ? (
             <div className={cs(styles.menu, { [styles.collapsedMenu]: collapsed })}>
               <div
                 className={cs(styles.collapseContainer, 'position-fixed t-0 h-100p z-index-101', {
@@ -74,7 +84,7 @@ const BasicLayout = (props) => {
               </div>
               {defaultDom}
             </div>
-          );
+          ) : null;
         }}
         collapsedButtonRender={false}
         navTheme="light"
