@@ -278,6 +278,17 @@ const leaveTimeCeilMinUnit = [
   },
 ];
 
+const FIXED_UNIT = [
+  {
+    value: 'day',
+    label: '天',
+  },
+  {
+    value: 'month',
+    label: '月',
+  },
+];
+
 const AddRulePop: FC = () => {
   const { isShowAddPop, editInfo, isCopy, hasLieuLeave } = useSelector((state) => ({
     isShowAddPop: state.rules.isShowAddPop,
@@ -332,6 +343,8 @@ const AddRulePop: FC = () => {
         fixedTime: 0,
         specifyDay: '',
         untilDay: '',
+        fixedUnit: 'day',
+        extendedUnit: 'day',
       },
       quotaRule: {
         quotaType: 'fixed',
@@ -961,7 +974,15 @@ const AddRulePop: FC = () => {
                     >
                       <InputNumber />
                     </Item>
-                    <span className="hour-text m-l-8">天有效</span>
+                    <Item
+                      label=""
+                      name="fixedUnit"
+                      className="w-50 m-l-8 inline"
+                      rules={[{ required: true, message: '请选择天或月' }]}
+                    >
+                      <Select options={FIXED_UNIT} />
+                    </Item>
+                    <span className="hour-text m-l-8">有效</span>
                   </>
                 )}
                 {/*指定某天*/}
@@ -1122,7 +1143,15 @@ const AddRulePop: FC = () => {
                       >
                         <InputNumber />
                       </Item>
-                      <span className="hour-text m-l-8">天有效</span>
+                      <Item
+                        label=""
+                        name={['vacationIssueRule', 'expireRule', 'fixedUnit']}
+                        className="w-50 m-l-8 inline"
+                        rules={[{ required: true, message: '请选择天或月' }]}
+                      >
+                        <Select options={FIXED_UNIT} />
+                      </Item>
+                      <span className="hour-text m-l-8">有效</span>
                     </>
                   )}
                   {/*指定某天*/}
@@ -1157,7 +1186,15 @@ const AddRulePop: FC = () => {
                   >
                     <InputNumber min={0} defaultValue={0} />
                   </Item>
-                  <span className="hour-text m-l-8">天</span>
+                  <Item
+                    label=""
+                    name={['vacationIssueRule', 'expireRule', 'extendedUnit']}
+                    className="w-50 m-l-8 inline"
+                    rules={[{ required: true, message: '请选择天或月' }]}
+                  >
+                    <Select options={FIXED_UNIT} />
+                  </Item>
+                  {/*<span className="hour-text m-l-8">天</span>*/}
                 </Item>
                 {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
                   <Item label="过期处理方式" style={{ marginBottom: 0 }}>
