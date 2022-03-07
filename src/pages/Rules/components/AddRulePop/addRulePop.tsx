@@ -483,6 +483,9 @@ const AddRulePop: FC = () => {
         },
       ];
     }
+    if (changedValues?.vacationIssueRule?.timeRule?.issueType === 'month_day') {
+      result.vacationIssueRule.quotaRule.quotaType = 'fixed';
+    }
     form.setFieldsValue({ ...result });
     setFormData({ ...result });
   };
@@ -1087,15 +1090,17 @@ const AddRulePop: FC = () => {
                     <Select options={averageTypeMap} />
                   </Item>
                 </Item>
-                <Item label="额度取整" style={{ marginBottom: 0 }}>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block', width: '100%' }}
-                    name={['vacationIssueRule', 'quotaRule', 'roundType']}
-                  >
-                    <Select onChange={(e) => {}} options={roundTypeMap} />
+                {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
+                  <Item label="额度取整" style={{ marginBottom: 0 }}>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block', width: '100%' }}
+                      name={['vacationIssueRule', 'quotaRule', 'roundType']}
+                    >
+                      <Select onChange={(e) => {}} options={roundTypeMap} />
+                    </Item>
                   </Item>
-                </Item>
+                )}
                 <Item label="额度有效期" style={{ marginBottom: 0 }}>
                   <Item
                     label=""
@@ -1154,15 +1159,17 @@ const AddRulePop: FC = () => {
                   </Item>
                   <span className="hour-text m-l-8">天</span>
                 </Item>
-                <Item label="过期处理方式" style={{ marginBottom: 0 }}>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block', width: '100%' }}
-                    name={['vacationIssueRule', 'expireRule', 'expiredWay']}
-                  >
-                    <Select onChange={(e) => {}} disabled options={expiredMap} defaultValue={0} />
+                {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
+                  <Item label="过期处理方式" style={{ marginBottom: 0 }}>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block', width: '100%' }}
+                      name={['vacationIssueRule', 'expireRule', 'expiredWay']}
+                    >
+                      <Select onChange={(e) => {}} disabled options={expiredMap} defaultValue={0} />
+                    </Item>
                   </Item>
-                </Item>
+                )}
                 <div className={'quota-rule'}>
                   <Item
                     label={
@@ -1183,7 +1190,11 @@ const AddRulePop: FC = () => {
                       className=" m-r-8"
                       name={['vacationIssueRule', 'quotaRule', 'quotaType']}
                     >
-                      <Select onChange={(e) => {}} options={quotaTypeMap} />
+                      <Select
+                        disabled={formData.vacationIssueRule.timeRule.issueType != 'annual'}
+                        onChange={(e) => {}}
+                        options={quotaTypeMap}
+                      />
                     </Item>
                     {/*额度配置 - 固定额度*/}
                     {formData.vacationIssueRule.quotaRule?.quotaType === 'fixed' && (

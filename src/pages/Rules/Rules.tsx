@@ -298,7 +298,7 @@ const Rules: FC = () => {
 
   const getColumns = () => {
     const actionsReturn = getActions({
-      width: 150,
+      width: 190,
       getHandles: (v: any) => {
         const has_lieu_leave = v.vacationTypeRule.bizType === 'lieu_leave';
         const r = [];
