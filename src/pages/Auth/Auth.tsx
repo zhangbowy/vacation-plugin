@@ -63,6 +63,14 @@ const Auth: FC = () => {
     },
     [dispatch, handleRemove]
   )
+  useEffect(
+    () => {
+      return () => {
+        dispatch({ type: 'table/close' })
+      }
+    },
+    []
+  )
   return (
     <PageContent className='pg-auth' hasPadding>
       <Header />
