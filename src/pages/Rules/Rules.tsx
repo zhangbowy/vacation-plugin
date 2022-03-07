@@ -274,8 +274,12 @@ const Rules: FC = () => {
   // 删除规则
   const onClick_del = (d: Result) => {
     confirm({
-      title: '提示',
-      content: '确定要删除假期规则吗？',
+      title: '确定删除吗？',
+      content: (
+        <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>
+          删除后，所有员工余额、假期使用记录将被清除，数据不可恢复，请谨慎操作!
+        </span>
+      ),
       onOk: () => {
         loading.show();
         delRule({ id: d.id, leaveCode: d.vacationTypeRule.leaveCode })
