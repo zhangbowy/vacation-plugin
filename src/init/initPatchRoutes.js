@@ -38,7 +38,7 @@ export default function patchRoutes({ routes }) {
   const otherRoutes = [
     {
       component: dynamic({
-        loader: () => import(/* webpackChunkName: '404' */ '@/pages/404'),
+        loader: () => import(/* webpackChunkName: '404' */ '@/pages/notFound/404'),
         loading: LoadingComponent,
       }),
     },
@@ -127,7 +127,7 @@ export default function patchRoutes({ routes }) {
   const mergeRoutes = [
     {
       path: '/(index.html)?',
-      redirect: fistPage?.path,
+      redirect: fistPage?.path || '/404',
       exact: true,
     },
     ...oldRoutes,
