@@ -536,9 +536,9 @@ const AddRulePop: FC = () => {
             visibilityRules.push({
               type: 'staff',
               visible: users ? users.map(({ emplId }) => emplId) : [],
-              details: users.map(({ id, name }) => {
+              details: users.map(({ emplId, name }) => {
                 return {
-                  id,
+                  id: emplId,
                   name,
                 };
               }),
@@ -757,7 +757,11 @@ const AddRulePop: FC = () => {
                 </Space>
               </Group>
             </Item>
-            <Item label="限时提交" style={{ marginBottom: 0 }}>
+            <Item
+              rules={[{ required: true, message: '' }]}
+              label="限时提交"
+              style={{ marginBottom: 0 }}
+            >
               <Item
                 label=""
                 style={{ display: 'inline-block' }}
