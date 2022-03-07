@@ -16,6 +16,8 @@ declare module 'react-redux' {
       resultHandle: VoidFunction | null;
     };
     rules: {
+      hasLieuLeave: any;
+      isCopy: any;
       editInfo: any;
       isShowAddPop: boolean;
     };
