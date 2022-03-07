@@ -15,13 +15,14 @@ import InputNumber from '@/components/form/InputNumber';
 import DatePicker from '@/components/form/DatePicker';
 import { Space, Switch } from 'antd';
 import UserSelect from '@/components/form/UserSelect/UserSelect';
-import { addRule, editRule } from '@/services/rules';
+import { addRule, delRule, editRule } from '@/services/rules';
 import { errMsg, msg } from '@/components/pop';
 import { __merge } from '@/utils/utils';
 import Tooltip from '@/components/pop/Tooltip/Tooltip';
 import loading from '@/components/pop/loading';
 import moment from 'moment';
 import QuotaRule from './../QuotaRule';
+import { confirm } from '@/components/pop/Modal';
 
 const RULE_TYPE = [
   {
@@ -278,9 +279,11 @@ const leaveTimeCeilMinUnit = [
 ];
 
 const AddRulePop: FC = () => {
-  const { isShowAddPop, editInfo } = useSelector((state) => ({
+  const { isShowAddPop, editInfo, isCopy, hasLieuLeave } = useSelector((state) => ({
     isShowAddPop: state.rules.isShowAddPop,
     editInfo: state.rules.editInfo,
+    isCopy: state.rules.isCopy,
+    hasLieuLeave: state.rules.hasLieuLeave,
   }));
   const [form] = useForm();
   const dispatch = useDispatch();
@@ -354,9 +357,15 @@ const AddRulePop: FC = () => {
 
   // 关闭弹窗
   const close = () => {
-    dispatch({
-      type: 'rules/updateState',
-      payload: { isShowAddPop: false, editInfo: null },
+    confirm({
+      title: '提示',
+      content: '确定取消吗？',
+      onOk: () => {
+        dispatch({
+          type: 'rules/updateState',
+          payload: { isShowAddPop: false, editInfo: null, isCopy: false },
+        });
+      },
     });
   };
 
@@ -536,7 +545,11 @@ const AddRulePop: FC = () => {
             });
           }
         }
-
+        if (values.APPLICATION_RANGE === 2) {
+          if (visibilityRules.length === 0) {
+            return errMsg('适用范围请选择人员');
+          }
+        }
         const params = {
           vacationTypeRule: {
             leaveName: values.leaveName, // 假期规则名称
@@ -558,6 +571,7 @@ const AddRulePop: FC = () => {
             freedomLeave: !values.vacationIssueRule.freedomLeave, // 开关
           }, // 假期额度设置
         };
+
         // 如果开启了限制单次最大请假时间
         if (values.isLimitLeaveTime) {
           params.vacationTypeRule.maxLeaveTime = values.maxLeaveTime;
@@ -590,20 +604,23 @@ const AddRulePop: FC = () => {
           ).format('MM-DD');
         }
 
+        let api = addRule;
         // 编辑的时候多增加的信息
-        if (editInfo) {
+        if (editInfo && !isCopy) {
           params.id = editInfo.id;
           params.companyId = editInfo.companyId;
           params.corpId = editInfo.corpId;
           params.vacationTypeRule.leaveCode = editInfo.vacationTypeRule.leaveCode;
+          api = editRule;
         }
-
         // api
-        const api = editInfo ? editRule : addRule;
         api(params).then(([success, result]) => {
-          const text = editInfo ? '编辑' : '添加';
+          const text = editInfo && !isCopy ? '编辑' : '添加';
           if (success) {
-            close();
+            dispatch({
+              type: 'rules/updateState',
+              payload: { isShowAddPop: false, editInfo: null, isCopy: false },
+            });
             msg(`规则${text}成功`);
             dispatch({ type: 'table/refreshTable' });
           } else {
@@ -668,7 +685,7 @@ const AddRulePop: FC = () => {
       {/*抽屉的自定义头*/}
       <div className="customer_header">
         <div className="title_box">
-          <div className={'customer_title'}>{editInfo ? '编辑' : '添加'}假期规则</div>
+          <div className={'customer_title'}>{editInfo && !isCopy ? '编辑' : '添加'}假期规则</div>
           {
             <Icon
               type="icon-guanbi"
@@ -698,7 +715,7 @@ const AddRulePop: FC = () => {
               className="w-120"
               rules={[{ required: true, message: '请选择' }]}
             >
-              <Select onChange={() => {}} options={RULE_TYPE} />
+              <Select onChange={() => {}} disabled={hasLieuLeave} options={RULE_TYPE} />
             </Item>
             <Item label="新员工请假" name="whenCanLeave">
               <Group>
@@ -714,6 +731,7 @@ const AddRulePop: FC = () => {
                 style={{ display: 'inline-block' }}
                 className="w-120"
                 name="APPLICATION_RANGE"
+                rules={[{ required: true, message: '请选择' }]}
               >
                 <Select onChange={(e) => {}} options={APPLICATION_RANGE} />
               </Item>
@@ -758,7 +776,7 @@ const AddRulePop: FC = () => {
                   >
                     <InputNumber min={1} max={24} onChange={() => {}} />
                   </Item>
-                  <span className="hour-text">天之内的请假申请</span>
+                  <span className="hour-text">天提交请假申请</span>
                 </>
               )}
               {formData.submitTimeRule.timeType === 'after' && (
@@ -771,7 +789,7 @@ const AddRulePop: FC = () => {
                   >
                     <InputNumber min={1} onChange={() => {}} />
                   </Item>
-                  <span className="hour-text">天提交请假申请</span>
+                  <span className="hour-text">天之内的请假申请</span>
                 </>
               )}
             </Item>
@@ -1031,7 +1049,7 @@ const AddRulePop: FC = () => {
                         >
                           <Select onChange={(e) => {}} options={SEX} />
                         </Item>
-                        , 年龄在
+                        年龄在
                         <Item
                           label=""
                           style={{ display: 'inline-block', width: 80, margin: '0 8px' }}
@@ -1047,7 +1065,7 @@ const AddRulePop: FC = () => {
                           name={['vacationIssueRule', 'targetRule', 'maxAge']}
                           rules={[{ required: true, message: '' }]}
                         >
-                          <InputNumber min={1} onChange={(e) => {}} />{' '}
+                          <InputNumber min={1} />
                         </Item>
                       </div>
                     )}
@@ -1058,7 +1076,7 @@ const AddRulePop: FC = () => {
                     style={{ display: 'inline-block', width: '100%' }}
                     name={['vacationIssueRule', 'quotaRule', 'averageType']}
                   >
-                    <Select onChange={(e) => {}} options={averageTypeMap} />
+                    <Select options={averageTypeMap} />
                   </Item>
                 </Item>
                 <Item label="额度取整" style={{ marginBottom: 0 }}>
@@ -1077,7 +1095,7 @@ const AddRulePop: FC = () => {
                     className="m-r-8"
                     name={['vacationIssueRule', 'expireRule', 'expireType']}
                   >
-                    <Select onChange={(e) => {}} options={expireTypeMap} />
+                    <Select options={expireTypeMap} />
                   </Item>
                   {/*固定时间段*/}
                   {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
@@ -1099,7 +1117,6 @@ const AddRulePop: FC = () => {
                     <Item
                       label=""
                       style={{ display: 'inline-block' }}
-                      // className="w-120"
                       name={['vacationIssueRule', 'expireRule', 'specifyDay']}
                       rules={[{ required: true, message: '请选择日期' }]}
                     >

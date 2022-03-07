@@ -200,6 +200,12 @@ const Rules: FC = () => {
           const { currentPage = 1, total = 0 } = page;
           return {
             list: list.map((v: any, i: number) => {
+              if (v.vacationTypeRule.bizType === 'lieu_leave') {
+                dispatch({
+                  type: 'rules/updateState',
+                  payload: { hasLieuLeave: true },
+                });
+              }
               const visibilityRules = v.vacationTypeRule.visibilityRules;
               let visibilityRulesStr = '全员';
               let visibilityRulesStrHover = '全员';
@@ -208,16 +214,20 @@ const Rules: FC = () => {
                 visibilityRulesStrHover = '';
                 visibilityRules.forEach(({ type, visible = [], details = [] }) => {
                   if (type === 'dept') {
-                    visibilityRulesStr = visibilityRulesStr + `${visible.length}个部门`;
+                    if (visible.length) {
+                      visibilityRulesStr = visibilityRulesStr + `${visible.length}个部门`;
+                    }
                     visibilityRulesStrHover =
                       visibilityRulesStrHover + details.map((item) => item.name).join(',');
                   }
                   if (type === 'staff') {
-                    if (visibilityRulesStr) {
-                      visibilityRulesStr = visibilityRulesStr + ',';
-                      visibilityRulesStrHover = visibilityRulesStrHover + ',';
+                    if (visible.length) {
+                      if (visibilityRulesStr) {
+                        visibilityRulesStr = visibilityRulesStr + ',';
+                        visibilityRulesStrHover = visibilityRulesStrHover + ',';
+                      }
+                      visibilityRulesStr = visibilityRulesStr + `${visible.length}个人`;
                     }
-                    visibilityRulesStr = visibilityRulesStr + `${visible.length}个人`;
                     visibilityRulesStrHover =
                       visibilityRulesStrHover + details.map((item) => item.name).join(',');
                   }
@@ -254,6 +264,13 @@ const Rules: FC = () => {
     });
   };
 
+  const onClick_copy = (d: Result) => {
+    dispatch({
+      type: 'rules/updateState',
+      payload: { isShowAddPop: true, editInfo: d, isCopy: true },
+    });
+  };
+
   // 删除规则
   const onClick_del = (d: Result) => {
     confirm({
@@ -277,7 +294,7 @@ const Rules: FC = () => {
 
   const getColumns = () => {
     const actionsReturn = getActions({
-      width: 120,
+      width: 150,
       getHandles: (v: any) => {
         const r = [];
         if (checkAuth(1003)) {
@@ -286,10 +303,18 @@ const Rules: FC = () => {
             handle: onClick_edit,
           });
         }
+        if (checkAuth(1003)) {
+          r.push({
+            title: '复制',
+            handle: onClick_copy,
+            disabled: v.vacationTypeRule.bizType === 'lieu_leave',
+          });
+        }
         if (checkAuth(1004)) {
           r.push({
             title: '删除',
             handle: onClick_del,
+            disabled: v.vacationTypeRule.bizType === 'lieu_leave',
           });
         }
         return r;
