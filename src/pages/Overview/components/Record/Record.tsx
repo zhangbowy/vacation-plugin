@@ -71,7 +71,7 @@ const columns = [
 
 interface RecordProps {
   refDates: { current: [Moment, Moment] | null }
-  ruleOptions: { value: string, label: string | number }[]
+  ruleOptions: OptionProps[]
 }
 
 const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
@@ -105,6 +105,14 @@ const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
       })
     },
     [dispatch, refDates]
+  )
+  useEffect(
+    () => {
+      return () => {
+        dispatch({ type: 'table/close' })
+      }
+    },
+    []
   )
   const scroll = useTableStoreScroll()
   return <>
