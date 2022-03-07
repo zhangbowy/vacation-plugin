@@ -300,6 +300,7 @@ const Rules: FC = () => {
     const actionsReturn = getActions({
       width: 150,
       getHandles: (v: any) => {
+        const has_lieu_leave = v.vacationTypeRule.bizType === 'lieu_leave';
         const r = [];
         if (checkAuth(1003)) {
           r.push({
@@ -309,16 +310,22 @@ const Rules: FC = () => {
         }
         if (checkAuth(1003)) {
           r.push({
-            title: '复制',
+            title: has_lieu_leave ? (
+              <Tooltip overlayClassName="leave-unit--tooltip" title={'只允许存在一个调休假'}>
+                <span>复制</span>
+              </Tooltip>
+            ) : (
+              <span>复制</span>
+            ),
             handle: onClick_copy,
-            disabled: v.vacationTypeRule.bizType === 'lieu_leave',
+            disabled: has_lieu_leave,
           });
         }
         if (checkAuth(1004)) {
           r.push({
             title: '删除',
             handle: onClick_del,
-            disabled: v.vacationTypeRule.bizType === 'lieu_leave',
+            disabled: has_lieu_leave,
           });
         }
         return r;
