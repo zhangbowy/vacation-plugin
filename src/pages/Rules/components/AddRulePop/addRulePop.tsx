@@ -38,11 +38,11 @@ const RULE_TYPE = [
 // 适用范围
 const APPLICATION_RANGE = [
   {
-    value: 1,
+    value: true,
     label: '全公司',
   },
   {
-    value: 2,
+    value: false,
     label: '部分人员',
   },
 ];
@@ -298,6 +298,7 @@ const AddRulePop: FC = () => {
     isLimitDuration: 0, // 是否限制请假时长
     hoursInPerDay: 8, // 每日工时折算,
     naturalDayLeave: true,
+    isAllCompany: true, // 是否全员
     submitTimeRule: {
       timeType: 'none',
       timeUnit: 'day',
@@ -545,7 +546,7 @@ const AddRulePop: FC = () => {
             });
           }
         }
-        if (values.APPLICATION_RANGE === 2) {
+        if (!values.isAllCompany) {
           if (visibilityRules.length === 0) {
             return errMsg('适用范围请选择人员');
           }
@@ -565,6 +566,7 @@ const AddRulePop: FC = () => {
             maxLeaveTime: '', // 最大请假时间
             isLimitLeaveTime: values.isLimitLeaveTime, // 是否限制最大请假时间
             visibilityRules: visibilityRules, // 适用范围，如果是“全员”此参数不传
+            isAllCompany: values.isAllCompany, // 是否全公司
           },
           vacationIssueRule: {
             ...values.vacationIssueRule,
@@ -730,12 +732,12 @@ const AddRulePop: FC = () => {
                 label=""
                 style={{ display: 'inline-block' }}
                 className="w-120"
-                name="APPLICATION_RANGE"
+                name="isAllCompany"
                 rules={[{ required: true, message: '请选择' }]}
               >
                 <Select onChange={(e) => {}} options={APPLICATION_RANGE} />
               </Item>
-              {formData.APPLICATION_RANGE === 2 && (
+              {!formData.isAllCompany && (
                 <Item
                   label=""
                   style={{ display: 'inline-block', width: 270, margin: '0 8px' }}
