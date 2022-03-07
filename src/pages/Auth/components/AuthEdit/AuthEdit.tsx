@@ -14,6 +14,20 @@ import CheckGroups from '../CheckGroups';
 import RangeSelect from '../RangeSelect';
 import './AuthEdit.less';
 
+const rules = [
+  () => ({
+    validator(_rule: any, value: any) {
+      if (value) {
+        const { dataAuthority, depts } = value
+        if (dataAuthority === 2 && (!depts || !depts.length)) {
+          return Promise.reject(new Error('请选择指定部门'));
+        }
+      }
+      return Promise.resolve();
+    },
+  })
+]
+
 interface AuthEditProps {
   id: string;
   visible: boolean;
@@ -44,8 +58,8 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
     () => ({
       formatter: ({ count, maxLength }: { count: number; maxLength?: number }) => (
         <p>
-          <span className="pg-auth--edit--count">{count}</span>
-          <span className="pg-auth--edit--max-count">{`/${maxLength}`}</span>
+          <span className='pg-auth--edit--count'>{count}</span>
+          <span className='pg-auth--edit--max-count'>{`/${maxLength}`}</span>
         </p>
       ),
     }),
@@ -170,7 +184,7 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
     () => (
       <div>
         <Button onClick={handleVisibleChange}>取消</Button>
-        <Button type="primary" onClick={handleConfirm}>
+        <Button type='primary' onClick={handleConfirm}>
           保存
         </Button>
       </div>
@@ -179,31 +193,43 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
   );
   return (
     <Drawer
-      className="pg-auth--edit"
+      className='pg-auth--edit'
       visible={visible}
       onClose={handleVisibleChange}
       title={id ? '编辑权限' : '新增权限'}
       width={600}
-      closeIcon={<Icon type="icon-guanbi" />}
+      closeIcon={<Icon type='icon-guanbi' />}
       footer={footer}
     >
-      <Form layout="vertical" form={form} initialValues={initialValues}>
-        <Item label="规则名称" name="name" rules={[{ required: true, message: '请输入规则名称' }]}>
-          <Input placeholder="请输入" showCount={showCount} maxLength={30} />
+      <Form layout='vertical' form={form} initialValues={initialValues}>
+        <Item
+          label='规则名称'
+          name='name'
+          rules={[{ required: true, message: '请输入规则名称' }]}
+        >
+          <Input placeholder='请输入' showCount={showCount} maxLength={30} />
         </Item>
-        <Item label="成员" name="dingUsers" rules={[{ required: true, message: '请选择成员' }]}>
-          <UserSelect placeholder="请选择" />
+        <Item
+          label='成员'
+          name='dingUsers'
+          rules={[{ required: true, message: '请选择成员' }]}
+        >
+          <UserSelect placeholder='请选择' />
         </Item>
-        <Item label="管理范围" name="range">
+        <Item label='管理范围' name='range' rules={rules}>
           <RangeSelect />
         </Item>
         <Item
-          label="分配权限"
-          name="resourceInfo"
+          label='分配权限'
+          name='resourceInfo'
           rules={[
             () => ({
               validator(_rule, value) {
-                if (value && value.resourceMap && Object.values(value.resourceMap).some(Boolean)) {
+                if (
+                  value &&
+                  value.resourceMap &&
+                  Object.values(value.resourceMap).some(Boolean)
+                ) {
                   return Promise.resolve();
                 }
                 return Promise.reject(new Error('请勾选分配权限'));
