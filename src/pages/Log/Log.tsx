@@ -114,6 +114,14 @@ const Log: FC = () => {
     },
     [dispatch]
   )
+  useEffect(
+    () => {
+      return () => {
+        dispatch({ type: 'table/close' })
+      }
+    },
+    []
+  )
   return <PageContent className='pg-auth' hasPadding>
     <Header />
     <Filters tableName={tableName} />
