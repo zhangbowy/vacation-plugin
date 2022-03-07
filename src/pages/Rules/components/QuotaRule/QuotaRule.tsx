@@ -170,20 +170,10 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
                     )}
                   </div>
                 ))}
-                {/*<Form.Item>*/}
-                {/*  <Button type="dashed" onClick={() => onClick_add()} block icon={<PlusOutlined />}>*/}
-                {/*    添加规则*/}
-                {/*  </Button>*/}
-                {/*</Form.Item>*/}
               </div>
             );
           }}
         </Form.List>
-        {/*<Form.Item>*/}
-        {/*<Button type="primary" htmlType="submit">*/}
-        {/*  Submit*/}
-        {/*</Button>*/}
-        {/*</Form.Item>*/}
       </Form>
     </div>
   );
