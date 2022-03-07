@@ -586,6 +586,10 @@ const AddRulePop: FC = () => {
           },
           vacationIssueRule: {
             ...values.vacationIssueRule,
+            expireRule: {
+              ...values.vacationIssueRule?.expireRule,
+              isExtended: true,
+            },
             freedomLeave: !values.vacationIssueRule.freedomLeave, // 开关
           }, // 假期额度设置
         };
