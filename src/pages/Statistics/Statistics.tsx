@@ -143,6 +143,14 @@ const Statistics: FC = () => {
     },
     [dispatch, updateData]
   )
+  useEffect(
+    () => {
+      return () => {
+        dispatch({ type: 'table/close' })
+      }
+    },
+    []
+  )
   const scroll = useTableStoreScroll()
   return <PageContent className='pg-statistics' hasPadding>
     <Header />

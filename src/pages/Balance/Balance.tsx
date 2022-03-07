@@ -157,6 +157,14 @@ const Balance: FC = () => {
     },
     [dispatch, updateData]
   )
+  useEffect(
+    () => {
+      return () => {
+        dispatch({ type: 'table/close' })
+      }
+    },
+    []
+  )
   const scroll = useTableStoreScroll()
   return <PageContent className='pg-balance' hasPadding>
     <Header />

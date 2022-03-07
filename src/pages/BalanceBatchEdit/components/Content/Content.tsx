@@ -7,6 +7,7 @@ import Button from '@/components/buttons/Button'
 import Checkbox, { Group } from '@/components/form/Checkbox'
 import config from '@/config'
 import Upload from '@/components/form/Upload'
+import { errMsg } from '@/components/pop'
 import { createSuccess, createError } from '@/components/pop/Modal'
 import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
 
@@ -116,7 +117,7 @@ const Content: FC = () => {
     },
     [depts, checkedValue]
   )
-  console.log(handleSuccess, handleError)
+  // console.log(handleSuccess, handleError)
   const handleChange = ({ file, fileList }: { file: any, fileList: any[] }) => {
     setFileInfo({ file, fileList })
     if (file) {
@@ -125,8 +126,12 @@ const Content: FC = () => {
         console.log('file', file)
         console.log('aaa')
         const { response = {} } = file
-        if (response.success) {
-          console.log('xxx')
+        if (response.success && !response.errorCode) {
+          handleSuccess()
+        } else if (response.errorCode) {
+          handleError()
+        } else {
+          errMsg(response.errorMsg || response.meesage || '请求失败')
         }
       }
     }

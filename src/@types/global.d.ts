@@ -6,3 +6,6 @@ declare interface Resource {
 declare interface Tab {
   tab: string, key: string
 }
+declare interface OptionProps {
+  label: string | number, value: string | number
+}

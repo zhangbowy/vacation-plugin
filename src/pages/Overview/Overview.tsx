@@ -29,7 +29,7 @@ const Overview: FC = () => {
     }
     setTabActiveKey(key)
   }
-  const [ruleOptions, setRuleOptionss] = useState([])
+  const [ruleOptions, setRuleOptionss] = useState<OptionProps[]>([])
   useEffect(
     () => {
       refDestroyed.current = false
