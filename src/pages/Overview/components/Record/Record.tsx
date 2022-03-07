@@ -106,6 +106,14 @@ const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
     },
     [dispatch, refDates]
   )
+  useEffect(
+    () => {
+      return () => {
+        dispatch({ type: 'table/close' })
+      }
+    },
+    []
+  )
   const scroll = useTableStoreScroll()
   return <>
     <RecordOptions ruleOptions={ruleOptions} tableName={tableName} />
