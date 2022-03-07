@@ -707,7 +707,7 @@ const AddRulePop: FC = () => {
               name="leaveName"
               rules={[{ required: true, message: '请输入规则名称' }]}
             >
-              <Input placeholder="请输入规则名称" showCount={showCount} maxLength={30} />
+              <Input placeholder="请输入规则名称" showCount={showCount} maxLength={64} />
             </Item>
             <Item
               label="假期规则类型"
@@ -773,6 +773,7 @@ const AddRulePop: FC = () => {
                     style={{ display: 'inline-block' }}
                     className="hours-InPerDay-input"
                     name={['submitTimeRule', 'timeValue']}
+                    rules={[{ required: true, message: '请填写天数' }]}
                   >
                     <InputNumber min={1} max={24} onChange={() => {}} />
                   </Item>
@@ -786,6 +787,7 @@ const AddRulePop: FC = () => {
                     style={{ display: 'inline-block' }}
                     className="hours-InPerDay-input"
                     name={['submitTimeRule', 'timeValue']}
+                    rules={[{ required: true, message: '请填写天数' }]}
                   >
                     <InputNumber min={1} onChange={() => {}} />
                   </Item>
