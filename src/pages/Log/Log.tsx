@@ -57,20 +57,17 @@ const columns = [
         </>
       }
       return <>
-        <span>
-          {
-            `${title}${
-              changeDatas.length > 0
-                ? `：${
-                  changeDatas.map(
-                    ({ field, before, after }) =>
-                      `${field}修改前${before}，修改后${after}`
-                  ).join('；')
-                }`
-                : ''
-            }`
-          }
-        </span>
+        <p>{ title }</p>
+        {
+          changeDatas.map(
+            ({ field, before, after }, i) => {
+              const key = i
+              return <p key={key}>
+                { `${field}：修改前${before}，修改后${after}` }
+              </p>
+            }
+          )
+        }
       </>
     }
   },
