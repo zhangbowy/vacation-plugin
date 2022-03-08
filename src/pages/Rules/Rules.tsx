@@ -177,10 +177,11 @@ const defaultColumns = [
 
 const Rules: FC = () => {
   const dispatch = useDispatch();
-  const { isShowAddPop, total } = useSelector((state) => ({
+  const { isShowAddPop, total, inLoading } = useSelector((state) => ({
     isShowAddPop: state.rules.isShowAddPop,
     editInfo: state.rules.editInfo,
     total: state.table.total,
+    inLoading: state.table.inLoading,
   }));
   useEffect(() => {
     dispatch({
@@ -339,16 +340,17 @@ const Rules: FC = () => {
   return (
     <PageContent className="pg-rules" hasPadding>
       <Header />
-      {!total ? (
-        <Empty />
-      ) : (
-        <>
-          <div className="pg-rules--options">
-            <Buttons />
-          </div>
-          <StoreTable name="rule" rowKey="id" withFooterPagination />
-        </>
-      )}
+      {!inLoading &&
+        (!total ? (
+          <Empty />
+        ) : (
+          <>
+            <div className="pg-rules--options">
+              <Buttons />
+            </div>
+            <StoreTable name="rule" rowKey="id" withFooterPagination />
+          </>
+        ))}
       {/*新增假期规则弹窗*/}
       {isShowAddPop && <AddRulePop />}
     </PageContent>
