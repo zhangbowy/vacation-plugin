@@ -1219,23 +1219,25 @@ const AddRulePop: FC = () => {
                       </div>
                     )}
                 </Item>
-                <Item label="额度计算方式" style={{ marginBottom: 0 }}>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block', width: '100%' }}
-                    name={['vacationIssueRule', 'quotaRule', 'averageType']}
-                    // rules={[{ required: true, message: '请选择' }]}
-                  >
-                    <Select options={averageTypeMap} />
+                {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
+                  <Item label="额度计算方式" style={{ marginBottom: 0 }}>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block', width: '100%' }}
+                      name={['vacationIssueRule', 'quotaRule', 'averageType']}
+                      rules={[{ required: true, message: '请选择额度计算方式' }]}
+                    >
+                      <Select options={averageTypeMap} />
+                    </Item>
                   </Item>
-                </Item>
+                )}
                 {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
                   <Item label="额度取整" style={{ marginBottom: 0 }}>
                     <Item
                       label=""
                       style={{ display: 'inline-block', width: '100%' }}
                       name={['vacationIssueRule', 'quotaRule', 'roundType']}
-                      // rules={[{ required: true, message: '请选择' }]}
+                      rules={[{ required: true, message: '请选择额度取整方式' }]}
                     >
                       <Select onChange={(e) => {}} options={roundTypeMap} />
                     </Item>
