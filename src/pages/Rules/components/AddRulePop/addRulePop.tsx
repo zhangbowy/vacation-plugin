@@ -289,6 +289,17 @@ const FIXED_UNIT = [
   },
 ];
 
+const TIME_UNIT = [
+  {
+    value: 'day',
+    label: '天',
+  },
+  {
+    value: 'hour',
+    label: '时',
+  },
+];
+
 const AddRulePop: FC = () => {
   const { isShowAddPop, editInfo, isCopy, hasLieuLeave } = useSelector((state) => ({
     isShowAddPop: state.rules.isShowAddPop,
@@ -412,6 +423,20 @@ const AddRulePop: FC = () => {
         },
       };
 
+      if (vacationIssueRule?.quotaRule?.ageRules) {
+        editData.vacationIssueRule.quotaRule.ageRules = vacationIssueRule.quotaRule.ageRules.map(
+          (item) => {
+            item.quota = item.quota / 100;
+            return item;
+          },
+        );
+      }
+
+      if (vacationIssueRule?.quotaRule?.fixedQuota) {
+        editData.vacationIssueRule.quotaRule.fixedQuota =
+          vacationIssueRule.quotaRule.fixedQuota / 100;
+      }
+
       if (vacationTypeRule.visibilityRules && vacationTypeRule.visibilityRules.length > 0) {
         const departments =
           vacationTypeRule.visibilityRules.find((item) => item.type === 'dept') || {};
@@ -426,6 +451,7 @@ const AddRulePop: FC = () => {
           }),
         };
       }
+
       if (
         vacationIssueRule?.quotaRule?.ageRules &&
         vacationIssueRule?.quotaRule?.ageRules.length > 0
@@ -574,7 +600,11 @@ const AddRulePop: FC = () => {
             whenCanLeave: values.whenCanLeave, // 新员工请假 entry：入职可使用 formal：转正可使用
             // APPLICATION_RANGE: 1, // 适用范围
             paidLeave: values.paidLeave, // 是否带薪休假
-            submitTimeRule: values.submitTimeRule,
+            // submitTimeRule: values.submitTimeRule, // 限时提交
+            submitTimeRule: {
+              ...values.submitTimeRule,
+              enableTimeLimit: values.submitTimeRule.timeType == 'none' ? false : true,
+            },
             leaveCertificate: values.leaveCertificate, // 请假时提交证明
             leaveViewUnit: values.leaveViewUnit, // 请假时长单位
             naturalDayLeave: values.naturalDayLeave, // 请请假时长核算,是否按照自然日统计请假时长
@@ -590,6 +620,10 @@ const AddRulePop: FC = () => {
               ...values.vacationIssueRule?.expireRule,
               isExtended: true,
             },
+            quotaRule: {
+              ...values.vacationIssueRule?.quotaRule,
+              fixedQuota: values.vacationIssueRule?.quotaRule?.fixedQuota * 100 || 0,
+            },
             freedomLeave: !values.vacationIssueRule.freedomLeave, // 开关
           }, // 假期额度设置
         };
@@ -603,6 +637,7 @@ const AddRulePop: FC = () => {
           params.vacationTypeRule.leaveHourCeil = values.leaveHourCeil; // 设置取整类型
           params.vacationTypeRule.leaveTimeCeilMinUnit = values.leaveTimeCeilMinUnit; // 设置取整大小
         }
+        // TODO
         if (values.vacationIssueRule?.quotaRule?.ageRules_two) {
           params.vacationIssueRule.quotaRule.ageRules =
             values.vacationIssueRule.quotaRule.ageRules.concat(
@@ -610,16 +645,26 @@ const AddRulePop: FC = () => {
             );
           delete params.vacationIssueRule.quotaRule.ageRules_two;
         }
+        if (values.vacationIssueRule?.quotaRule?.ageRules) {
+          params.vacationIssueRule.quotaRule.ageRules =
+            values.vacationIssueRule.quotaRule.ageRules.map((item) => {
+              item.quota = item.quota * 100;
+              return item;
+            });
+        }
+        // 过期时间特别的一天时间格式化
         if (values.vacationIssueRule?.expireRule?.specifyDay) {
           params.vacationIssueRule.expireRule.specifyDay = moment(
             values.vacationIssueRule.expireRule.specifyDay,
-          ).format('yyyy-MM-DD');
+          ).format('MM-DD');
         }
+        // 截止某一天
         if (values.vacationIssueRule?.expireRule?.untilDay) {
           params.vacationIssueRule.expireRule.untilDay = moment(
             values.vacationIssueRule.expireRule.untilDay,
           ).format('yyyy-MM-DD');
         }
+        // 发放日期
         if (values.vacationIssueRule?.timeRule?.issueDayOfYear) {
           params.vacationIssueRule.timeRule.issueDayOfYear = moment(
             values.vacationIssueRule.timeRule.issueDayOfYear,
@@ -803,7 +848,15 @@ const AddRulePop: FC = () => {
                   >
                     <InputNumber min={1} max={24} onChange={() => {}} />
                   </Item>
-                  <span className="hour-text">天提交请假申请</span>
+                  <Item
+                    label=""
+                    name={['submitTimeRule', 'timeUnit']}
+                    className="w-50 m-l-8 inline"
+                    rules={[{ required: true, message: '请选择天或小时' }]}
+                  >
+                    <Select options={TIME_UNIT} />
+                  </Item>
+                  <span className="hour-text">提交请假申请</span>
                 </>
               )}
               {formData.submitTimeRule.timeType === 'after' && (
@@ -817,7 +870,15 @@ const AddRulePop: FC = () => {
                   >
                     <InputNumber min={1} onChange={() => {}} />
                   </Item>
-                  <span className="hour-text">天之内的请假申请</span>
+                  <Item
+                    label=""
+                    name={['submitTimeRule', 'timeUnit']}
+                    className="w-50 m-l-8 inline"
+                    rules={[{ required: true, message: '请选择天或小时' }]}
+                  >
+                    <Select options={TIME_UNIT} />
+                  </Item>
+                  <span className="hour-text">之内的请假申请</span>
                 </>
               )}
             </Item>
@@ -860,28 +921,32 @@ const AddRulePop: FC = () => {
                   <Item label="" name="leaveHourCeil" className="w-120 m-l-8 inline">
                     <Select options={HourCeil} />
                   </Item>
-                  <Item label="" name="leaveTimeCeilMinUnit" className="w-120 m-l-8 inline">
-                    <Select options={leaveTimeCeilMinUnit} />
-                  </Item>
-                  <span className="leave-unit-tips m-l-8">
-                    <Tooltip
-                      overlayClassName="leave-unit--tooltip"
-                      title={
-                        <div>
-                          <p>向上取整：</p>
-                          <p>
-                            按1小时取整：抹掉小数，整数+1；按半小时取整：小数点后1位大于0.5，则抹掉小数，整数+1；小数点后一位小于0.5，则小数点计为0.5
-                          </p>
-                          <p>向下取整</p>
-                          <p>
-                            按1小时取整：抹掉小数，整数不变；按半小时取整：小数点后1位大于0.5，则小数点计为0.5；小数点后一位小于0.5，则抹去小数，整数不变
-                          </p>
-                        </div>
-                      }
-                    >
-                      <Icon type="icon-tishi" className={'close_icon'} />
-                    </Tooltip>
-                  </span>
+                  {formData.leaveHourCeil && (
+                    <>
+                      <Item label="" name="leaveTimeCeilMinUnit" className="w-120 m-l-8 inline">
+                        <Select options={leaveTimeCeilMinUnit} />
+                      </Item>
+                      <span className="leave-unit-tips m-l-8">
+                        <Tooltip
+                          overlayClassName="leave-unit--tooltip"
+                          title={
+                            <div>
+                              <p>向上取整：</p>
+                              <p>
+                                按1小时取整：抹掉小数，整数+1；按半小时取整：小数点后1位大于0.5，则抹掉小数，整数+1；小数点后一位小于0.5，则小数点计为0.5
+                              </p>
+                              <p>向下取整</p>
+                              <p>
+                                按1小时取整：抹掉小数，整数不变；按半小时取整：小数点后1位大于0.5，则小数点计为0.5；小数点后一位小于0.5，则抹去小数，整数不变
+                              </p>
+                            </div>
+                          }
+                        >
+                          <Icon type="icon-tishi" className={'close_icon'} />
+                        </Tooltip>
+                      </span>
+                    </>
+                  )}
                 </>
               )}
             </Item>
@@ -998,7 +1063,7 @@ const AddRulePop: FC = () => {
                     name={['vacationIssueRule', 'expireRule', 'specifyDay']}
                     rules={[{ required: true, message: '请选择日期' }]}
                   >
-                    <DatePicker />
+                    <DatePicker format={'MM-DD'} />
                   </Item>
                 )}
                 {/*直到某天*/}
@@ -1166,7 +1231,7 @@ const AddRulePop: FC = () => {
                       name={['vacationIssueRule', 'expireRule', 'specifyDay']}
                       rules={[{ required: true, message: '请选择日期' }]}
                     >
-                      <DatePicker />
+                      <DatePicker format={'MM-DD'} />
                     </Item>
                   )}
                   {/*直到某天*/}
@@ -1246,7 +1311,7 @@ const AddRulePop: FC = () => {
                           className="w-120"
                           name={['vacationIssueRule', 'quotaRule', 'fixedQuota']}
                         >
-                          <InputNumber />
+                          <InputNumber step="0.01" />
                         </Item>
                         <span className="hour-text m-l-8">天</span>
                       </>
