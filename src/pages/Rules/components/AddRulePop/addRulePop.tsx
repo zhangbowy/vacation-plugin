@@ -300,6 +300,73 @@ const TIME_UNIT = [
   },
 ];
 
+const defaultData = {
+  whenCanLeave: 'entry', //
+  paidLeave: true, // 是否带薪休假
+  bizType: 'general_leave', // 假期规则
+  APPLICATION_RANGE: 1, // 适用范围
+  leaveViewUnit: 'day', //
+  leaveTimeCeilMinUnit: 'hour', // 取整方式
+  leaveHourCeil: '',
+  isLimitDuration: 0, // 是否限制请假时长
+  hoursInPerDay: 8, // 每日工时折算,
+  naturalDayLeave: true,
+  isAllCompany: true, // 是否全员
+  submitTimeRule: {
+    timeType: 'none',
+    timeUnit: 'day',
+    timeValue: 1,
+  },
+  // 请假证明
+  leaveCertificate: {
+    enable: false,
+    promptInformation: '',
+    unit: 'day',
+    duration: 1,
+  },
+  // 假期额度配置
+  vacationIssueRule: {
+    freedomLeave: false, // 开关
+    timeRule: {
+      issueType: 'annual',
+      issueTimeType: 'first_day_year',
+      issueDayOfMonth: 1,
+      issueDayOfYear: '',
+    },
+    targetRule: {
+      targetType: 'probational_normal',
+      sex: 0,
+      maxAge: 2,
+      minAge: 0,
+    },
+    expireRule: {
+      expireType: 'permanent',
+      extendedTime: 0,
+      fixedTime: 0,
+      specifyDay: '',
+      untilDay: '',
+      fixedUnit: 'day',
+      extendedUnit: 'day',
+    },
+    quotaRule: {
+      quotaType: 'fixed',
+      fixedQuota: 0.0,
+      averageType: 'none',
+      roundType: 'none',
+      ageRules: [
+        {
+          maxAge: 1,
+          minAge: 0,
+          quota: 1,
+          type: 'work_age',
+        },
+      ],
+    },
+  },
+  // 是否限制最大请假时间
+  isLimitLeaveTime: false,
+};
+
 const AddRulePop: FC = () => {
   const { isShowAddPop, editInfo, isCopy, hasLieuLeave } = useSelector((state) => ({
     isShowAddPop: state.rules.isShowAddPop,
@@ -309,72 +376,7 @@ const AddRulePop: FC = () => {
   }));
   const [form] = useForm();
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState({
-    whenCanLeave: 'entry', //
-    paidLeave: true, // 是否带薪休假
-    bizType: 'general_leave', // 假期规则
-    APPLICATION_RANGE: 1, // 适用范围
-    leaveViewUnit: 'day', //
-    leaveTimeCeilMinUnit: 'hour', // 取整方式
-    leaveHourCeil: '',
-    isLimitDuration: 0, // 是否限制请假时长
-    hoursInPerDay: 8, // 每日工时折算,
-    naturalDayLeave: true,
-    isAllCompany: true, // 是否全员
-    submitTimeRule: {
-      timeType: 'none',
-      timeUnit: 'day',
-      timeValue: 1,
-    },
-    // 请假证明
-    leaveCertificate: {
-      enable: false,
-      promptInformation: '',
-      unit: 'day',
-      duration: 1,
-    },
-    // 假期额度配置
-    vacationIssueRule: {
-      freedomLeave: false, // 开关
-      timeRule: {
-        issueType: 'annual',
-        issueTimeType: 'first_day_year',
-        issueDayOfMonth: 1,
-        issueDayOfYear: '',
-      },
-      targetRule: {
-        targetType: 'probational_normal',
-        sex: 0,
-        maxAge: 2,
-        minAge: 0,
-      },
-      expireRule: {
-        expireType: 'permanent',
-        extendedTime: 0,
-        fixedTime: 0,
-        specifyDay: '',
-        untilDay: '',
-        fixedUnit: 'day',
-        extendedUnit: 'day',
-      },
-      quotaRule: {
-        quotaType: 'fixed',
-        fixedQuota: 0.0,
-        averageType: 'none',
-        roundType: 'none',
-        ageRules: [
-          {
-            maxAge: 1,
-            minAge: 0,
-            quota: 1,
-            type: 'work_age',
-          },
-        ],
-      },
-    },
-    // 是否限制最大请假时间
-    isLimitLeaveTime: false,
-  });
+  const [formData, setFormData] = useState(__merge({}, defaultData, true));
   const [issueTimeTypeOpts, setIssueTimeTypeOpts] = useState(IssueTimeTypeMap.annual);
   const [isShowLoading, setIsShowLoading] = useState(false);
   const workAgeRef = useRef();
@@ -483,6 +485,7 @@ const AddRulePop: FC = () => {
 
   const onChange_value = (changedValues: any, allVal: any) => {
     const result = __merge(formData, allVal, true);
+    console.log(changedValues);
     if (changedValues?.vacationIssueRule?.timeRule?.issueType === 'month_day') {
       result.vacationIssueRule.timeRule.issueTimeType = 'fixed_day';
     }
@@ -525,6 +528,51 @@ const AddRulePop: FC = () => {
     if (changedValues?.vacationIssueRule?.timeRule?.issueType === 'month_day') {
       result.vacationIssueRule.quotaRule.quotaType = 'fixed';
     }
+
+    if (changedValues?.vacationIssueRule?.freedomLeave == true) {
+      result.vacationIssueRule.quotaRule = defaultData.vacationIssueRule.quotaRule;
+      console.log(defaultData, 'defaultData');
+    }
+
+    // vacationIssueRule: {
+    //   freedomLeave: false, // 开关
+    //     timeRule: {
+    //     issueType: 'annual',
+    //       issueTimeType: 'first_day_year',
+    //       issueDayOfMonth: 1,
+    //       issueDayOfYear: '',
+    //   },
+    //   targetRule: {
+    //     targetType: 'probational_normal',
+    //       sex: 0,
+    //       maxAge: 2,
+    //       minAge: 0,
+    //   },
+    //   expireRule: {
+    //     expireType: 'permanent',
+    //       extendedTime: 0,
+    //       fixedTime: 0,
+    //       specifyDay: '',
+    //       untilDay: '',
+    //       fixedUnit: 'day',
+    //       extendedUnit: 'day',
+    //   },
+    //   quotaRule: {
+    //     quotaType: 'fixed',
+    //       fixedQuota: 0.0,
+    //       averageType: 'none',
+    //       roundType: 'none',
+    //       ageRules: [
+    //       {
+    //         maxAge: 1,
+    //         minAge: 0,
+    //         quota: 1,
+    //         type: 'work_age',
+    //       },
+    //     ],
+    //   },
+    // },
+    console.log(result, '----------');
     form.setFieldsValue({ ...result });
     setFormData({ ...result });
   };
@@ -1176,6 +1224,7 @@ const AddRulePop: FC = () => {
                     label=""
                     style={{ display: 'inline-block', width: '100%' }}
                     name={['vacationIssueRule', 'quotaRule', 'averageType']}
+                    // rules={[{ required: true, message: '请选择' }]}
                   >
                     <Select options={averageTypeMap} />
                   </Item>
@@ -1186,6 +1235,7 @@ const AddRulePop: FC = () => {
                       label=""
                       style={{ display: 'inline-block', width: '100%' }}
                       name={['vacationIssueRule', 'quotaRule', 'roundType']}
+                      // rules={[{ required: true, message: '请选择' }]}
                     >
                       <Select onChange={(e) => {}} options={roundTypeMap} />
                     </Item>
