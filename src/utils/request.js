@@ -128,7 +128,7 @@ export const requestConfig = {
     adaptor: (resData) => {
       return {
         ...resData,
-        errorMessage: resData.errorMsg || resData.error,
+        errorMessage: resData.errorMsg || resData.error || '网络错误',
       };
     },
   },
