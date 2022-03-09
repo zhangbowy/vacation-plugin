@@ -7,6 +7,7 @@ import { msg, errMsg } from '@/components/pop'
 import Select from '@/components/form/Select'
 import InputNumber from '@/components/form/InputNumber'
 import { updateBalance } from '@/services/balance'
+import loading from '@/components/pop/loading'
 
 const selOptions = [
   { label: '增加' , value: 'add' },
@@ -79,11 +80,13 @@ const ModalBalance: FC<ModalBalanceProps> = ({
   const [form] = useForm()
   const handleConfirm = useCallback(
     () => {
+      loading.show()
       form.validateFields().then(
         values => {
           const { status, number } = values.rest
           if (!number) {
             errMsg('请输入余额')
+            loading.hide()
           } else {
             updateBalance({
               balanceEditType: status === 'add' ? 1 : 2,
@@ -91,6 +94,7 @@ const ModalBalance: FC<ModalBalanceProps> = ({
               ruleId,
               userId: item.userId
             }).then(d => {
+              loading.hide()
               if (d && d[0]) {
                 msg('操作成功')
                 onConfirm()
@@ -99,14 +103,15 @@ const ModalBalance: FC<ModalBalanceProps> = ({
           }
         }
       ).catch(e => {
-          const { errorFields = [] } = e;
-          if (errorFields[0] && errorFields[0].errors) {
-            const errors = errorFields[0].errors || []
-            errMsg(errors[0] || '参数错误，请检查')
-          } else {
-            errMsg(e)
-          }
-        })
+        loading.hide()
+        const { errorFields = [] } = e;
+        if (errorFields[0] && errorFields[0].errors) {
+          const errors = errorFields[0].errors || []
+          errMsg(errors[0] || '参数错误，请检查')
+        } else {
+          errMsg(e)
+        }
+      })
     },
     [form, ruleId, item, onConfirm]
   )

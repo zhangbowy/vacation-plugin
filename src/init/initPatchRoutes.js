@@ -81,7 +81,7 @@ export default function patchRoutes({ routes }) {
     {
       path: '/statistics',
       name: '统计报表',
-      icon: 'icon-tongjibaobiao',
+      icon: 'icon-tongjibaobiao1',
       component: dynamic({
         loader: () => import('@/pages/Statistics'),
         loading: LoadingComponent,

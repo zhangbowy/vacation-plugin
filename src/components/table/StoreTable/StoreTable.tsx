@@ -47,12 +47,32 @@ const StoreTable: FC<StoreTableProps> = ({
     () => classnames('com-table--store', className),
     [className]
   )
+  const dispColumns = useMemo(
+    () => {
+      if (columns && Array.isArray(columns)) {
+        return columns.map(
+          v => {
+            //@ts-ignore
+            if (!v.render) {
+              return {
+                ...v,
+                render: (x: any) => x === 0 || x ? x : '-'
+              }
+            }
+            return v
+          }
+        )
+      }
+      return columns
+    },
+    [columns]
+  )
   return <>
     <Table
       className={cName}
       tableLayout={tableLayout}
       rowKey={rowKey}
-      columns={columns}
+      columns={dispColumns}
       dataSource={dataSource}
       pagination={false}
       bordered={bordered}

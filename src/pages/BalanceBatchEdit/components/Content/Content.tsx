@@ -5,11 +5,11 @@ import { getDropdownList } from '@/services/vacationType'
 import { downloadEditTemplate } from '@/services/balance'
 import Button from '@/components/buttons/Button'
 import Checkbox, { Group } from '@/components/form/Checkbox'
-import config from '@/config'
 import Upload from '@/components/form/Upload'
-import { errMsg } from '@/components/pop'
 import { createSuccess, createError } from '@/components/pop/Modal'
 import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
+import { batchUpload } from '@/services/balance'
+import loading from '@/components/pop/loading'
 
 type DepartmentsType = { id: string | number, name: string, number: number }[]
 
@@ -49,6 +49,13 @@ const Content: FC = () => {
     },
     []
   )
+  const handleBeforeUpload = useCallback(
+    (file: File) => {
+      setFileInfo({ file, fileList: [file] })
+      return false
+    },
+    []
+  )
   useEffect(
     () => {
       if (checkedValue.length === 0) {
@@ -82,6 +89,27 @@ const Content: FC = () => {
       content: '导入文件中存在重复数据!18446831691136586'
     })
   }
+  const handleCatch = (e: any) => {
+    e.stopPropagation()
+  }
+  const handleUpload = useCallback(
+    () => {
+      loading.show()
+      const { file } = fileInfo
+      batchUpload({ uploadFile: file }).then(d => {
+        const [success, result = {}] = d
+        if (success && !result.errorCode) {
+          handleSuccess()
+          setFileInfo({ file: null, fileList: [] })
+        } else if (result.errorCode) {
+          // 当错误码为定值时，报错
+          handleError()
+        }
+        loading.hide()
+      })
+    },
+    [fileInfo]
+  )
   const handleChooseDepts = useCallback(
     () => {
       chooseDepartments({
@@ -105,7 +133,6 @@ const Content: FC = () => {
   const handleChangeCheckbox = (
     newCheckedValue: (string | number | boolean)[]
   ) => {
-    console.log('newCheckedValue', newCheckedValue)
     setCheckedValue(newCheckedValue)
   }
   const handleDownload = useCallback(
@@ -117,24 +144,8 @@ const Content: FC = () => {
     },
     [depts, checkedValue]
   )
-  // console.log(handleSuccess, handleError)
-  const handleChange = ({ file, fileList }: { file: any, fileList: any[] }) => {
-    setFileInfo({ file, fileList })
-    if (file) {
-      const { status } = file
-      if (status === 'error' || status === 'success' || status === 'done') {
-        console.log('file', file)
-        console.log('aaa')
-        const { response = {} } = file
-        if (response.success && !response.errorCode) {
-          handleSuccess()
-        } else if (response.errorCode) {
-          handleError()
-        } else {
-          errMsg(response.errorMsg || response.meesage || '请求失败')
-        }
-      }
-    }
+  const handleRemove = () => {
+    setFileInfo({ file: null, fileList: [] })
   }
   return <>
     <div className='pg-balance-batch-edit--content--info'>
@@ -213,19 +224,31 @@ const Content: FC = () => {
       </div>
       <div className='pg-balance-batch-edit--content--wrap'>
         <Upload
-          action='/vacation/balance/batchEditUpload'
           accept='.xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel'
-          headers={{ token: config.token }}
-          name='uploadFile'
           maxCount={1}
-          onChange={handleChange}
+          onRemove={handleRemove}
+          beforeUpload={handleBeforeUpload}
         >
           <Button
             className='pg-balance-batch-edit--content--button'
-            type='primary'
           >
-            { fileInfo.fileList.length > 0 ? '重新上传' : '上传文件' }
+            { fileInfo.file ? '重新选择' : '选择文件' }
           </Button>
+          {
+            fileInfo.file &&
+            <div
+              className='pg-balance-batch-edit--content--fetch-wrap'
+              onClick={handleCatch}
+            >
+              <Button
+                className='pg-balance-batch-edit--content--fetch'
+                type='primary'
+                onClick={handleUpload}
+              >
+                开始上传
+              </Button>
+            </div>
+          }
         </Upload>
       </div>
     </div>
