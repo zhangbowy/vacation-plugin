@@ -17,7 +17,7 @@ const Buttons: FC = () => {
     });
   };
   return (
-    <div className="pg-balance--buttons">
+    <div className="rule--buttons">
       <Button type="primary" onClick={onClick_addRule}>
         <Icon type="icon-tianjia" />
         添加规则
