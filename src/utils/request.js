@@ -88,6 +88,18 @@ async function middlewareTokenInvalid(ctx, next) {
   }
 }
 
+async function middlewareBatchUploadInvalid(ctx, next) {
+  await next();
+
+  if (Number(ctx?.res?.errorCode) === 501001) {
+    ctx.res.success = true
+    ctx.res.result = {
+      errorCode: 501001,
+      errorMsg: ctx.res.errorMsg || ''
+    }
+  }
+}
+
 const adapRequestDataKey = {
   get: 'params',
 };
@@ -123,7 +135,7 @@ export const requestConfig = {
   prefix: API_PREFIX,
   requestInterceptors,
   responseInterceptors,
-  middlewares: [middlewareTokenInvalid],
+  middlewares: [middlewareTokenInvalid, middlewareBatchUploadInvalid],
   errorConfig: {
     adaptor: (resData) => {
       return {
