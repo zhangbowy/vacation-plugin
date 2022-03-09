@@ -83,10 +83,10 @@ const Content: FC = () => {
       content: '文件已导入！'
     })
   }
-  const handleError = () => {
+  const handleError = (content: string) => {
     createError({
       title: '上传出错！',
-      content: '导入文件中存在重复数据!18446831691136586'
+      content
     })
   }
   const handleCatch = (e: any) => {
@@ -97,13 +97,14 @@ const Content: FC = () => {
       loading.show()
       const { file } = fileInfo
       batchUpload({ uploadFile: file }).then(d => {
-        const [success, result = {}] = d
-        if (success && !result.errorCode) {
-          handleSuccess()
-          setFileInfo({ file: null, fileList: [] })
-        } else if (result.errorCode) {
-          // 当错误码为定值时，报错
-          handleError()
+        const [success, result] = d
+        if (success) {
+          if (result && result.errorCode === 501001) {
+            handleError(result.errorMsg)
+          } else {
+            handleSuccess()
+            setFileInfo({ file: null, fileList: [] })
+          }
         }
         loading.hide()
       })
