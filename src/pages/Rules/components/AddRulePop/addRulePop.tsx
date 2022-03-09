@@ -899,7 +899,7 @@ const AddRulePop: FC = () => {
                   <Item
                     label=""
                     name={['submitTimeRule', 'timeUnit']}
-                    className="w-50 m-l-8 inline"
+                    className="w-80 m-l-8 inline"
                     rules={[{ required: true, message: '请选择天或小时' }]}
                   >
                     <Select options={TIME_UNIT} />
@@ -921,7 +921,7 @@ const AddRulePop: FC = () => {
                   <Item
                     label=""
                     name={['submitTimeRule', 'timeUnit']}
-                    className="w-50 m-l-8 inline"
+                    className="w-80 m-l-8 inline"
                     rules={[{ required: true, message: '请选择天或小时' }]}
                   >
                     <Select options={TIME_UNIT} />
@@ -1086,7 +1086,7 @@ const AddRulePop: FC = () => {
                     <Item
                       label=""
                       style={{ display: 'inline-block' }}
-                      // className="w-120"
+                      className="expireRule"
                       name={['vacationIssueRule', 'expireRule', 'fixedTime']}
                     >
                       <InputNumber />
@@ -1094,7 +1094,7 @@ const AddRulePop: FC = () => {
                     <Item
                       label=""
                       name="fixedUnit"
-                      className="w-50 m-l-8 inline"
+                      className="w-80 m-l-8 inline"
                       rules={[{ required: true, message: '请选择天或月' }]}
                     >
                       <Select options={FIXED_UNIT} />
@@ -1267,7 +1267,7 @@ const AddRulePop: FC = () => {
                       <Item
                         label=""
                         name={['vacationIssueRule', 'expireRule', 'fixedUnit']}
-                        className="w-50 m-l-8 inline"
+                        className="w-80 m-l-8 inline"
                         rules={[{ required: true, message: '请选择天或月' }]}
                       >
                         <Select options={FIXED_UNIT} />
@@ -1303,6 +1303,7 @@ const AddRulePop: FC = () => {
                   <Item
                     label=""
                     style={{ display: 'inline-block' }}
+                    className="expireRule m-l-8 inline"
                     name={['vacationIssueRule', 'expireRule', 'extendedTime']}
                   >
                     <InputNumber min={0} defaultValue={0} />
@@ -1310,7 +1311,7 @@ const AddRulePop: FC = () => {
                   <Item
                     label=""
                     name={['vacationIssueRule', 'expireRule', 'extendedUnit']}
-                    className="w-50 m-l-8 inline"
+                    className="expireRule w-80 m-l-8 inline"
                     rules={[{ required: true, message: '请选择天或月' }]}
                   >
                     <Select options={FIXED_UNIT} />
@@ -1333,9 +1334,7 @@ const AddRulePop: FC = () => {
                     label={
                       <div>
                         <span>额度配置</span>
-                        <Tooltip
-                          title={'开启后，可设置假期额度，例如年假每年5天；关闭则不限制假期额度。'}
-                        >
+                        <Tooltip title={'未配置或不符合条件则额度为0'}>
                           <Icon type="icon-tishi" className={'tips'} />
                         </Tooltip>
                       </div>
@@ -1357,10 +1356,11 @@ const AddRulePop: FC = () => {
                     {/*额度配置 - 固定额度*/}
                     {formData.vacationIssueRule.quotaRule?.quotaType === 'fixed' && (
                       <>
+                        <span className="hour-text m-r-8">发放</span>
                         <Item
                           label=""
                           style={{ display: 'inline-block' }}
-                          className="w-120"
+                          className="expireRule"
                           name={['vacationIssueRule', 'quotaRule', 'fixedQuota']}
                         >
                           <InputNumber step="0.01" />
