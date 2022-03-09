@@ -7,6 +7,7 @@ import { useDispatch } from 'dva'
 import { getBalanceList } from '@/services/balance'
 import useTableStoreScroll from '@/hooks/useTableStoreScroll'
 import useTableStoreActiveColumn from '@/hooks/useTableStoreActiveColumn'
+import Tooltip from '@/components/pop/Tooltip'
 import Header from './components/Header'
 import Filters from './components/Filters'
 import Buttons from './components/Buttons'
@@ -29,15 +30,20 @@ const getColumns = (cells?: any) => {
           { ruleId, ruleName, unit }: {
             ruleId: number, ruleName: string, unit: string
           }
-        ) => ({
-          title: `${ruleName}(${unit})`,
-          dataIndex: ruleId,
-          width: 102,
-          render: (v: number | string) =>
-            (typeof v === 'number' && !Number.isNaN(v))
-              ? v / 100
-              : v || '-'
-        })
+        ) => {
+          const title = `${ruleName}(${unit})`
+          return {
+            title: <div className='pg-balance--column-header'>
+              <Tooltip title={title}>{ title }</Tooltip>
+            </div>,
+            dataIndex: ruleId,
+            width: 102,
+            render: (v: number | string) =>
+              (typeof v === 'number' && !Number.isNaN(v))
+                ? v / 100
+                : v || '-'
+          }
+        }
       )
     ]
   }

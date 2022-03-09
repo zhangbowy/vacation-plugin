@@ -66,6 +66,7 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
     [],
   );
   const handleConfirm = useCallback(() => {
+    loading.show();
     form
       .validateFields()
       .then((values) => {
@@ -83,8 +84,8 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
             .filter((v) => v[1])
             .map(([key]) => key),
         };
-        loading.show();
         updateRole(params).then(([success]) => {
+          loading.hide();
           if (success) {
             msg(id ? '权限编辑成功' : '权限添加成功');
             dispatch({ type: 'table/refreshTable' });
@@ -95,6 +96,7 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
         });
       })
       .catch((e) => {
+        loading.hide();
         const { errorFields = [] } = e;
         if (errorFields[0] && errorFields[0].errors) {
           const errors = errorFields[0].errors || [];
