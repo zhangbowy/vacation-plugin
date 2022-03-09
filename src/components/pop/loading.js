@@ -1,38 +1,37 @@
-import { render, unmountComponentAtNode } from 'react-dom'
-import { Spin } from 'antd'
+import React from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
+import { Spin } from 'antd';
 
-let el = null
-let storeFlag = ''
+let el = null;
+let storeFlag = '';
 export const execHideLoading = (flag, changeCss) => {
   if (storeFlag && storeFlag !== flag) {
-    return
+    return;
   }
-  storeFlag = ''
+  storeFlag = '';
   if (el) {
-    const unmounted = unmountComponentAtNode(el)
+    const unmounted = unmountComponentAtNode(el);
     if (unmounted) {
-      el.parentNode.removeChild(el)
-      el = null
+      el.parentNode.removeChild(el);
+      el = null;
       if (changeCss) {
-        document.body.style.overflow = ''
+        document.body.style.overflow = '';
       }
     }
   }
-}
-export const execShowLoading = (
-  time, flag, changeCss, loadingTips, className
-) => {
+};
+export const execShowLoading = (time, flag, changeCss, loadingTips, className) => {
   if (flag) {
-    storeFlag = flag
+    storeFlag = flag;
   }
   if (el) {
-    return
+    return;
   }
-  el = document.createElement('div')
-  el.style = 'position: fixed top: 0 right: 0' +
-  ' bottom: 0 left: 0' +
-  ' text-align: center z-index: 99999'
-  document.body.appendChild(el)
+  el = document.createElement('div');
+  el.style = 'position: fixed; top: 0; right: 0;' +
+  ' bottom: 0; left: 0;' +
+  ' text-align: center; z-index: 99999;';
+  document.body.appendChild(el);
   render(
     <Spin
       className={className}
@@ -45,22 +44,22 @@ export const execShowLoading = (
       }}
     />,
     el
-  )
+  );
   if (typeof time === 'number' && time >= 0) {
-    setTimeout(flag => execHideLoading(flag, true), time)
+    setTimeout(flag => execHideLoading(flag, true), time);
   }
   if (changeCss) {
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden';
   }
-}
-
-export const showLoading = (time, flag, loadingTips, className) =>
-  execShowLoading(time, flag, false, loadingTips, className)
-export const hideLoading = flag => execHideLoading(flag, false)
-export const inLoading = () => storeFlag !== ''
-
-export default {
-  show: showLoading,
-  hide: hideLoading,
+};
+export const showLoadingX = (time, flag, loadingTips, className) =>
+  execShowLoading(time, flag, false, loadingTips, className);
+export const hideLoadingX = flag => execHideLoading(flag, false);
+export const inLoading = () => storeFlag !== '';
+export const loading = {
+  show: showLoadingX,
+  hide: hideLoadingX,
   status: inLoading,
-}
+};
+
+export default loading;

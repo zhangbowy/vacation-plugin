@@ -9,6 +9,7 @@ import Upload from '@/components/form/Upload'
 import { createSuccess, createError } from '@/components/pop/Modal'
 import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
 import { batchUpload } from '@/services/balance'
+import loading from '@/components/pop/loading'
 
 type DepartmentsType = { id: string | number, name: string, number: number }[]
 
@@ -88,17 +89,23 @@ const Content: FC = () => {
       content: '导入文件中存在重复数据!18446831691136586'
     })
   }
+  const handleCatch = (e: any) => {
+    e.stopPropagation()
+  }
   const handleUpload = useCallback(
     () => {
+      loading.show()
       const { file } = fileInfo
       batchUpload({ uploadFile: file }).then(d => {
         const [success, result = {}] = d
         if (success && !result.errorCode) {
           handleSuccess()
+          setFileInfo({ file: null, fileList: [] })
         } else if (result.errorCode) {
           // 当错误码为定值时，报错
           handleError()
         }
+        loading.hide()
       })
     },
     [fileInfo]
@@ -227,15 +234,23 @@ const Content: FC = () => {
           >
             { fileInfo.file ? '重新选择' : '选择文件' }
           </Button>
+          {
+            fileInfo.file &&
+            <div
+              className='pg-balance-batch-edit--content--fetch-wrap'
+              onClick={handleCatch}
+            >
+              <Button
+                className='pg-balance-batch-edit--content--fetch'
+                type='primary'
+                onClick={handleUpload}
+              >
+                开始上传
+              </Button>
+            </div>
+          }
         </Upload>
       </div>
-      <Button
-        type='primary'
-        onClick={handleUpload}
-        disabled={!fileInfo.file}
-      >
-        开始上传
-      </Button>
     </div>
   </>
 }
