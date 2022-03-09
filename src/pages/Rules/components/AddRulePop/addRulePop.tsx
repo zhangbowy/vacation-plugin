@@ -1233,16 +1233,21 @@ const AddRulePop: FC = () => {
                     )}
                 </Item>
                 {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
-                  <Item label="额度计算方式" style={{ marginBottom: 0 }}>
-                    <Item
-                      label=""
-                      style={{ display: 'inline-block', width: '100%' }}
-                      name={['vacationIssueRule', 'quotaRule', 'averageType']}
-                      rules={[{ required: true, message: '请选择额度计算方式' }]}
-                    >
-                      <Select options={averageTypeMap} />
+                  <>
+                    <Item label="额度计算方式" style={{}}>
+                      <Item
+                        label=""
+                        style={{ marginBottom: 0, display: 'inline-block', width: '100%' }}
+                        name={['vacationIssueRule', 'quotaRule', 'averageType']}
+                        rules={[{ required: true, message: '请选择额度计算方式' }]}
+                      >
+                        <Select options={averageTypeMap} />
+                      </Item>
+                      {formData.vacationIssueRule.quotaRule.averageType === 'average_work_time' && (
+                        <p className="average-type-tip">额度=上年在职天数/365*对应假期额度</p>
+                      )}
                     </Item>
-                  </Item>
+                  </>
                 )}
                 {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
                   <Item label="额度取整" style={{ marginBottom: 0 }}>
