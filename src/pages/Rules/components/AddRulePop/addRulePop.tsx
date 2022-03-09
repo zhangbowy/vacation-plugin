@@ -947,7 +947,7 @@ const AddRulePop: FC = () => {
                   label=""
                   style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
                   name={['leaveCertificate', 'promptInformation']}
-                  rules={[{ required: true, message: '请输入' }]}
+                  rules={[{ required: true, message: '请输入提示语' }]}
                 >
                   <Input onChange={() => {}} placeholder={'请输入提示语'} />
                 </Item>
@@ -1040,9 +1040,16 @@ const AddRulePop: FC = () => {
                     className="hours-InPerDay-input"
                     name="maxLeaveTime"
                   >
-                    <InputNumber min={1} max={24} onChange={() => {}} />
+                    <InputNumber
+                      min={1}
+                      step={formData.leaveViewUnit === 'halfDay' ? 0.5 : 1}
+                      max={24}
+                      onChange={() => {}}
+                    />
                   </Item>
-                  <span className="hour-text">天</span>
+                  <span className="hour-text">
+                    {formData.leaveViewUnit === 'hour' ? '小时' : '天'}
+                  </span>
                 </>
               )}
             </Item>
@@ -1177,7 +1184,10 @@ const AddRulePop: FC = () => {
                     </Item>
                   )}
 
-                  <span className="hour-text">自动发放</span>
+                  <span className="hour-text">
+                    {formData.vacationIssueRule?.timeRule?.issueType === 'month_day' ? '号' : ''}
+                    自动发放
+                  </span>
                 </Item>
 
                 <Item label="额度发放人员" style={{ marginBottom: 0 }}>
