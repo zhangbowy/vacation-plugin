@@ -18,7 +18,7 @@ interface UserSelectProps {
   onChange?: (users: ValuesType) => any;
   options?: Record<string, any>;
   placeholder?: string;
-  responseUserOnly: boolean;
+  responseUserOnly?: boolean;
 }
 
 interface Result {

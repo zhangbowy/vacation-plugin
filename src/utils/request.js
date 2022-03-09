@@ -49,7 +49,28 @@ const responseInterceptorDownload = async (response, options) => {
   return response;
 };
 
-const requestInterceptors = [requestInterceptorToken];
+const requestInterceptorUpload = async (url, options) => {
+  const { upload } = options
+  if (upload) {
+    const { data } = options
+    const formData = new FormData()
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value)
+    })
+    return {
+      url,
+      options: {
+        ...options,
+        data: formData,
+        requestType: 'form'
+      }
+    }
+  }
+  return { url, options };
+};
+
+
+const requestInterceptors = [requestInterceptorToken, requestInterceptorUpload];
 
 const responseInterceptors = [responseInterceptorDownload];
 
