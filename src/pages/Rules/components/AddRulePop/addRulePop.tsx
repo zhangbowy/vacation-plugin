@@ -51,7 +51,7 @@ const APPLICATION_RANGE = [
 const LIMIT_SUBMIT = [
   {
     value: 'none',
-    label: '不限时',
+    label: '不开启',
   },
   {
     value: 'before',
@@ -1159,7 +1159,7 @@ const AddRulePop: FC = () => {
                       <Item
                         label=""
                         style={{ display: 'inline-block' }}
-                        className="m-r-8"
+                        className="issueDayOfMonth m-r-8"
                         name={['vacationIssueRule', 'timeRule', 'issueDayOfMonth']}
                       >
                         <InputNumber min={1} max={28} />
