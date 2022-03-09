@@ -135,7 +135,9 @@ const defaultColumns = [
     render: (d: VacationTypeRule) => {
       return (
         <>
-          <span>{d.leaveName}</span>
+          <span>
+            {d.leaveName.length > 11 ? d.leaveName.substring(0, 11) + '...' : d.leaveName}
+          </span>
           {d.bizType === 'lieu_leave' && <span className={'lieu-title'}>调休假</span>}
         </>
       );
@@ -276,6 +278,7 @@ const Rules: FC = () => {
   const onClick_del = (d: Result) => {
     confirm({
       title: '确定删除吗？',
+      width: 400,
       content: (
         <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>
           删除后，所有员工余额、假期使用记录将被清除，数据不可恢复，请谨慎操作!
@@ -309,6 +312,13 @@ const Rules: FC = () => {
             handle: onClick_edit,
           });
         }
+        if (checkAuth(1004)) {
+          r.push({
+            title: '删除',
+            handle: onClick_del,
+            disabled: has_lieu_leave,
+          });
+        }
         if (checkAuth(1003)) {
           r.push({
             title: has_lieu_leave ? (
@@ -319,13 +329,6 @@ const Rules: FC = () => {
               <span>复制</span>
             ),
             handle: onClick_copy,
-            disabled: has_lieu_leave,
-          });
-        }
-        if (checkAuth(1004)) {
-          r.push({
-            title: '删除',
-            handle: onClick_del,
             disabled: has_lieu_leave,
           });
         }
