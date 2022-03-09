@@ -440,9 +440,12 @@ const AddRulePop: FC = () => {
       }
 
       if (vacationTypeRule.visibilityRules && vacationTypeRule.visibilityRules.length > 0) {
-        const departments =
-          vacationTypeRule.visibilityRules.find((item) => item.type === 'dept') || {};
-        const users = vacationTypeRule.visibilityRules.find((item) => item.type === 'staff') || {};
+        const departments = vacationTypeRule.visibilityRules.find(
+          (item) => item.type === 'dept',
+        ) || { details: [] };
+        const users = vacationTypeRule.visibilityRules.find((item) => item.type === 'staff') || {
+          details: [],
+        };
         editData.chooseUsers = {
           departments: departments?.details,
           users: users?.details.map(({ id, name }) => {
@@ -1156,7 +1159,7 @@ const AddRulePop: FC = () => {
                       <Item
                         label=""
                         style={{ display: 'inline-block' }}
-                        className="w-120 m-r-8"
+                        className="m-r-8"
                         name={['vacationIssueRule', 'timeRule', 'issueDayOfMonth']}
                       >
                         <InputNumber min={1} max={28} />
