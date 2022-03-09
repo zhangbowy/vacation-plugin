@@ -31,8 +31,12 @@ const BasicLayout = (props) => {
   }, [pathname]);
 
   useEffect(() => {
-    const isPage = props.route.routes.find((item) => item.path === pathname);
-    if (!isPage && pathname != '/' && pathname != '/404') {
+    const page = props.route.routes.find((item) => item.permissionId);
+    const exist = props.route.routes.find((item) => item.path === pathname);
+    if (exist) {
+      return;
+    }
+    if (page && pathname != '/') {
       history.push('/');
     }
   }, [locations]);
