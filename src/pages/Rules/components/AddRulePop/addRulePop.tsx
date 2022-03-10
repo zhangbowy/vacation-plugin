@@ -15,7 +15,7 @@ import InputNumber from '@/components/form/InputNumber';
 import DatePicker from '@/components/form/DatePicker';
 import { Space, Switch } from 'antd';
 import UserSelect from '@/components/form/UserSelect/UserSelect';
-import { addRule, delRule, editRule } from '@/services/rules';
+import { addRule, getDetail, editRule } from '@/services/rules';
 import { errMsg, msg } from '@/components/pop';
 import { __merge } from '@/utils/utils';
 import Tooltip from '@/components/pop/Tooltip/Tooltip';
@@ -23,6 +23,7 @@ import loading from '@/components/pop/loading';
 import moment from 'moment';
 import QuotaRule from './../QuotaRule';
 import { confirm } from '@/components/pop/Modal';
+import { Spin } from 'antd';
 
 const RULE_TYPE = [
   {
@@ -372,13 +373,14 @@ const AddRulePop: FC = () => {
     isShowAddPop: state.rules.isShowAddPop,
     editInfo: state.rules.editInfo,
     isCopy: state.rules.isCopy,
-    hasLieuLeave: state.rules.hasLieuLeave,
+    hasLieuLeave: state.rules.editInfo?.isHasLieuLeave,
   }));
   const [form] = useForm();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(__merge({}, defaultData, true));
   const [issueTimeTypeOpts, setIssueTimeTypeOpts] = useState(IssueTimeTypeMap.annual);
   const [isShowLoading, setIsShowLoading] = useState(false);
+  const [isPopLoading, setIsPopLoading] = useState(false);
   const workAgeRef = useRef();
   const entryAgeRef = useRef();
 
@@ -482,8 +484,20 @@ const AddRulePop: FC = () => {
     }
   };
 
-  useEffect(() => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(async () => {
+    setIsPopLoading(true);
+    if (editInfo?.id) {
+      const [err, result] = await getDetail({ id: editInfo.id });
+      dispatch({
+        type: 'rules/updateState',
+        payload: { editInfo: result },
+      });
+    }
     init();
+    setTimeout(() => {
+      setIsPopLoading(false);
+    }, 300);
   }, [form]);
 
   const onChange_value = (changedValues: any, allVal: any) => {
@@ -813,452 +827,272 @@ const AddRulePop: FC = () => {
           }
         </div>
       </div>
-      <div className="customer_body">
-        <Form layout="vertical" onValuesChange={onChange_value} form={form}>
-          {/*基本信息*/}
-          <div className="base_info">
-            <div className="title">基本信息</div>
-            <Item
-              label="假期规则名称"
-              name="leaveName"
-              rules={[{ required: true, message: '请输入规则名称' }]}
-            >
-              <Input placeholder="请输入规则名称" showCount={showCount} maxLength={64} />
-            </Item>
-            <Item
-              label="假期规则类型"
-              name="bizType"
-              className="w-120"
-              rules={[{ required: true, message: '请选择' }]}
-            >
-              <Select onChange={() => {}} disabled={hasLieuLeave} options={RULE_TYPE} />
-            </Item>
-            <Item label="新员工请假" name="whenCanLeave">
-              <Group>
-                <Space direction="vertical">
-                  <Radio value={'entry'}>入职可使用</Radio>
-                  <Radio value={'formal'}>转正可使用</Radio>
-                </Space>
-              </Group>
-            </Item>
-            <Item label="规则适用范围" style={{ marginBottom: 0 }}>
+      <Spin spinning={isPopLoading}>
+        <div className="customer_body">
+          <Form layout="vertical" onValuesChange={onChange_value} form={form}>
+            {/*基本信息*/}
+            <div className="base_info">
+              <div className="title">基本信息</div>
               <Item
-                label=""
-                style={{ display: 'inline-block' }}
+                label="假期规则名称"
+                name="leaveName"
+                rules={[{ required: true, message: '请输入规则名称' }]}
+              >
+                <Input placeholder="请输入规则名称" showCount={showCount} maxLength={64} />
+              </Item>
+              <Item
+                label="假期规则类型"
+                name="bizType"
                 className="w-120"
-                name="isAllCompany"
                 rules={[{ required: true, message: '请选择' }]}
               >
-                <Select onChange={(e) => {}} options={APPLICATION_RANGE} />
+                <Select onChange={() => {}} disabled={hasLieuLeave} options={RULE_TYPE} />
               </Item>
-              {!formData.isAllCompany && (
+              <Item label="新员工请假" name="whenCanLeave">
+                <Group>
+                  <Space direction="vertical">
+                    <Radio value={'entry'}>入职可使用</Radio>
+                    <Radio value={'formal'}>转正可使用</Radio>
+                  </Space>
+                </Group>
+              </Item>
+              <Item label="规则适用范围" style={{ marginBottom: 0 }}>
                 <Item
                   label=""
-                  style={{ display: 'inline-block', width: 270, margin: '0 8px' }}
-                  name="chooseUsers"
+                  style={{ display: 'inline-block' }}
+                  className="w-120"
+                  name="isAllCompany"
+                  rules={[{ required: true, message: '请选择' }]}
                 >
-                  <UserSelect
-                    placeholder="请选择"
-                    responseUserOnly={false}
-                    className={'app_range_user_select'}
-                  />
+                  <Select onChange={(e) => {}} options={APPLICATION_RANGE} />
                 </Item>
-              )}
-            </Item>
-            <Item label="是否带薪" name="paidLeave">
-              <Group>
-                <Space direction="vertical">
-                  <Radio value={true}>是</Radio>
-                  <Radio value={false}>否</Radio>
-                </Space>
-              </Group>
-            </Item>
-            <Item
-              rules={[{ required: true, message: '' }]}
-              label="限时提交"
-              style={{ marginBottom: 0 }}
-            >
-              <Item
-                label=""
-                style={{ display: 'inline-block' }}
-                className="w-120 m-r-8"
-                name={['submitTimeRule', 'timeType']}
-              >
-                <Select onChange={() => {}} options={LIMIT_SUBMIT} />
-              </Item>
-              {formData.submitTimeRule.timeType === 'before' && (
-                <>
+                {!formData.isAllCompany && (
                   <Item
                     label=""
-                    style={{ display: 'inline-block' }}
-                    className="hours-InPerDay-input"
-                    name={['submitTimeRule', 'timeValue']}
-                    rules={[{ required: true, message: '请填写天数' }]}
+                    style={{ display: 'inline-block', width: 270, margin: '0 8px' }}
+                    name="chooseUsers"
                   >
-                    <InputNumber min={1} max={24} onChange={() => {}} />
-                  </Item>
-                  <Item
-                    label=""
-                    name={['submitTimeRule', 'timeUnit']}
-                    className="w-80 m-l-8 inline"
-                    rules={[{ required: true, message: '请选择天或小时' }]}
-                  >
-                    <Select options={TIME_UNIT} />
-                  </Item>
-                  <span className="hour-text">提交请假申请</span>
-                </>
-              )}
-              {formData.submitTimeRule.timeType === 'after' && (
-                <>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block' }}
-                    className="hours-InPerDay-input"
-                    name={['submitTimeRule', 'timeValue']}
-                    rules={[{ required: true, message: '请填写天数' }]}
-                  >
-                    <InputNumber min={1} onChange={() => {}} />
-                  </Item>
-                  <Item
-                    label=""
-                    name={['submitTimeRule', 'timeUnit']}
-                    className="w-80 m-l-8 inline"
-                    rules={[{ required: true, message: '请选择天或小时' }]}
-                  >
-                    <Select options={TIME_UNIT} />
-                  </Item>
-                  <span className="hour-text">之内的请假申请</span>
-                </>
-              )}
-            </Item>
-            <Item label="员工请假时提交证明" name="leaveCertificate" style={{ marginBottom: 0 }}>
-              <Item
-                label=""
-                style={{ display: 'inline-block' }}
-                className="w-120"
-                name={['leaveCertificate', 'enable']}
-              >
-                <Select onChange={() => {}} options={PROVE} />
-              </Item>
-              {formData.leaveCertificate.enable && (
-                <Item
-                  label=""
-                  style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
-                  name={['leaveCertificate', 'promptInformation']}
-                  rules={[{ required: true, message: '请输入提示语' }]}
-                >
-                  <Input onChange={() => {}} placeholder={'请输入提示语'} />
-                </Item>
-              )}
-            </Item>
-          </div>
-
-          <div className="base_info">
-            <div className="title">时长核算规则</div>
-            <Item label="最小请假单位" style={{ marginBottom: 0 }}>
-              <Item
-                label=""
-                name="leaveViewUnit"
-                className="w-120 inline"
-                rules={[{ required: true, message: '请选择' }]}
-              >
-                <Select options={leaveViewUnit} />
-              </Item>
-              {formData.leaveViewUnit === 'hour' && (
-                <>
-                  <span className="hour-text m-l-8">，时长</span>
-                  <Item label="" name="leaveHourCeil" className="w-120 m-l-8 inline">
-                    <Select options={HourCeil} />
-                  </Item>
-                  {formData.leaveHourCeil && (
-                    <>
-                      <Item label="" name="leaveTimeCeilMinUnit" className="w-120 m-l-8 inline">
-                        <Select options={leaveTimeCeilMinUnit} />
-                      </Item>
-                      <span className="leave-unit-tips m-l-8">
-                        <Tooltip
-                          overlayClassName="leave-unit--tooltip"
-                          title={
-                            <div>
-                              <p>向上取整：</p>
-                              <p>
-                                按1小时取整：抹掉小数，整数+1；按半小时取整：小数点后1位大于0.5，则抹掉小数，整数+1；小数点后一位小于0.5，则小数点计为0.5
-                              </p>
-                              <p>向下取整</p>
-                              <p>
-                                按1小时取整：抹掉小数，整数不变；按半小时取整：小数点后1位大于0.5，则小数点计为0.5；小数点后一位小于0.5，则抹去小数，整数不变
-                              </p>
-                            </div>
-                          }
-                        >
-                          <Icon type="icon-tishi" className={'close_icon'} />
-                        </Tooltip>
-                      </span>
-                    </>
-                  )}
-                </>
-              )}
-            </Item>
-            <Item label="请假时长核算" name="naturalDayLeave">
-              <Group>
-                <Space direction="vertical">
-                  <Radio value={false}>按照工作日计算时长</Radio>
-                  <Radio value={true}>按照自然日计算时长</Radio>
-                </Space>
-              </Group>
-            </Item>
-            <Item label="工时折算" style={{ marginBottom: 0 }}>
-              <span className="hours-InPerDay">1天工时折合</span>
-              <Item
-                label=""
-                style={{ display: 'inline-block' }}
-                className="hours-InPerDay-input"
-                name="hoursInPerDay"
-              >
-                <InputNumber min={1} max={24} onChange={() => {}} />
-              </Item>
-              <span className="hour-text">小时</span>
-            </Item>
-            <Item label="单次请假时长" style={{ marginBottom: 0 }}>
-              <Item
-                style={{ display: 'inline-block' }}
-                className="w-120 m-r-8"
-                label=""
-                name="isLimitLeaveTime"
-              >
-                <Select onChange={() => {}} options={DURATION} />
-              </Item>
-
-              {formData.isLimitLeaveTime && (
-                <>
-                  <span className="hours-InPerDay">单次请假不能超过</span>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block' }}
-                    className="hours-InPerDay-input"
-                    name="maxLeaveTime"
-                  >
-                    <InputNumber
-                      min={1}
-                      step={formData.leaveViewUnit === 'halfDay' ? 0.5 : 1}
-                      max={24}
-                      onChange={() => {}}
+                    <UserSelect
+                      placeholder="请选择"
+                      responseUserOnly={false}
+                      className={'app_range_user_select'}
                     />
                   </Item>
-                  <span className="hour-text">
-                    {formData.leaveViewUnit === 'hour' ? '小时' : '天'}
-                  </span>
-                </>
-              )}
-            </Item>
-          </div>
-          <div className="base_info">
-            <div className="title-wrap" style={{ display: 'flex', alignItems: 'center' }}>
-              <div className="title">假期额度设置</div>
-              <Tooltip
-                overlayClassName="leave-unit--tooltip"
-                title={'开启后，可设置假期额度，例如年假每年5天；关闭则不限制假期额度。'}
-              >
-                <Icon type="icon-tishi" className={'tips'} />
-              </Tooltip>
+                )}
+              </Item>
+              <Item label="是否带薪" name="paidLeave">
+                <Group>
+                  <Space direction="vertical">
+                    <Radio value={true}>是</Radio>
+                    <Radio value={false}>否</Radio>
+                  </Space>
+                </Group>
+              </Item>
               <Item
-                style={{
-                  display: 'inline-block',
-                  width: 100,
-                  height: 32,
-                  margin: '0 8px',
-                }}
-                label=""
-                name={['vacationIssueRule', 'freedomLeave']}
+                rules={[{ required: true, message: '' }]}
+                label="限时提交"
+                style={{ marginBottom: 0 }}
               >
-                <Switch
-                  disabled={formData.bizType === 'lieu_leave'}
-                  checked={formData.vacationIssueRule.freedomLeave}
-                />
+                <Item
+                  label=""
+                  style={{ display: 'inline-block' }}
+                  className="w-120 m-r-8"
+                  name={['submitTimeRule', 'timeType']}
+                >
+                  <Select onChange={() => {}} options={LIMIT_SUBMIT} />
+                </Item>
+                {formData.submitTimeRule.timeType === 'before' && (
+                  <>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block' }}
+                      className="hours-InPerDay-input"
+                      name={['submitTimeRule', 'timeValue']}
+                      rules={[{ required: true, message: '请填写天数' }]}
+                    >
+                      <InputNumber min={1} max={24} onChange={() => {}} />
+                    </Item>
+                    <Item
+                      label=""
+                      name={['submitTimeRule', 'timeUnit']}
+                      className="w-80 m-l-8 inline"
+                      rules={[{ required: true, message: '请选择天或小时' }]}
+                    >
+                      <Select options={TIME_UNIT} />
+                    </Item>
+                    <span className="hour-text">提交请假申请</span>
+                  </>
+                )}
+                {formData.submitTimeRule.timeType === 'after' && (
+                  <>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block' }}
+                      className="hours-InPerDay-input"
+                      name={['submitTimeRule', 'timeValue']}
+                      rules={[{ required: true, message: '请填写天数' }]}
+                    >
+                      <InputNumber min={1} onChange={() => {}} />
+                    </Item>
+                    <Item
+                      label=""
+                      name={['submitTimeRule', 'timeUnit']}
+                      className="w-80 m-l-8 inline"
+                      rules={[{ required: true, message: '请选择天或小时' }]}
+                    >
+                      <Select options={TIME_UNIT} />
+                    </Item>
+                    <span className="hour-text">之内的请假申请</span>
+                  </>
+                )}
+              </Item>
+              <Item label="员工请假时提交证明" name="leaveCertificate" style={{ marginBottom: 0 }}>
+                <Item
+                  label=""
+                  style={{ display: 'inline-block' }}
+                  className="w-120"
+                  name={['leaveCertificate', 'enable']}
+                >
+                  <Select onChange={() => {}} options={PROVE} />
+                </Item>
+                {formData.leaveCertificate.enable && (
+                  <Item
+                    label=""
+                    style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
+                    name={['leaveCertificate', 'promptInformation']}
+                    rules={[{ required: true, message: '请输入提示语' }]}
+                  >
+                    <Input onChange={() => {}} placeholder={'请输入提示语'} />
+                  </Item>
+                )}
               </Item>
             </div>
-            {formData.vacationIssueRule.freedomLeave === false && (
-              <Item label="额度有效期" style={{ marginBottom: 0 }}>
+
+            <div className="base_info">
+              <div className="title">时长核算规则</div>
+              <Item label="最小请假单位" style={{ marginBottom: 0 }}>
                 <Item
                   label=""
-                  style={{ display: 'inline-block', width: 200 }}
-                  className="m-r-8"
-                  name={['vacationIssueRule', 'expireRule', 'expireType']}
+                  name="leaveViewUnit"
+                  className="w-120 inline"
+                  rules={[{ required: true, message: '请选择' }]}
                 >
-                  <Select onChange={(e) => {}} options={expireTypeMap} />
+                  <Select options={leaveViewUnit} />
                 </Item>
-                {/*固定时间段*/}
-                {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
+                {formData.leaveViewUnit === 'hour' && (
                   <>
-                    <span className="hour-text m-r-8">自发起日起</span>
-                    <Item
-                      label=""
-                      style={{ display: 'inline-block' }}
-                      className="expireRule"
-                      name={['vacationIssueRule', 'expireRule', 'fixedTime']}
-                    >
-                      <InputNumber />
+                    <span className="hour-text m-l-8">，时长</span>
+                    <Item label="" name="leaveHourCeil" className="w-120 m-l-8 inline">
+                      <Select options={HourCeil} />
                     </Item>
-                    <Item
-                      label=""
-                      name="fixedUnit"
-                      className="w-80 m-l-8 inline"
-                      rules={[{ required: true, message: '请选择天或月' }]}
-                    >
-                      <Select options={FIXED_UNIT} />
-                    </Item>
-                    <span className="hour-text m-l-8">有效</span>
+                    {formData.leaveHourCeil && (
+                      <>
+                        <Item label="" name="leaveTimeCeilMinUnit" className="w-120 m-l-8 inline">
+                          <Select options={leaveTimeCeilMinUnit} />
+                        </Item>
+                        <span className="leave-unit-tips m-l-8">
+                          <Tooltip
+                            overlayClassName="leave-unit--tooltip"
+                            title={
+                              <div>
+                                <p>向上取整：</p>
+                                <p>
+                                  按1小时取整：抹掉小数，整数+1；按半小时取整：小数点后1位大于0.5，则抹掉小数，整数+1；小数点后一位小于0.5，则小数点计为0.5
+                                </p>
+                                <p>向下取整</p>
+                                <p>
+                                  按1小时取整：抹掉小数，整数不变；按半小时取整：小数点后1位大于0.5，则小数点计为0.5；小数点后一位小于0.5，则抹去小数，整数不变
+                                </p>
+                              </div>
+                            }
+                          >
+                            <Icon type="icon-tishi" className={'close_icon'} />
+                          </Tooltip>
+                        </span>
+                      </>
+                    )}
                   </>
-                )}
-                {/*指定某天*/}
-                {formData.vacationIssueRule.expireRule?.expireType === 'specify_day' && (
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block' }}
-                    // className="w-120"
-                    name={['vacationIssueRule', 'expireRule', 'specifyDay']}
-                    rules={[{ required: true, message: '请选择日期' }]}
-                  >
-                    <DatePicker format={'MM-DD'} />
-                  </Item>
-                )}
-                {/*直到某天*/}
-                {formData.vacationIssueRule.expireRule?.expireType === 'until_day' && (
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block' }}
-                    // className="w-120"
-                    name={['vacationIssueRule', 'expireRule', 'untilDay']}
-                    rules={[{ required: true, message: '请选择日期' }]}
-                  >
-                    <DatePicker />
-                  </Item>
                 )}
               </Item>
-            )}
-            {formData.vacationIssueRule.freedomLeave && (
-              <div>
-                <Item label="额度发放方式" style={{ marginBottom: 0 }}>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block' }}
-                    className="w-120 m-r-8"
-                    name={['vacationIssueRule', 'timeRule', 'issueType']}
-                  >
-                    <Select onChange={onChange_issueType} options={level1Data} />
-                  </Item>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block' }}
-                    className="w-120 m-r-8"
-                    name={['vacationIssueRule', 'timeRule', 'issueTimeType']}
-                  >
-                    <Select
-                      disabled={formData.vacationIssueRule?.timeRule?.issueType === 'month_day'}
-                      onChange={(e) => {}}
-                      options={issueTimeTypeOpts}
-                    />
-                  </Item>
-                  {showChooseDay() &&
-                    formData.vacationIssueRule?.timeRule?.issueType === 'month_day' && (
-                      <Item
-                        label=""
-                        style={{ display: 'inline-block' }}
-                        className="issueDayOfMonth m-r-8"
-                        name={['vacationIssueRule', 'timeRule', 'issueDayOfMonth']}
-                      >
-                        <InputNumber min={1} max={28} />
-                      </Item>
-                    )}
-                  {showChooseDay() && formData.vacationIssueRule?.timeRule?.issueType === 'annual' && (
+              <Item label="请假时长核算" name="naturalDayLeave">
+                <Group>
+                  <Space direction="vertical">
+                    <Radio value={false}>按照工作日计算时长</Radio>
+                    <Radio value={true}>按照自然日计算时长</Radio>
+                  </Space>
+                </Group>
+              </Item>
+              <Item label="工时折算" style={{ marginBottom: 0 }}>
+                <span className="hours-InPerDay">1天工时折合</span>
+                <Item
+                  label=""
+                  style={{ display: 'inline-block' }}
+                  className="hours-InPerDay-input"
+                  name="hoursInPerDay"
+                >
+                  <InputNumber min={1} max={24} onChange={() => {}} />
+                </Item>
+                <span className="hour-text">小时</span>
+              </Item>
+              <Item label="单次请假时长" style={{ marginBottom: 0 }}>
+                <Item
+                  style={{ display: 'inline-block' }}
+                  className="w-120 m-r-8"
+                  label=""
+                  name="isLimitLeaveTime"
+                >
+                  <Select onChange={() => {}} options={DURATION} />
+                </Item>
+
+                {formData.isLimitLeaveTime && (
+                  <>
+                    <span className="hours-InPerDay">单次请假不能超过</span>
                     <Item
                       label=""
                       style={{ display: 'inline-block' }}
-                      className="w-120 m-r-8"
-                      name={['vacationIssueRule', 'timeRule', 'issueDayOfYear']}
-                      rules={[{ required: true, message: '请选择日期' }]}
+                      className="hours-InPerDay-input"
+                      name="maxLeaveTime"
                     >
-                      <DatePicker format={'MM-DD'} />
+                      <InputNumber
+                        min={1}
+                        step={formData.leaveViewUnit === 'halfDay' ? 0.5 : 1}
+                        max={24}
+                        onChange={() => {}}
+                      />
                     </Item>
-                  )}
-
-                  <span className="hour-text">
-                    {formData.vacationIssueRule?.timeRule?.issueType === 'month_day' ? '号' : ''}
-                    自动发放
-                  </span>
-                </Item>
-
-                <Item label="额度发放人员" style={{ marginBottom: 0 }}>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block' }}
-                    className="w-120"
-                    name={['vacationIssueRule', 'targetRule', 'targetType']}
-                  >
-                    <Select onChange={(e) => {}} options={TARGET_USER} />
-                  </Item>
-                  {formData.vacationIssueRule?.targetRule &&
-                    formData.vacationIssueRule.targetRule.targetType === 'specific' && (
-                      <div className="targetRule">
-                        <span className="hours-InPerDay">性别为</span>
-                        <Item
-                          label=""
-                          style={{ display: 'inline-block', width: 80, marginRight: 8 }}
-                          name={['vacationIssueRule', 'targetRule', 'sex']}
-                          rules={[{ required: true, message: '请选择性别' }]}
-                        >
-                          <Select onChange={(e) => {}} options={SEX} />
-                        </Item>
-                        年龄在
-                        <Item
-                          label=""
-                          style={{ display: 'inline-block', width: 80, margin: '0 8px' }}
-                          name={['vacationIssueRule', 'targetRule', 'minAge']}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          <InputNumber min={0} onChange={(e) => {}} />
-                        </Item>
-                        <span>-</span>
-                        <Item
-                          label=""
-                          style={{ display: 'inline-block', width: 80, margin: '0 8px' }}
-                          name={['vacationIssueRule', 'targetRule', 'maxAge']}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          <InputNumber min={1} />
-                        </Item>
-                      </div>
-                    )}
-                </Item>
-                {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
-                  <>
-                    <Item label="额度计算方式" style={{}}>
-                      <Item
-                        label=""
-                        style={{ marginBottom: 0, display: 'inline-block', width: '100%' }}
-                        name={['vacationIssueRule', 'quotaRule', 'averageType']}
-                        rules={[{ required: true, message: '请选择额度计算方式' }]}
-                      >
-                        <Select options={averageTypeMap} />
-                      </Item>
-                      {formData.vacationIssueRule.quotaRule.averageType === 'average_work_time' && (
-                        <p className="average-type-tip">额度=上年在职天数/365*对应假期额度</p>
-                      )}
-                    </Item>
+                    <span className="hour-text">
+                      {formData.leaveViewUnit === 'hour' ? '小时' : '天'}
+                    </span>
                   </>
                 )}
-                {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
-                  <Item label="额度取整" style={{ marginBottom: 0 }}>
-                    <Item
-                      label=""
-                      style={{ display: 'inline-block', width: '100%' }}
-                      name={['vacationIssueRule', 'quotaRule', 'roundType']}
-                      rules={[{ required: true, message: '请选择额度取整方式' }]}
-                    >
-                      <Select onChange={(e) => {}} options={roundTypeMap} />
-                    </Item>
-                  </Item>
-                )}
+              </Item>
+            </div>
+            <div className="base_info">
+              <div className="title-wrap" style={{ display: 'flex', alignItems: 'center' }}>
+                <div className="title">假期额度设置</div>
+                <Tooltip
+                  overlayClassName="leave-unit--tooltip"
+                  title={'开启后，可设置假期额度，例如年假每年5天；关闭则不限制假期额度。'}
+                >
+                  <Icon type="icon-tishi" className={'tips'} />
+                </Tooltip>
+                <Item
+                  style={{
+                    display: 'inline-block',
+                    width: 100,
+                    height: 32,
+                    margin: '0 8px',
+                  }}
+                  label=""
+                  name={['vacationIssueRule', 'freedomLeave']}
+                >
+                  <Switch
+                    disabled={formData.bizType === 'lieu_leave'}
+                    checked={formData.vacationIssueRule.freedomLeave}
+                  />
+                </Item>
+              </div>
+              {formData.vacationIssueRule.freedomLeave === false && (
                 <Item label="额度有效期" style={{ marginBottom: 0 }}>
                   <Item
                     label=""
@@ -1266,7 +1100,7 @@ const AddRulePop: FC = () => {
                     className="m-r-8"
                     name={['vacationIssueRule', 'expireRule', 'expireType']}
                   >
-                    <Select options={expireTypeMap} />
+                    <Select onChange={(e) => {}} options={expireTypeMap} />
                   </Item>
                   {/*固定时间段*/}
                   {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
@@ -1275,14 +1109,14 @@ const AddRulePop: FC = () => {
                       <Item
                         label=""
                         style={{ display: 'inline-block' }}
-                        // className="w-120"
+                        className="expireRule"
                         name={['vacationIssueRule', 'expireRule', 'fixedTime']}
                       >
                         <InputNumber />
                       </Item>
                       <Item
                         label=""
-                        name={['vacationIssueRule', 'expireRule', 'fixedUnit']}
+                        name="fixedUnit"
                         className="w-80 m-l-8 inline"
                         rules={[{ required: true, message: '请选择天或月' }]}
                       >
@@ -1296,6 +1130,7 @@ const AddRulePop: FC = () => {
                     <Item
                       label=""
                       style={{ display: 'inline-block' }}
+                      // className="w-120"
                       name={['vacationIssueRule', 'expireRule', 'specifyDay']}
                       rules={[{ required: true, message: '请选择日期' }]}
                     >
@@ -1315,173 +1150,361 @@ const AddRulePop: FC = () => {
                     </Item>
                   )}
                 </Item>
-                <Item label="有效期可以延长" style={{ marginBottom: 0 }}>
-                  <Item
-                    label=""
-                    style={{ display: 'inline-block' }}
-                    className="expireRule m-l-8 inline"
-                    name={['vacationIssueRule', 'expireRule', 'extendedTime']}
-                  >
-                    <InputNumber min={0} defaultValue={0} />
-                  </Item>
-                  <Item
-                    label=""
-                    name={['vacationIssueRule', 'expireRule', 'extendedUnit']}
-                    className="expireRule w-80 m-l-8 inline"
-                    rules={[{ required: true, message: '请选择天或月' }]}
-                  >
-                    <Select options={FIXED_UNIT} />
-                  </Item>
-                  {/*<span className="hour-text m-l-8">天</span>*/}
-                </Item>
-                {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
-                  <Item label="过期处理方式" style={{ marginBottom: 0 }}>
+              )}
+              {formData.vacationIssueRule.freedomLeave && (
+                <div>
+                  <Item label="额度发放方式" style={{ marginBottom: 0 }}>
                     <Item
                       label=""
-                      style={{ display: 'inline-block', width: '100%' }}
-                      name={['vacationIssueRule', 'expireRule', 'expiredWay']}
+                      style={{ display: 'inline-block' }}
+                      className="w-120 m-r-8"
+                      name={['vacationIssueRule', 'timeRule', 'issueType']}
                     >
-                      <Select onChange={(e) => {}} disabled options={expiredMap} defaultValue={0} />
+                      <Select onChange={onChange_issueType} options={level1Data} />
                     </Item>
-                  </Item>
-                )}
-                <div className={'quota-rule'}>
-                  <Item
-                    label={
-                      <div>
-                        <span>额度配置</span>
-                        <Tooltip title={'未配置或不符合条件则额度为0'}>
-                          <Icon type="icon-tishi" className={'tips'} />
-                        </Tooltip>
-                      </div>
-                    }
-                    style={{ marginBottom: 0 }}
-                  >
                     <Item
                       label=""
-                      style={{ display: 'inline-block', width: 320, marginBottom: 0 }}
-                      className=" m-r-8"
-                      name={['vacationIssueRule', 'quotaRule', 'quotaType']}
+                      style={{ display: 'inline-block' }}
+                      className="w-120 m-r-8"
+                      name={['vacationIssueRule', 'timeRule', 'issueTimeType']}
                     >
                       <Select
-                        disabled={formData.vacationIssueRule.timeRule.issueType != 'annual'}
+                        disabled={formData.vacationIssueRule?.timeRule?.issueType === 'month_day'}
                         onChange={(e) => {}}
-                        options={quotaTypeMap}
+                        options={issueTimeTypeOpts}
                       />
                     </Item>
-                    {/*额度配置 - 固定额度*/}
-                    {formData.vacationIssueRule.quotaRule?.quotaType === 'fixed' && (
-                      <>
-                        <span className="hour-text m-r-8">发放</span>
+                    {showChooseDay() &&
+                      formData.vacationIssueRule?.timeRule?.issueType === 'month_day' && (
                         <Item
                           label=""
                           style={{ display: 'inline-block' }}
-                          className="expireRule"
-                          name={['vacationIssueRule', 'quotaRule', 'fixedQuota']}
+                          className="issueDayOfMonth m-r-8"
+                          name={['vacationIssueRule', 'timeRule', 'issueDayOfMonth']}
                         >
-                          <InputNumber step="0.01" />
+                          <InputNumber min={1} max={28} />
                         </Item>
-                        <span className="hour-text m-l-8">天</span>
-                      </>
-                    )}
-                    {/*额度配置 - 按社会工龄*/}
-                    {formData.vacationIssueRule.quotaRule?.quotaType === 'work_age' && (
-                      <>
-                        <span
-                          className="add-rule-btn"
-                          onClick={() => {
-                            workAgeRef.current.add();
-                          }}
-                        >
-                          添加规则
-                        </span>
+                      )}
+                    {showChooseDay() &&
+                      formData.vacationIssueRule?.timeRule?.issueType === 'annual' && (
                         <Item
                           label=""
-                          style={{ display: 'block' }}
-                          className="w-120"
-                          name={['vacationIssueRule', 'quotaRule', 'ageRules']}
+                          style={{ display: 'inline-block' }}
+                          className="w-120 m-r-8"
+                          name={['vacationIssueRule', 'timeRule', 'issueDayOfYear']}
+                          rules={[{ required: true, message: '请选择日期' }]}
                         >
-                          <QuotaRule cRef={workAgeRef} type={'work_age'} />
+                          <DatePicker format={'MM-DD'} />
                         </Item>
-                      </>
-                    )}
-                    {/*额度配置 - 按社会工龄*/}
-                    {formData.vacationIssueRule.quotaRule?.quotaType === 'entry_age' && (
-                      <>
-                        <span
-                          className="add-rule-btn"
-                          onClick={() => {
-                            workAgeRef.current.add();
-                          }}
-                        >
-                          添加规则
-                        </span>
-                        <Item
-                          label=""
-                          style={{ display: 'block' }}
-                          className="w-120"
-                          name={['vacationIssueRule', 'quotaRule', 'ageRules']}
-                        >
-                          <QuotaRule cRef={workAgeRef} type={'entry_age'} />
-                        </Item>
-                      </>
-                    )}
-                    {/*额度配置 - 按照工龄、司龄相加*/}
-                    {(formData.vacationIssueRule.quotaRule?.quotaType === 'sum_work_entry_age' ||
-                      formData.vacationIssueRule.quotaRule?.quotaType === 'max_work_entry_age') && (
-                      <>
-                        <div className={'sum_work_entry_age'}>
-                          <div className={'top-wrap'}>
-                            <span className={'sub-title'}>社会工龄配额</span>
-                            <span
-                              className="add-rule-btn"
-                              onClick={() => {
-                                workAgeRef.current.add();
-                              }}
-                            >
-                              添加规则
-                            </span>
-                          </div>
+                      )}
+
+                    <span className="hour-text">
+                      {formData.vacationIssueRule?.timeRule?.issueType === 'month_day' ? '号' : ''}
+                      自动发放
+                    </span>
+                  </Item>
+
+                  <Item label="额度发放人员" style={{ marginBottom: 0 }}>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block' }}
+                      className="w-120"
+                      name={['vacationIssueRule', 'targetRule', 'targetType']}
+                    >
+                      <Select onChange={(e) => {}} options={TARGET_USER} />
+                    </Item>
+                    {formData.vacationIssueRule?.targetRule &&
+                      formData.vacationIssueRule.targetRule.targetType === 'specific' && (
+                        <div className="targetRule">
+                          <span className="hours-InPerDay">性别为</span>
                           <Item
                             label=""
-                            style={{ display: 'block', marginBottom: 0 }}
+                            style={{ display: 'inline-block', width: 80, marginRight: 8 }}
+                            name={['vacationIssueRule', 'targetRule', 'sex']}
+                            rules={[{ required: true, message: '请选择性别' }]}
+                          >
+                            <Select onChange={(e) => {}} options={SEX} />
+                          </Item>
+                          年龄在
+                          <Item
+                            label=""
+                            style={{ display: 'inline-block', width: 80, margin: '0 8px' }}
+                            name={['vacationIssueRule', 'targetRule', 'minAge']}
+                            rules={[{ required: true, message: '' }]}
+                          >
+                            <InputNumber min={0} onChange={(e) => {}} />
+                          </Item>
+                          <span>-</span>
+                          <Item
+                            label=""
+                            style={{ display: 'inline-block', width: 80, margin: '0 8px' }}
+                            name={['vacationIssueRule', 'targetRule', 'maxAge']}
+                            rules={[{ required: true, message: '' }]}
+                          >
+                            <InputNumber min={1} />
+                          </Item>
+                        </div>
+                      )}
+                  </Item>
+                  {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
+                    <>
+                      <Item label="额度计算方式" style={{}}>
+                        <Item
+                          label=""
+                          style={{ marginBottom: 0, display: 'inline-block', width: '100%' }}
+                          name={['vacationIssueRule', 'quotaRule', 'averageType']}
+                          rules={[{ required: true, message: '请选择额度计算方式' }]}
+                        >
+                          <Select options={averageTypeMap} />
+                        </Item>
+                        {formData.vacationIssueRule.quotaRule.averageType ===
+                          'average_work_time' && (
+                          <p className="average-type-tip">额度=上年在职天数/365*对应假期额度</p>
+                        )}
+                      </Item>
+                    </>
+                  )}
+                  {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
+                    <Item label="额度取整" style={{ marginBottom: 0 }}>
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block', width: '100%' }}
+                        name={['vacationIssueRule', 'quotaRule', 'roundType']}
+                        rules={[{ required: true, message: '请选择额度取整方式' }]}
+                      >
+                        <Select onChange={(e) => {}} options={roundTypeMap} />
+                      </Item>
+                    </Item>
+                  )}
+                  <Item label="额度有效期" style={{ marginBottom: 0 }}>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block', width: 200 }}
+                      className="m-r-8"
+                      name={['vacationIssueRule', 'expireRule', 'expireType']}
+                    >
+                      <Select options={expireTypeMap} />
+                    </Item>
+                    {/*固定时间段*/}
+                    {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
+                      <>
+                        <span className="hour-text m-r-8">自发起日起</span>
+                        <Item
+                          label=""
+                          style={{ display: 'inline-block' }}
+                          // className="w-120"
+                          name={['vacationIssueRule', 'expireRule', 'fixedTime']}
+                        >
+                          <InputNumber />
+                        </Item>
+                        <Item
+                          label=""
+                          name={['vacationIssueRule', 'expireRule', 'fixedUnit']}
+                          className="w-80 m-l-8 inline"
+                          rules={[{ required: true, message: '请选择天或月' }]}
+                        >
+                          <Select options={FIXED_UNIT} />
+                        </Item>
+                        <span className="hour-text m-l-8">有效</span>
+                      </>
+                    )}
+                    {/*指定某天*/}
+                    {formData.vacationIssueRule.expireRule?.expireType === 'specify_day' && (
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block' }}
+                        name={['vacationIssueRule', 'expireRule', 'specifyDay']}
+                        rules={[{ required: true, message: '请选择日期' }]}
+                      >
+                        <DatePicker format={'MM-DD'} />
+                      </Item>
+                    )}
+                    {/*直到某天*/}
+                    {formData.vacationIssueRule.expireRule?.expireType === 'until_day' && (
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block' }}
+                        // className="w-120"
+                        name={['vacationIssueRule', 'expireRule', 'untilDay']}
+                        rules={[{ required: true, message: '请选择日期' }]}
+                      >
+                        <DatePicker />
+                      </Item>
+                    )}
+                  </Item>
+                  <Item label="有效期可以延长" style={{ marginBottom: 0 }}>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block' }}
+                      className="expireRule m-l-8 inline"
+                      name={['vacationIssueRule', 'expireRule', 'extendedTime']}
+                    >
+                      <InputNumber min={0} defaultValue={0} />
+                    </Item>
+                    <Item
+                      label=""
+                      name={['vacationIssueRule', 'expireRule', 'extendedUnit']}
+                      className="expireRule w-80 m-l-8 inline"
+                      rules={[{ required: true, message: '请选择天或月' }]}
+                    >
+                      <Select options={FIXED_UNIT} />
+                    </Item>
+                    {/*<span className="hour-text m-l-8">天</span>*/}
+                  </Item>
+                  {formData.vacationIssueRule.timeRule.issueType === 'annual' && (
+                    <Item label="过期处理方式" style={{ marginBottom: 0 }}>
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block', width: '100%' }}
+                        name={['vacationIssueRule', 'expireRule', 'expiredWay']}
+                      >
+                        <Select
+                          onChange={(e) => {}}
+                          disabled
+                          options={expiredMap}
+                          defaultValue={0}
+                        />
+                      </Item>
+                    </Item>
+                  )}
+                  <div className={'quota-rule'}>
+                    <Item
+                      label={
+                        <div>
+                          <span>额度配置</span>
+                          <Tooltip title={'未配置或不符合条件则额度为0'}>
+                            <Icon type="icon-tishi" className={'tips'} />
+                          </Tooltip>
+                        </div>
+                      }
+                      style={{ marginBottom: 0 }}
+                    >
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block', width: 320, marginBottom: 0 }}
+                        className=" m-r-8"
+                        name={['vacationIssueRule', 'quotaRule', 'quotaType']}
+                      >
+                        <Select
+                          disabled={formData.vacationIssueRule.timeRule.issueType != 'annual'}
+                          onChange={(e) => {}}
+                          options={quotaTypeMap}
+                        />
+                      </Item>
+                      {/*额度配置 - 固定额度*/}
+                      {formData.vacationIssueRule.quotaRule?.quotaType === 'fixed' && (
+                        <>
+                          <span className="hour-text m-r-8">发放</span>
+                          <Item
+                            label=""
+                            style={{ display: 'inline-block' }}
+                            className="expireRule"
+                            name={['vacationIssueRule', 'quotaRule', 'fixedQuota']}
+                          >
+                            <InputNumber step="0.01" />
+                          </Item>
+                          <span className="hour-text m-l-8">天</span>
+                        </>
+                      )}
+                      {/*额度配置 - 按社会工龄*/}
+                      {formData.vacationIssueRule.quotaRule?.quotaType === 'work_age' && (
+                        <>
+                          <span
+                            className="add-rule-btn"
+                            onClick={() => {
+                              workAgeRef.current.add();
+                            }}
+                          >
+                            添加规则
+                          </span>
+                          <Item
+                            label=""
+                            style={{ display: 'block' }}
                             className="w-120"
                             name={['vacationIssueRule', 'quotaRule', 'ageRules']}
                           >
                             <QuotaRule cRef={workAgeRef} type={'work_age'} />
                           </Item>
-                        </div>
-                        <div className={'sum_work_entry_age'}>
-                          <div className={'top-wrap'}>
-                            <span className={'sub-title'}>司龄配额</span>
-                            <span
-                              className="add-rule-btn"
-                              onClick={() => {
-                                entryAgeRef.current.add();
-                              }}
-                            >
-                              添加规则
-                            </span>
-                          </div>
+                        </>
+                      )}
+                      {/*额度配置 - 按社会工龄*/}
+                      {formData.vacationIssueRule.quotaRule?.quotaType === 'entry_age' && (
+                        <>
+                          <span
+                            className="add-rule-btn"
+                            onClick={() => {
+                              workAgeRef.current.add();
+                            }}
+                          >
+                            添加规则
+                          </span>
                           <Item
                             label=""
-                            style={{ display: 'block', marginBottom: 0 }}
+                            style={{ display: 'block' }}
                             className="w-120"
-                            name={['vacationIssueRule', 'quotaRule', 'ageRules_two']}
+                            name={['vacationIssueRule', 'quotaRule', 'ageRules']}
                           >
-                            <QuotaRule cRef={entryAgeRef} type={'entry_age'} />
+                            <QuotaRule cRef={workAgeRef} type={'entry_age'} />
                           </Item>
-                        </div>
-                      </>
-                    )}
-                  </Item>
+                        </>
+                      )}
+                      {/*额度配置 - 按照工龄、司龄相加*/}
+                      {(formData.vacationIssueRule.quotaRule?.quotaType === 'sum_work_entry_age' ||
+                        formData.vacationIssueRule.quotaRule?.quotaType ===
+                          'max_work_entry_age') && (
+                        <>
+                          <div className={'sum_work_entry_age'}>
+                            <div className={'top-wrap'}>
+                              <span className={'sub-title'}>社会工龄配额</span>
+                              <span
+                                className="add-rule-btn"
+                                onClick={() => {
+                                  workAgeRef.current.add();
+                                }}
+                              >
+                                添加规则
+                              </span>
+                            </div>
+                            <Item
+                              label=""
+                              style={{ display: 'block', marginBottom: 0 }}
+                              className="w-120"
+                              name={['vacationIssueRule', 'quotaRule', 'ageRules']}
+                            >
+                              <QuotaRule cRef={workAgeRef} type={'work_age'} />
+                            </Item>
+                          </div>
+                          <div className={'sum_work_entry_age'}>
+                            <div className={'top-wrap'}>
+                              <span className={'sub-title'}>司龄配额</span>
+                              <span
+                                className="add-rule-btn"
+                                onClick={() => {
+                                  entryAgeRef.current.add();
+                                }}
+                              >
+                                添加规则
+                              </span>
+                            </div>
+                            <Item
+                              label=""
+                              style={{ display: 'block', marginBottom: 0 }}
+                              className="w-120"
+                              name={['vacationIssueRule', 'quotaRule', 'ageRules_two']}
+                            >
+                              <QuotaRule cRef={entryAgeRef} type={'entry_age'} />
+                            </Item>
+                          </div>
+                        </>
+                      )}
+                    </Item>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </Form>
-        <div />
-      </div>
+              )}
+            </div>
+          </Form>
+        </div>
+      </Spin>
     </Drawer>
   );
 };
