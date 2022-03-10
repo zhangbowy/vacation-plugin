@@ -212,29 +212,31 @@ const Rules: FC = () => {
               const visibilityRules = v.vacationTypeRule.visibilityRules;
               let visibilityRulesStr = '全员';
               let visibilityRulesStrHover = '全员';
-              if (visibilityRules && visibilityRules.length > 0) {
-                visibilityRulesStr = '';
-                visibilityRulesStrHover = '';
-                visibilityRules.forEach(({ type, visible = [], details = [] }) => {
-                  if (type === 'dept') {
-                    if (visible.length) {
-                      visibilityRulesStr = visibilityRulesStr + `${visible.length}个部门`;
-                    }
-                    visibilityRulesStrHover =
-                      visibilityRulesStrHover + details.map((item) => item.name).join(',');
-                  }
-                  if (type === 'staff') {
-                    if (visible.length) {
-                      if (visibilityRulesStr) {
-                        visibilityRulesStr = visibilityRulesStr + ',';
-                        visibilityRulesStrHover = visibilityRulesStrHover + ',';
+              if (!v.vacationTypeRule.isAllCompany) {
+                if (visibilityRules && visibilityRules.length > 0) {
+                  visibilityRulesStr = '';
+                  visibilityRulesStrHover = '';
+                  visibilityRules.forEach(({ type, visible = [], details = [] }) => {
+                    if (type === 'dept') {
+                      if (visible.length) {
+                        visibilityRulesStr = visibilityRulesStr + `${visible.length}个部门`;
                       }
-                      visibilityRulesStr = visibilityRulesStr + `${visible.length}个人`;
+                      visibilityRulesStrHover =
+                        visibilityRulesStrHover + details.map((item) => item.name).join(',');
                     }
-                    visibilityRulesStrHover =
-                      visibilityRulesStrHover + details.map((item) => item.name).join(',');
-                  }
-                });
+                    if (type === 'staff') {
+                      if (visible.length) {
+                        if (visibilityRulesStr) {
+                          visibilityRulesStr = visibilityRulesStr + ',';
+                          visibilityRulesStrHover = visibilityRulesStrHover + ',';
+                        }
+                        visibilityRulesStr = visibilityRulesStr + `${visible.length}个人`;
+                      }
+                      visibilityRulesStrHover =
+                        visibilityRulesStrHover + details.map((item) => item.name).join(',');
+                    }
+                  });
+                }
               }
               return {
                 ...v,
