@@ -337,8 +337,8 @@ const defaultData = {
     targetRule: {
       targetType: 'probational_normal',
       sex: 0,
-      maxAge: 2,
-      minAge: 0,
+      maxAge: 28,
+      minAge: 20,
     },
     expireRule: {
       expireType: 'permanent',
@@ -551,45 +551,14 @@ const AddRulePop: FC = () => {
       console.log(defaultData, 'defaultData');
     }
 
-    // vacationIssueRule: {
-    //   freedomLeave: false, // 开关
-    //     timeRule: {
-    //     issueType: 'annual',
-    //       issueTimeType: 'first_day_year',
-    //       issueDayOfMonth: 1,
-    //       issueDayOfYear: '',
-    //   },
-    //   targetRule: {
-    //     targetType: 'probational_normal',
-    //       sex: 0,
-    //       maxAge: 2,
-    //       minAge: 0,
-    //   },
-    //   expireRule: {
-    //     expireType: 'permanent',
-    //       extendedTime: 0,
-    //       fixedTime: 0,
-    //       specifyDay: '',
-    //       untilDay: '',
-    //       fixedUnit: 'day',
-    //       extendedUnit: 'day',
-    //   },
-    //   quotaRule: {
-    //     quotaType: 'fixed',
-    //       fixedQuota: 0.0,
-    //       averageType: 'none',
-    //       roundType: 'none',
-    //       ageRules: [
-    //       {
-    //         maxAge: 1,
-    //         minAge: 0,
-    //         quota: 1,
-    //         type: 'work_age',
-    //       },
-    //     ],
-    //   },
-    // },
-    console.log(result, '----------');
+    if (changedValues?.leaveViewUnit) {
+      if (changedValues?.leaveViewUnit === 'halfDay') {
+        result.maxLeaveTime = 0.5;
+      } else {
+        result.maxLeaveTime = 1;
+      }
+    }
+
     form.setFieldsValue({ ...result });
     setFormData({ ...result });
   };
@@ -1054,7 +1023,7 @@ const AddRulePop: FC = () => {
                       name="maxLeaveTime"
                     >
                       <InputNumber
-                        min={1}
+                        min={formData.leaveViewUnit === 'halfDay' ? 0.5 : 1}
                         step={formData.leaveViewUnit === 'halfDay' ? 0.5 : 1}
                         max={24}
                         onChange={() => {}}
@@ -1232,7 +1201,15 @@ const AddRulePop: FC = () => {
                             name={['vacationIssueRule', 'targetRule', 'minAge']}
                             rules={[{ required: true, message: '' }]}
                           >
-                            <InputNumber min={0} onChange={(e) => {}} />
+                            <InputNumber
+                              min={0}
+                              max={
+                                formData.vacationIssueRule.targetRule.maxAge
+                                  ? formData.vacationIssueRule.targetRule.maxAge - 1
+                                  : 99
+                              }
+                              onChange={(e) => {}}
+                            />
                           </Item>
                           <span>-</span>
                           <Item
@@ -1241,7 +1218,13 @@ const AddRulePop: FC = () => {
                             name={['vacationIssueRule', 'targetRule', 'maxAge']}
                             rules={[{ required: true, message: '' }]}
                           >
-                            <InputNumber min={1} />
+                            <InputNumber
+                              min={
+                                formData.vacationIssueRule.targetRule.minAge
+                                  ? formData.vacationIssueRule.targetRule.minAge + 1
+                                  : 1
+                              }
+                            />
                           </Item>
                         </div>
                       )}
