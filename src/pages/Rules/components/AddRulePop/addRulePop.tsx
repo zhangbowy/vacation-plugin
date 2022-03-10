@@ -741,8 +741,6 @@ const AddRulePop: FC = () => {
             });
             msg(`规则${text}成功`);
             dispatch({ type: 'table/refreshTable' });
-          } else {
-            errMsg(`${text}失败, 请重试`);
           }
         });
       })
