@@ -25,7 +25,11 @@
       height: 32px;
       background: #0089FF;
       border-radius: 6px;
-      padding: 0
+      padding: 0;
+      &:focus {
+        background: #0089FF!important;
+        color:#FFFFFF!important;
+      }
     }
     .cancel-btn {
       width: 60px;
@@ -98,7 +102,7 @@
         color: rgba(23, 26, 29, 0.6);
         margin-top:8px
       }
-      .targetRule {
+      .target-rule {
         .ant-input-number {
           width: 80px;
         }
@@ -109,12 +113,10 @@
       .hours-InPerDay-input {
         padding-right: 8px;
       }
-
       .app_range_user_select {
           width: 270px;
       }
-
-      .title-wrap {
+      .time-rule-title-wrap {
         margin-bottom: 24px;
         .title {
           margin-bottom: 0;
