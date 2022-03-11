@@ -6,7 +6,7 @@ import Button from '@/components/buttons/Button';
 interface RestProps {
   onModalOpen: VoidFunction;
   data: {
-    allowEditBalance: boolean;
+    allowEditBalance?: boolean;
     durationType?: 0 | 2;
     duration?: number;
   };
