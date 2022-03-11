@@ -1,0 +1,24 @@
+.pg-statistics--options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.pg-statistics--child-th {
+  padding: 8px 0 8px 1px !important;
+  text-align: center !important;
+  &.not-last {
+    border-right-color: transparent !important;
+  }
+}
+
+.pg-statistics {
+  .ant-table-wrapper {
+    height: 90%;
+    .ant-table-content {
+      overflow: auto;
+      height: calc(78vh - 10px);
+    }
+  }
+
+}

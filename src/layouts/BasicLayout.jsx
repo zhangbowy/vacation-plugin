@@ -9,72 +9,70 @@ import React, { useEffect, useState } from 'react';
 import cs from 'classnames';
 import { connect, history } from 'umi';
 import { RightOutlined } from '@ant-design/icons';
-import initDingTalkJsapi from '@/init/initDingTalkJsapi';
-import './BasicLayout.less'
+import useStoreContentSize from '@/hooks/useStoreContentSize';
+// import initDingTalkJsapi from '@/init/initDingTalkJsapi';
+import './BasicLayout.less';
 import styles from './index.less';
+import { useLocation } from 'umi';
 
 const BasicLayout = (props) => {
-  const {
-    children,
-    settings,
-    location = {
-      pathname: '/',
-    },
-  } = props;
+  useStoreContentSize();
+  const { children, settings, location = { pathname: '/' } } = props;
+
   const { pathname } = location;
 
   const [collapsed, setSetcollapsed] = useState(false);
   const [isAdminHeaderTip] = useState(false);
-
-  // const headerContentRef = useRef();
+  const locations = useLocation();
 
   // 切换路由 滚动回到顶部
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  useEffect(
-    () => {
-      initDingTalkJsapi().then(d => {
-        console.log(d)
-      })
-    },
-    []
-  )
-
+  useEffect(() => {
+    const page = props.route.routes.find((item) => item.permissionId);
+    const exist = props.route.routes.find((item) => item.path === pathname);
+    if (exist) {
+      return;
+    }
+    if (page && pathname != '/') {
+      history.push('/');
+    }
+  }, [locations]);
 
   return (
     <div
       className={cs({
         [styles.hasSystemTip]: isAdminHeaderTip,
       })}
-      style={{
-        height: '100%',
-        margin: 0,
-        padding: 0,
-      }}
+      style={{ height: '100%', margin: 0, padding: 0 }}
     >
       <ProLayout
-        className={cs({
-          [styles.proLayoutCollapsed]: collapsed,
-        })}
+        className={cs(
+          {
+            [styles.proLayoutCollapsed]: collapsed,
+          },
+          'lay-content',
+        )}
         logo={false}
         title=""
         {...props}
         {...settings}
-        collapsedWidth={40}
-        siderWidth={190}
+        collapsedWidth={32}
+        siderWidth={160}
         iconfontUrl={ICONFONT_URL}
         fixedHeader={true}
         fixSiderbar={true}
         headerHeight={64}
         collapsed={collapsed}
         menuRender={(_props, defaultDom) => {
-          return (
+          const hasPermission = _props.menuData.find((item) => item.permissionId);
+          return hasPermission ? (
             <div className={cs(styles.menu, { [styles.collapsedMenu]: collapsed })}>
               <div
                 className={cs(styles.collapseContainer, 'position-fixed t-0 h-100p z-index-101', {
-                  'l-190': !collapsed,
+                  'l-160': !collapsed,
                   'l-64': collapsed,
                 })}
               >
@@ -90,7 +88,7 @@ const BasicLayout = (props) => {
               </div>
               {defaultDom}
             </div>
-          );
+          ) : null;
         }}
         collapsedButtonRender={false}
         navTheme="light"
@@ -155,10 +153,10 @@ const BasicLayout = (props) => {
         }}
         headerRender={false}
       >
-        <div className='lay-basic-layout--wrap'>
-          <div id='lay-basic-layout--content-header' />
-          { children }
-          <div id='lay-basic-layout--content-footer' />
+        <div className="lay-basic-layout--wrap">
+          <div id="lay-basic-layout--content-header" />
+          {children}
+          <div id="lay-basic-layout--content-footer" />
         </div>
       </ProLayout>
     </div>

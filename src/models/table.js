@@ -1,4 +1,6 @@
-const defaultParamsHandle = (params, pageNo, pageSize) => ({
+import loading from '@/components/pop/loading'
+
+export const defaultParamsHandle = (params, pageNo, pageSize) => ({
   ...(params || {}), pageNo: pageNo || 1, pageSize: pageSize || 10
 })
 
@@ -21,6 +23,7 @@ const paramsFilter = obj => {
 };
 
 const getDefaultState = () =>({
+  name: '',
   inLoading: false,
   params: {},
   pageNo: 1,
@@ -33,22 +36,40 @@ const getDefaultState = () =>({
   resultHandle: null
 })
 
-const doFetch = async (action, params, pageNo, pageSize, paramsHandle, resultHandle) => {
+let i = 0
+
+const doFetch = async (
+  action, params, pageNo, pageSize, paramsHandle, resultHandle, others
+) => {
+  loading.show()
+  const k = ++i
   const [success, result] = await action(
-    paramsFilter(paramsHandle || defaultParamsHandle(params, pageNo, pageSize))
+    paramsFilter((paramsHandle || defaultParamsHandle)(params, pageNo, pageSize))
   )
-  if (success) {
-    if (resultHandle) {
-      const handleResult = resultHandle(result)
-      return handleResult
+  loading.hide()
+  if (k === i) {
+    if (success) {
+      if (resultHandle) {
+        return {
+          ...others,
+          ...resultHandle(result, pageNo, pageSize)
+        }
+      }
+      const { page = {}, list } = result || {}
+      const { currentPage = 1, total = 0 } = page
+      return {
+        ...others, list, total, pageNo: currentPage, pageSize
+      }
     }
-    return result
-  }
-  return {
-    list: [],
-    pageNo: 1,
-    pageSize: 10,
-    total: 0
+    return {
+      ...others,
+      list: [],
+      pageNo: 1,
+      pageSize: 10,
+      total: 0
+    }
+  } else {
+    return {}
   }
 }
 
@@ -77,9 +98,17 @@ const LoginModel = {
           type: 'update', payload: { inLoading: true, columns: payload.columns }
         })
         const result = yield doFetch(
-          action, params, pageNo, pageSize, paramsHandle, resultHandle
+          action,
+          params,
+          pageNo,
+          pageSize,
+          paramsHandle,
+          resultHandle,
+          nextPayload
         )
-        yield put({ type: 'init', payload: { ...nextPayload, ...result } })
+        yield put({
+          type: 'init', payload: result
+        })
       } else {
         yield put({ type: 'init', payload: nextPayload })
       }
@@ -89,22 +118,28 @@ const LoginModel = {
       const {
         action, params, pageSize, paramsHandle, resultHandle
       } = table
-      console.log(newParams)
       const nextParams = {
         ...params, ...newParams
       }
       if (typeof action === 'function') {
-        yield put({ type: 'update', payload: { inLoading: true } })
-        const result = yield doFetch(
-          action, nextParams, 1, pageSize, paramsHandle, resultHandle
-        )
         yield put({
-          type: 'update', payload: {
+          type: 'update', payload: { params: nextParams, inLoading: true }
+        })
+        const result = yield doFetch(
+          action,
+          nextParams,
+          1,
+          pageSize,
+          paramsHandle,
+          resultHandle,
+          {
             inLoading: false,
             pageNo: 1,
-            params: nextParams,
-            ...result
+            params: nextParams
           }
+        )
+        yield put({
+          type: 'update', payload: result
         })
       } else {
         yield put({
@@ -125,20 +160,34 @@ const LoginModel = {
         pageNo,
         pageSize,
         paramsHandle,
-        resultHandle
+        resultHandle,
+        { inLoading: false, pageNo, pageSize }
       )
       yield put({
         type: 'update',
-        payload: { inLoading: false, pageNo, pageSize, ...result }
+        payload: result
       })
     },
-    *refreshTable(...args) {
-      const r = yield args[1].select(state => state.table)
-      console.log(r)
-      yield args[1].put({ type: 'init', payload: getDefaultState() })
+    *refreshTable(_, { select, put }) {
+      const {
+        action, params, paramsHandle, resultHandle
+      } = yield select(state => state.table)
+      yield put({ type: 'update', payload: { inLoading: true } })
+      const result = yield doFetch(
+        action,
+        params,
+        1,
+        10,
+        paramsHandle,
+        resultHandle,
+        { inLoading: false, pageNo: 1, pageSize: 10 }
+      )
+      yield put({
+        type: 'update',
+        payload: result
+      })
     }
   },
-
   reducers: {
     init(_, { payload = {} }) {
       return payload

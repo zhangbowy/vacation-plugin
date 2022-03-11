@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import classnames from 'classnames'
 import './DeptSelect.less'
 import Tooltip from '@/components/pop/Tooltip'
+import Icon from '@/components/Icon'
 import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
 
 export type ValuesType = { id: string | number, name: string, number: number }[]
@@ -24,10 +25,8 @@ const DeptSelect: FC<DeptSelectProps> = ({
     () => classnames('com-form-dept-select', className),
     [className]
   )
-  console.log('onChange', onChange)
   const handleChoose = useCallback(
     () => {
-      console.log((value || []).map(({ id }) => id))
       chooseDepartments({
         title: '选择部门',
         departments: value
@@ -41,6 +40,15 @@ const DeptSelect: FC<DeptSelectProps> = ({
       })
     },
     [onChange, options, value]
+  )
+  const handleClear = useCallback(
+    e => {
+      e.stopPropagation()
+      if (onChange) {
+        onChange([])
+      }
+    },
+    [onChange]
   )
   const txt = useMemo(
     () => {
@@ -60,7 +68,11 @@ const DeptSelect: FC<DeptSelectProps> = ({
               { txt }
             </p>
           </Tooltip>
-          <span className='com-form-dept-select--icon'>x</span>
+          <Icon
+            className='com-form-dept-select--icon'
+            type='icon-qingkong_mian'
+            onClick={handleClear}
+          />
         </>
         : <span className='com-form-dept-select--placeholder'>
             { placeholder }

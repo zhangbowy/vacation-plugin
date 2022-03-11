@@ -1,0 +1,37 @@
+.com-auth--check-groups {
+  position: relative;
+}
+.com-auth--check-groups--all {
+  position: absolute;
+  top: -30px;
+  left: 76px;
+}
+.com-auth--check-groups--content {
+  padding: 1px 20px 16px;
+  background-color: rgba(23, 26, 29, .04);
+  border-radius: 6px;
+  .ant-checkbox-group {
+    width: 100%;
+  }
+}
+.com-auth--check-groups--header {
+  display: flex;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+.com-auth--check-groups--header-text {
+  color: #171a1d;
+  font-family: var(--bold);
+  font-weight: 500;
+}
+.com-auth--check-groups--list {
+  margin-right: -8px;
+  .ant-checkbox-wrapper {
+    width: calc(33.3333% - 8px);
+    margin-right: 8px;
+    margin-bottom: 8px;
+    + .ant-checkbox-wrapper {
+      margin-left: 0;
+    }
+  }  
+}

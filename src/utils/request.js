@@ -49,7 +49,28 @@ const responseInterceptorDownload = async (response, options) => {
   return response;
 };
 
-const requestInterceptors = [requestInterceptorToken];
+const requestInterceptorUpload = async (url, options) => {
+  const { upload } = options
+  if (upload) {
+    const { data } = options
+    const formData = new FormData()
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value)
+    })
+    return {
+      url,
+      options: {
+        ...options,
+        data: formData,
+        requestType: 'form'
+      }
+    }
+  }
+  return { url, options };
+};
+
+
+const requestInterceptors = [requestInterceptorToken, requestInterceptorUpload];
 
 const responseInterceptors = [responseInterceptorDownload];
 
@@ -63,6 +84,18 @@ async function middlewareTokenInvalid(ctx, next) {
       isReloadLock = true;
       message.error('登录超时，重新登录~');
       window.location.reload();
+    }
+  }
+}
+
+async function middlewareBatchUploadInvalid(ctx, next) {
+  await next();
+
+  if (Number(ctx?.res?.errorCode) === 501001) {
+    ctx.res.success = true
+    ctx.res.result = {
+      errorCode: 501001,
+      errorMsg: ctx.res.errorMsg || ''
     }
   }
 }
@@ -102,12 +135,12 @@ export const requestConfig = {
   prefix: API_PREFIX,
   requestInterceptors,
   responseInterceptors,
-  middlewares: [middlewareTokenInvalid],
+  middlewares: [middlewareTokenInvalid, middlewareBatchUploadInvalid],
   errorConfig: {
     adaptor: (resData) => {
       return {
         ...resData,
-        errorMessage: resData.errorMsg || resData.error,
+        errorMessage: resData.errorMsg || resData.error || '网络错误',
       };
     },
   },

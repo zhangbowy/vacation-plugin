@@ -3,11 +3,11 @@
  */
 export default {
   dev: {
-    "/vacation_api": {
+    "/vacation": {
       target: "http://vacation-pc.forwe.work/vacation",
       changeOrigin: true,
       pathRewrite: {
-        '^/vacation_api': '',
+        '^/vacation': '',
       },
       cookiePathRewrite: '/'
     },

@@ -7,6 +7,7 @@ const GlobalModel = {
 
       tabListProps: [],
     },
+    contentSize: undefined
   },
 
   effects: {},
@@ -28,6 +29,10 @@ const GlobalModel = {
         },
       };
     },
+
+    updateContentSize(state, contentSize) {
+      return { ...state, contentSize }
+    }
   },
 };
 

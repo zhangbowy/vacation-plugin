@@ -1,0 +1,40 @@
+.com-structure-common-tabs {
+  width: 600px;
+  .ant-tabs-nav {
+    margin: 0;
+    padding: 0 15px;
+    &::before {
+      display: none;
+    }
+  }
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #0089ff;
+    font-size: 16px;
+    line-height: 22px;
+    text-shadow: none;
+  }
+  .ant-tabs-tab {
+    padding: 12px 15px 14px;
+    color: #171a1d;
+    font-size: 16px;
+    line-height: 22px;
+    &:hover {
+      color: #0089ff;
+    }
+  }
+  .ant-tabs-ink-bar {
+    background-color: transparent;
+    &:after {
+      content: ' ';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 24px;
+      height: 3px;
+      max-width: 100%;
+      background-color: #0089ff;
+      border-radius: 2px;
+      transform: translateX(-50%);
+    }
+  }
+}

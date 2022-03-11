@@ -1,91 +1,129 @@
-import { memo } from 'react';
-import type { FC } from 'react';
-import ProTable from '@ant-design/pro-table';
-import type { ProColumns } from '@ant-design/pro-table';
-import { Button, Input, Select, DatePicker } from 'antd';
+import { memo, useEffect } from 'react'
+import type { FC } from 'react'
+import StoreTable from '@/components/table/StoreTable'
+import { useDispatch } from 'dva'
+import { getLeaveRecord } from '@/services/leave'
+import moment from 'moment'
+import type { Moment } from 'moment'
+import useTableStoreScroll from '@/hooks/useTableStoreScroll'
+import './Record.less'
+import RecordOptions from '../RecordOptions'
 
-type RecordItem = {
-  name: string;
-  no: string;
-  department: string;
-  position: string;
-  type: string;
-  time: Date;
-  duration: string;
-};
+const tableName = 'record'
 
-const columns: ProColumns<RecordItem>[] = [
+const columns = [
   {
     title: '姓名',
-    dataIndex: 'name',
+    dataIndex: 'userName',
+    width: 111
   },
   {
     title: '工号',
-    dataIndex: 'no',
+    dataIndex: 'jobNumber',
+    width: 114
   },
   {
     title: '所属部门',
-    dataIndex: 'department',
+    dataIndex: 'deptName',
+    width: 143
   },
   {
     title: '岗位',
     dataIndex: 'position',
+    width: 128
   },
   {
     title: '假期名称',
-    dataIndex: 'type',
+    dataIndex: 'ruleName',
+    width: 113
   },
   {
     title: '时间',
-    dataIndex: 'time',
+    key: 'time',
+    render: ({ startTime, endTime }: { startTime: Date, endTime: Date }) => {
+      if (!startTime || !endTime) {
+        return '-'
+      }
+      return `${
+        moment(startTime).format('YYYY-MM-DD HH:mm')
+      } ~ ${
+        moment(endTime).format('YYYY-MM-DD HH:mm')
+      }`
+    },
+    width: 171
   },
   {
     title: '时长',
-    dataIndex: 'duration',
+    key: 'duration',
+    render: (
+      { durationType, duration }: { durationType: 0 | 2, duration: number }
+    ) =>
+      `${duration / 100}${durationType === 0 ? '天' : '小时'}`,
+    width: 84
   },
-];
+  {
+    title: '请假理由',
+    dataIndex: 'reason',
+    width: 161,
+    render: (v: string) => v || '-'
+  }
+]
 
-const Record: FC = () => (
-  <ProTable
-    rowKey="id"
-    columns={columns}
-    search={false}
-    pagination={{
-      pageSize: 10,
-    }}
-    options={false}
-    request={async (params) => {
-      console.log('params', params);
-      return {
-        data: [
-          {
-            id: 'xxx',
-            name: 'd',
-            no: 'string',
-            department: 'string',
-            position: 'string',
-            type: 'string',
-            time: new Date(),
-            duration: 'string',
-          },
-        ],
-        success: true,
-        total: 1,
-      };
-    }}
-    headerTitle={
-      <div>
-        <div>
-          <Input placeholder="搜索员工姓名" />
-          <Select placeholder="选择假期" />
-          <DatePicker placeholder="选择时间" />
-        </div>
-        <Button type="primary" key="primary">
-          导出
-        </Button>
-      </div>
-    }
-  />
-);
+interface RecordProps {
+  refDates: { current: [Moment, Moment] | null }
+  ruleOptions: OptionProps[]
+}
 
-export default memo(Record);
+const Record: FC<RecordProps> = ({ refDates, ruleOptions }) => {
+  const dispatch = useDispatch()
+  useEffect(
+    () => {
+      const params: Record<string, any> = {}
+      if (refDates && refDates.current && refDates.current[0]) {
+        params.date = refDates.current
+      }
+      dispatch({
+        type: 'table/initTable',
+        payload: {
+          name: 'record',
+          action: getLeaveRecord,
+          columns,
+          params,
+          paramsHandle: (
+            p: Record<string, any> = {}, pageNo: number, pageSize: number
+          ) => {
+            const { date, ...rest } = p
+            if (date && date[0]) {
+              rest.startDate = +date[0]
+              rest.endDate = +date[1]
+            }
+            rest.pageNo = pageNo || 1
+            rest.pageSize = pageSize || 10
+            return rest
+          }
+        }
+      })
+    },
+    [dispatch, refDates]
+  )
+  useEffect(
+    () => {
+      return () => {
+        dispatch({ type: 'table/close' })
+      }
+    },
+    []
+  )
+  const scroll = useTableStoreScroll()
+  return <>
+    <RecordOptions ruleOptions={ruleOptions} tableName={tableName} />
+    <StoreTable
+      name={tableName}
+      rowKey='id'
+      scroll={scroll}
+      withFooterPagination
+    />
+  </>
+}
+
+export default memo(Record)

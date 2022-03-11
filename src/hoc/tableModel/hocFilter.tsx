@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
-import { useSelector, useDispatch } from 'dva'
+import { useDispatch } from 'dva'
 import type { ComponentType } from 'react'
+import useTableParam from '@/hooks/useTableParam'
 
 const defaultGetValue = (type: string, e: any) => {
   if (type === 'targetValue') {
@@ -16,20 +17,19 @@ const hocFilter = <P extends object>(
     getValue,
     getValueType,
     propValue = 'value',
-    propOnChange = 'onChange'
+    propOnChange = 'onChange',
+    tableName
   }: {
     name: string,
     getValue?: (v: any) => void,
     getValueType?: string,
     propValue?: string,
-    propOnChange?: string
+    propOnChange?: string,
+    tableName?: string
   }
 ) =>
   (props: any) => {
     const dispatch = useDispatch()
-    const value = useSelector(
-      state => state.table.params[name]
-    )
     const handleChange = useCallback(
       (v: any) => {
         const newValue = getValue
@@ -42,6 +42,7 @@ const hocFilter = <P extends object>(
       },
       [dispatch]
     )
+    const value = useTableParam(name, tableName)
     const otherProps = useMemo(
       () => ({
         [propValue]: value,

@@ -1,0 +1,87 @@
+.pg-overview--survey {
+  &.ant-picker-calendar .ant-picker-panel {
+    .ant-picker-content {
+      border: 1px solid #efefef;
+      user-select: none;
+    }
+    .ant-picker-body {
+      th {
+        padding: 8px 20px;
+        color: #171a1d;
+        font-size: 12px;
+        line-height: 20px;
+        text-align: left;
+        border: 1px solid #efefef;
+      }
+      td {
+        text-align: left;
+        border: 1px solid #efefef;
+      }
+    }
+    .ant-picker-calendar-date {
+      margin: 0;
+      border-top: none;
+    }
+  }
+}
+.pg-overview--survey--cell {
+  position: relative;
+  height: 74px;
+  padding: 8px 4px;
+  cursor: default;
+  &.not-current {
+    background-color: rgba(23, 26, 29, .04);
+    .pg-overview--survey--cell-date {
+      color: rgba(23, 26, 29, .24);
+    }
+  }
+}
+.pg-overview--survey--cell-today {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  background-color: #0089ff;
+  border-radius: 50%;
+}
+.pg-overview--survey--cell-date {
+  margin-bottom: 8px;
+  padding-left: 16px;
+  color: #171a1d;
+  font-size: 12px;
+  line-height: 20px;
+}
+.pg-overview--survey--cell-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 6px 14px;
+  border-radius: 0 5px 5px 0;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .06);
+  cursor: pointer;
+  &::before {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 4px;
+    background-color: #0089ff;
+  }
+}
+.pg-overview--survey--cell-body-title {
+  color: rgba(0, 0, 0, .85);
+  font-size: 12px;
+  line-height: 18px;
+}
+.pg-overview--survey--cell-body-content {
+  color: rgba(0, 0, 0, .45);
+  font-size: 12px;
+  line-height: 18px;
+}

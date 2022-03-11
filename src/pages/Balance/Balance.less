@@ -15,10 +15,20 @@
     font-family: var(--bold);
     font-weight: 500;
   }
+  tbody tr {
+    cursor: pointer;
+  }
 }
 .pg-balance--options {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+}
+.pg-balance--column-header {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: break-all;
 }

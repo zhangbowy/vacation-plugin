@@ -1,32 +1,41 @@
-import { memo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import type { FC } from 'react'
-import { SearchOutlined } from '@ant-design/icons'
-import Input from '@/components/form/Input'
 import Select from '@/components/form/Select'
 import hocFilter from '@/hoc/tableModel/hocFilter'
+import InputModel from '@/components/form/InputModel'
+import Icon from '@/components/Icon'
 import DeptSelect from '@/components/form/DeptSelect'
-import type { ValuesType } from '@/components/form/DeptSelect'
 import './Filters.less'
 
-const FilterInput = hocFilter(
-  Input, { name: 'testInput', getValueType: 'targetValue' }
-)
-const FilterSelect = hocFilter(
-  Select, { name: 'testSelect' }
-)
+const getFilters = (tableName: string) => ({
+  FilterSelect: hocFilter(
+    Select, { name: 'leaveStatus', tableName }
+  ),
+  FilterDeptSelect: hocFilter(
+    DeptSelect, { name: 'deptIds', tableName }
+  )
+})
 
-const Filters: FC = () => {
-  const [v, setV] = useState<ValuesType>([])
+const Filters: FC<{ tableName: string }> = ({ tableName }) => {
+  const {
+    FilterSelect, FilterDeptSelect
+  } = useMemo(
+    () => getFilters(tableName), [tableName]
+  )
   return <div className='pg-balance--filters'>
-    <FilterInput
+    <InputModel
       className='pg-balance--filters--name'
+      tableName={tableName}
+      name='userName'
       placeholder='搜索人员姓名'
-      prefix={<SearchOutlined />}
+      prefix={<Icon type='icon-sousuo' />}
     />
-    <DeptSelect value={v} onChange={setV} />
+    <FilterDeptSelect
+      className='pg-balance--filters--dept'
+    />
     <FilterSelect
       className='pg-balance--filters--status'
-      options={[{ label: 'yy', value: 'aa' }, { label: 'xx', value: 'bb' }]}
+      options={[{ label: '在职', value: 0 }, { label: '离职', value: 1 }]}
       placeholder='选择在职情况'
       allowClear
     />
