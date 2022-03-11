@@ -70,7 +70,7 @@ const Item: FC<{ list: any[]; title: string }> = ({ list, title }) => (
           </div>
           <div className="com-pop-balance-detail--item--content">
             <p className="com-pop-balance-detail--item--change font-bolder">
-              {`${!changeDuration || changeType === 0 || changeType === 1 ? '' : '-'}${
+              {`${!changeDuration || changeType === 0 || changeType === 1 ? '+' : '-'}${
                 (changeDuration || 0) / 100
               }${changeDurationType === 0 ? '天' : '小时'}`}
             </p>
