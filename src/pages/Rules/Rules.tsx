@@ -4,7 +4,6 @@ import PageContent from '@/components/structure/PageContent';
 import StoreTable from '@/components/table/StoreTable';
 import { useDispatch, useSelector } from 'dva';
 import Header from './components/Header';
-// import Filters from './components/Filters'
 import Buttons from './components/Buttons';
 import Empty from './components/Empty';
 import AddRulePop from './components/AddRulePop';
