@@ -122,6 +122,7 @@ const level1Data = [
     label: '每月',
   },
 ];
+
 const ISSUE_TIME_TYPE = {
   annual: [
     {
@@ -485,14 +486,16 @@ const AddRulePop: FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
     setIsPopLoading(true);
-    if (editInfo?.id) {
-      const [err, result] = await getDetail({ id: editInfo.id });
-      dispatch({
-        type: 'rules/updateState',
-        payload: { editInfo: result },
-      });
-    }
-    init();
+    try {
+      if (editInfo?.id) {
+        const [, result] = await getDetail({ id: editInfo.id });
+        dispatch({
+          type: 'rules/updateState',
+          payload: { editInfo: result },
+        });
+      }
+      init();
+    } catch (e) {}
     setTimeout(() => {
       setIsPopLoading(false);
     }, 300);
@@ -911,12 +914,7 @@ const AddRulePop: FC = () => {
                 )}
               </Item>
               <Item label="员工请假时提交证明" name="leaveCertificate" style={{ marginBottom: 0 }}>
-                <Item
-                  label=""
-                  style={{ display: 'inline-block' }}
-                  className="w-120"
-                  name={['leaveCertificate', 'enable']}
-                >
+                <Item label="" className="w-120 inline" name={['leaveCertificate', 'enable']}>
                   <Select onChange={() => {}} options={PROVE} />
                 </Item>
                 {formData.leaveCertificate.enable && (
@@ -987,35 +985,20 @@ const AddRulePop: FC = () => {
               </Item>
               <Item label="工时折算" style={{ marginBottom: 0 }}>
                 <span className="hours-InPerDay">1天工时折合</span>
-                <Item
-                  label=""
-                  style={{ display: 'inline-block' }}
-                  className="hours-InPerDay-input"
-                  name="hoursInPerDay"
-                >
+                <Item label="" className="hours-InPerDay-input inline" name="hoursInPerDay">
                   <InputNumber min={1} max={24} onChange={() => {}} />
                 </Item>
                 <span className="hour-text">小时</span>
               </Item>
               <Item label="单次请假时长" style={{ marginBottom: 0 }}>
-                <Item
-                  style={{ display: 'inline-block' }}
-                  className="w-120 m-r-8"
-                  label=""
-                  name="isLimitLeaveTime"
-                >
+                <Item className="w-120 m-r-8 inline" label="" name="isLimitLeaveTime">
                   <Select onChange={() => {}} options={DURATION} />
                 </Item>
 
                 {formData.isLimitLeaveTime && (
                   <>
                     <span className="hours-InPerDay">单次请假不能超过</span>
-                    <Item
-                      label=""
-                      style={{ display: 'inline-block' }}
-                      className="hours-InPerDay-input"
-                      name="maxLeaveTime"
-                    >
+                    <Item label="" className="hours-InPerDay-input inline" name="maxLeaveTime">
                       <InputNumber
                         min={formData.leaveViewUnit === 'halfDay' ? 0.5 : 1}
                         step={formData.leaveViewUnit === 'halfDay' ? 0.5 : 1}
@@ -1053,7 +1036,7 @@ const AddRulePop: FC = () => {
                   name={['vacationIssueRule', 'freedomLeave']}
                 >
                   <Switch
-                    disabled={formData.bizType === 'lieu_leave'}
+                    disabled={formData.bizType === 'lieu_leave' || (editInfo?.id && !isCopy)}
                     checked={formData.vacationIssueRule.freedomLeave}
                   />
                 </Item>
@@ -1063,16 +1046,14 @@ const AddRulePop: FC = () => {
                   <Item label="额度发放方式" style={{ marginBottom: 0 }}>
                     <Item
                       label=""
-                      style={{ display: 'inline-block' }}
-                      className="w-120 m-r-8"
+                      className="w-120 m-r-8 inline"
                       name={['vacationIssueRule', 'timeRule', 'issueType']}
                     >
                       <Select onChange={onChange_issueType} options={level1Data} />
                     </Item>
                     <Item
                       label=""
-                      style={{ display: 'inline-block' }}
-                      className="w-120 m-r-8"
+                      className="w-120 m-r-8 inline"
                       name={['vacationIssueRule', 'timeRule', 'issueTimeType']}
                     >
                       <Select
@@ -1084,8 +1065,7 @@ const AddRulePop: FC = () => {
                       formData.vacationIssueRule?.timeRule?.issueType === 'month_day' && (
                         <Item
                           label=""
-                          style={{ display: 'inline-block' }}
-                          className="issueDayOfMonth m-r-8"
+                          className="issueDayOfMonth m-r-8 inline"
                           name={['vacationIssueRule', 'timeRule', 'issueDayOfMonth']}
                         >
                           <InputNumber min={1} max={28} />
@@ -1095,8 +1075,7 @@ const AddRulePop: FC = () => {
                       formData.vacationIssueRule?.timeRule?.issueType === 'annual' && (
                         <Item
                           label=""
-                          style={{ display: 'inline-block' }}
-                          className="w-120 m-r-8"
+                          className="w-120 m-r-8 inline"
                           name={['vacationIssueRule', 'timeRule', 'issueDayOfYear']}
                           rules={[{ required: true, message: '请选择日期' }]}
                         >
@@ -1111,8 +1090,7 @@ const AddRulePop: FC = () => {
                   <Item label="额度发放人员" style={{ marginBottom: 0 }}>
                     <Item
                       label=""
-                      style={{ display: 'inline-block' }}
-                      className="w-120"
+                      className="w-120 inline"
                       name={['vacationIssueRule', 'targetRule', 'targetType']}
                     >
                       <Select options={TARGET_USER} />
@@ -1340,11 +1318,10 @@ const AddRulePop: FC = () => {
                         <span className="hour-text m-r-8">自发起日起</span>
                         <Item
                           label=""
-                          style={{ display: 'inline-block' }}
-                          // className="w-120"
+                          className="inline"
                           name={['vacationIssueRule', 'expireRule', 'fixedTime']}
                         >
-                          <InputNumber />
+                          <InputNumber min={0} />
                         </Item>
                         <Item
                           label=""
@@ -1361,7 +1338,7 @@ const AddRulePop: FC = () => {
                     {formData.vacationIssueRule.expireRule?.expireType === 'specify_day' && (
                       <Item
                         label=""
-                        style={{ display: 'inline-block' }}
+                        className="inline"
                         name={['vacationIssueRule', 'expireRule', 'specifyDay']}
                         rules={[{ required: true, message: '请选择日期' }]}
                       >
@@ -1372,8 +1349,7 @@ const AddRulePop: FC = () => {
                     {formData.vacationIssueRule.expireRule?.expireType === 'until_day' && (
                       <Item
                         label=""
-                        style={{ display: 'inline-block' }}
-                        // className="w-120"
+                        className="inline"
                         name={['vacationIssueRule', 'expireRule', 'untilDay']}
                         rules={[{ required: true, message: '请选择日期' }]}
                       >
@@ -1386,7 +1362,6 @@ const AddRulePop: FC = () => {
                     <Item label="有效期可以延长" style={{ marginBottom: 0 }}>
                       <Item
                         label=""
-                        style={{ display: 'inline-block' }}
                         className="expireRule m-l-8 inline"
                         name={['vacationIssueRule', 'expireRule', 'extendedTime']}
                       >
