@@ -16,6 +16,8 @@ import loading from '@/components/pop/loading';
 import { msg } from '@/components/pop';
 import { leaveViewUnit } from '@/constant/rule';
 import Tooltip from '@/components/pop/Tooltip/Tooltip';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+
 interface AgeRules {
   type: string;
   minAge: number;
@@ -202,12 +204,6 @@ const Rules: FC = () => {
           const { currentPage = 1, total = 0 } = page;
           return {
             list: list.map((v: any, i: number) => {
-              if (v.vacationTypeRule.bizType === 'lieu_leave') {
-                dispatch({
-                  type: 'rules/updateState',
-                  payload: { hasLieuLeave: true },
-                });
-              }
               const visibilityRules = v.vacationTypeRule.visibilityRules;
               let visibilityRulesStr = '全员';
               let visibilityRulesStrHover = '全员';
@@ -257,10 +253,6 @@ const Rules: FC = () => {
     });
   }, [dispatch]);
 
-  useEffect(() => {
-    init();
-  }, []);
-
   const onClick_edit = (d: Result) => {
     dispatch({
       type: 'rules/updateState',
@@ -279,6 +271,7 @@ const Rules: FC = () => {
   const onClick_del = (d: Result) => {
     confirm({
       title: '确定删除吗？',
+      icon: <ExclamationCircleFilled />,
       width: 400,
       content: (
         <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>
@@ -339,13 +332,12 @@ const Rules: FC = () => {
     return [...defaultColumns, actionsReturn];
   };
 
-  const init = () => {};
-
   return (
     <PageContent className="pg-rules" hasPadding>
       <Header />
       {!inLoading &&
         (!total ? (
+          //TODO
           <Empty />
         ) : (
           <>
