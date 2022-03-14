@@ -133,6 +133,7 @@ const defaultColumns = [
   {
     title: '假期名称',
     dataIndex: 'vacationTypeRule',
+    width: 140,
     render: (d: VacationTypeRule) => {
       return (
         <>
