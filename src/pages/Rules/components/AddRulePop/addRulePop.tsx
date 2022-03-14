@@ -297,7 +297,7 @@ const TIME_UNIT = [
   },
   {
     value: 'hour',
-    label: '时',
+    label: '小时',
   },
 ];
 
@@ -508,7 +508,7 @@ const AddRulePop: FC = () => {
     }
     // 假期类型选了调休假期 假期额度设置默认开启
     if (changedValues.bizType === 'lieu_leave') {
-      result.vacationIssueRule.freedomLeave = false;
+      result.vacationIssueRule.freedomLeave = true;
     }
     if (changedValues?.vacationIssueRule?.quotaRule?.ageRules) {
       result.vacationIssueRule.quotaRule.ageRules =
@@ -549,7 +549,7 @@ const AddRulePop: FC = () => {
       result.vacationIssueRule.quotaRule.quotaType = 'fixed';
     }
     // 编辑时候开启了假期，默认数据填充
-    if (changedValues?.vacationIssueRule?.freedomLeave == true) {
+    if (changedValues?.vacationIssueRule?.freedomLeave == true && result.bizType != 'lieu_leave') {
       result.vacationIssueRule.quotaRule = defaultData.vacationIssueRule.quotaRule;
     }
     // 最小请假单位选择了之后
@@ -909,7 +909,7 @@ const AddRulePop: FC = () => {
                     >
                       <Select options={TIME_UNIT} />
                     </Item>
-                    <span className="hour-text">之内的请假申请</span>
+                    <span className="m-l-8 hour-text">之内的请假申请</span>
                   </>
                 )}
               </Item>
@@ -1042,66 +1042,65 @@ const AddRulePop: FC = () => {
                 </Item>
               </div>
               {/*如果是调休假期, 默认开启不开关闭 展示额度有效期*/}
-              {formData.vacationIssueRule.freedomLeave === false &&
-                formData.bizType == 'lieu_leave' && (
-                  <Item label="额度有效期" style={{ marginBottom: 0 }}>
+              {formData.vacationIssueRule.freedomLeave && formData.bizType == 'lieu_leave' && (
+                <Item label="额度有效期" style={{ marginBottom: 0 }}>
+                  <Item
+                    label=""
+                    style={{ display: 'inline-block', width: 200 }}
+                    className="m-r-8"
+                    name={['vacationIssueRule', 'expireRule', 'expireType']}
+                  >
+                    <Select options={EXPIRE_TYPE} />
+                  </Item>
+                  {/*固定时间段*/}
+                  {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
+                    <>
+                      <span className="hour-text m-r-8">自发起日起</span>
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block' }}
+                        className="expireRule"
+                        name={['vacationIssueRule', 'expireRule', 'fixedTime']}
+                      >
+                        <InputNumber />
+                      </Item>
+                      <Item
+                        label=""
+                        name="fixedUnit"
+                        className="w-80 m-l-8 inline"
+                        rules={[{ required: true, message: '请选择天或月' }]}
+                      >
+                        <Select options={FIXED_UNIT} />
+                      </Item>
+                      <span className="hour-text m-l-8">有效</span>
+                    </>
+                  )}
+                  {/*指定某天*/}
+                  {formData.vacationIssueRule.expireRule?.expireType === 'specify_day' && (
                     <Item
                       label=""
-                      style={{ display: 'inline-block', width: 200 }}
-                      className="m-r-8"
-                      name={['vacationIssueRule', 'expireRule', 'expireType']}
+                      style={{ display: 'inline-block' }}
+                      // className="w-120"
+                      name={['vacationIssueRule', 'expireRule', 'specifyDay']}
+                      rules={[{ required: true, message: '请选择日期' }]}
                     >
-                      <Select options={EXPIRE_TYPE} />
+                      <DatePicker format={'MM-DD'} />
                     </Item>
-                    {/*固定时间段*/}
-                    {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
-                      <>
-                        <span className="hour-text m-r-8">自发起日起</span>
-                        <Item
-                          label=""
-                          style={{ display: 'inline-block' }}
-                          className="expireRule"
-                          name={['vacationIssueRule', 'expireRule', 'fixedTime']}
-                        >
-                          <InputNumber />
-                        </Item>
-                        <Item
-                          label=""
-                          name="fixedUnit"
-                          className="w-80 m-l-8 inline"
-                          rules={[{ required: true, message: '请选择天或月' }]}
-                        >
-                          <Select options={FIXED_UNIT} />
-                        </Item>
-                        <span className="hour-text m-l-8">有效</span>
-                      </>
-                    )}
-                    {/*指定某天*/}
-                    {formData.vacationIssueRule.expireRule?.expireType === 'specify_day' && (
-                      <Item
-                        label=""
-                        style={{ display: 'inline-block' }}
-                        // className="w-120"
-                        name={['vacationIssueRule', 'expireRule', 'specifyDay']}
-                        rules={[{ required: true, message: '请选择日期' }]}
-                      >
-                        <DatePicker format={'MM-DD'} />
-                      </Item>
-                    )}
-                    {/*直到某天*/}
-                    {formData.vacationIssueRule.expireRule?.expireType === 'until_day' && (
-                      <Item
-                        label=""
-                        style={{ display: 'inline-block' }}
-                        // className="w-120"
-                        name={['vacationIssueRule', 'expireRule', 'untilDay']}
-                        rules={[{ required: true, message: '请选择日期' }]}
-                      >
-                        <DatePicker format={'MM-DD'} />
-                      </Item>
-                    )}
-                  </Item>
-                )}
+                  )}
+                  {/*直到某天*/}
+                  {formData.vacationIssueRule.expireRule?.expireType === 'until_day' && (
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block' }}
+                      // className="w-120"
+                      name={['vacationIssueRule', 'expireRule', 'untilDay']}
+                      rules={[{ required: true, message: '请选择日期' }]}
+                    >
+                      <DatePicker format={'MM-DD'} />
+                    </Item>
+                  )}
+                </Item>
+              )}
               {/*/!*如果是普通假期}*/}
               {formData.vacationIssueRule.freedomLeave && formData.bizType !== 'lieu_leave' && (
                 <div>
