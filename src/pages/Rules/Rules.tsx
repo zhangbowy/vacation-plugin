@@ -154,6 +154,7 @@ const defaultColumns = [
   {
     title: '请假计算时长方式',
     dataIndex: 'vacationTypeRule',
+    width: 220,
     render: (d: VacationTypeRule) => {
       return d?.naturalDayLeave ? '按照自然日计算时长' : '按照工作日计算时长';
     },
