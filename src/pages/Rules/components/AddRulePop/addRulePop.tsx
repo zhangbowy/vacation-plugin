@@ -1051,7 +1051,7 @@ const AddRulePop: FC = () => {
                       className="m-r-8"
                       name={['vacationIssueRule', 'expireRule', 'expireType']}
                     >
-                      <Select onChange={(e) => {}} options={EXPIRE_TYPE} />
+                      <Select options={EXPIRE_TYPE} />
                     </Item>
                     {/*固定时间段*/}
                     {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
@@ -1218,7 +1218,7 @@ const AddRulePop: FC = () => {
                       <Item
                         label=""
                         style={{ display: 'inline-block', width: 320, marginBottom: 0 }}
-                        className=" m-r-8"
+                        className="m-r-8"
                         name={['vacationIssueRule', 'quotaRule', 'quotaType']}
                       >
                         <Select
