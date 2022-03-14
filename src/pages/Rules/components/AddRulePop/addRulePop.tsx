@@ -695,7 +695,7 @@ const AddRulePop: FC = () => {
         if (values.vacationIssueRule?.expireRule?.untilDay) {
           params.vacationIssueRule.expireRule.untilDay = moment(
             values.vacationIssueRule.expireRule.untilDay,
-          ).format('yyyy-MM-DD');
+          ).format('MM-DD');
         }
         // 发放日期
         if (values.vacationIssueRule?.timeRule?.issueDayOfYear) {
@@ -1041,7 +1041,69 @@ const AddRulePop: FC = () => {
                   />
                 </Item>
               </div>
-              {formData.vacationIssueRule.freedomLeave && (
+              {/*如果是调休假期, 默认开启不开关闭 展示额度有效期*/}
+              {formData.vacationIssueRule.freedomLeave === false &&
+                formData.bizType == 'lieu_leave' && (
+                  <Item label="额度有效期" style={{ marginBottom: 0 }}>
+                    <Item
+                      label=""
+                      style={{ display: 'inline-block', width: 200 }}
+                      className="m-r-8"
+                      name={['vacationIssueRule', 'expireRule', 'expireType']}
+                    >
+                      <Select onChange={(e) => {}} options={EXPIRE_TYPE} />
+                    </Item>
+                    {/*固定时间段*/}
+                    {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
+                      <>
+                        <span className="hour-text m-r-8">自发起日起</span>
+                        <Item
+                          label=""
+                          style={{ display: 'inline-block' }}
+                          className="expireRule"
+                          name={['vacationIssueRule', 'expireRule', 'fixedTime']}
+                        >
+                          <InputNumber />
+                        </Item>
+                        <Item
+                          label=""
+                          name="fixedUnit"
+                          className="w-80 m-l-8 inline"
+                          rules={[{ required: true, message: '请选择天或月' }]}
+                        >
+                          <Select options={FIXED_UNIT} />
+                        </Item>
+                        <span className="hour-text m-l-8">有效</span>
+                      </>
+                    )}
+                    {/*指定某天*/}
+                    {formData.vacationIssueRule.expireRule?.expireType === 'specify_day' && (
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block' }}
+                        // className="w-120"
+                        name={['vacationIssueRule', 'expireRule', 'specifyDay']}
+                        rules={[{ required: true, message: '请选择日期' }]}
+                      >
+                        <DatePicker format={'MM-DD'} />
+                      </Item>
+                    )}
+                    {/*直到某天*/}
+                    {formData.vacationIssueRule.expireRule?.expireType === 'until_day' && (
+                      <Item
+                        label=""
+                        style={{ display: 'inline-block' }}
+                        // className="w-120"
+                        name={['vacationIssueRule', 'expireRule', 'untilDay']}
+                        rules={[{ required: true, message: '请选择日期' }]}
+                      >
+                        <DatePicker format={'MM-DD'} />
+                      </Item>
+                    )}
+                  </Item>
+                )}
+              {/*/!*如果是普通假期}*/}
+              {formData.vacationIssueRule.freedomLeave && formData.bizType !== 'lieu_leave' && (
                 <div>
                   <Item label="额度发放方式" style={{ marginBottom: 0 }}>
                     <Item
@@ -1353,7 +1415,7 @@ const AddRulePop: FC = () => {
                         name={['vacationIssueRule', 'expireRule', 'untilDay']}
                         rules={[{ required: true, message: '请选择日期' }]}
                       >
-                        <DatePicker />
+                        <DatePicker format={'MM-DD'} />
                       </Item>
                     )}
                   </Item>
