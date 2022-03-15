@@ -30,9 +30,12 @@ const Content: FC = () => {
     refDestroyed.current = false;
     getDropdownList().then((d) => {
       const [success, result = []] = d;
+      //
+      const res = result.filter(({ freedomLeave }: { freedomLeave: boolean }) => !freedomLeave);
       if (success && !refDestroyed.current) {
+        // @ts-ignore
         setRuleOptionss(
-          result.map(({ id, name }: { id: string | number; name: string }) => ({
+          res.map(({ id, name }: { id: string | number; name: string }) => ({
             label: name,
             value: id,
           })),
@@ -68,51 +71,43 @@ const Content: FC = () => {
   const handleSuccess = () => {
     createSuccess({
       title: '文件导入成功！',
-      content: '文件已导入！'
-    })
-  }
+      content: '文件已导入！',
+    });
+  };
   const handleError = (content: string) => {
     createError({
       title: '上传出错！',
-      content
-    })
-  }
+      content,
+    });
+  };
   const handleCatch = (e: any) => {
-    e.stopPropagation()
-  }
-  const handleUpload = useCallback(
-    () => {
-      loading.show()
-      const { file } = fileInfo
-      batchUpload({ uploadFile: file }).then(d => {
-        const [success, result] = d
-        if (success) {
-          if (result && result.errorCode === 501001) {
-            handleError(result.errorMsg)
-          } else {
-            handleSuccess()
-            setFileInfo({ file: null, fileList: [] })
-          }
+    e.stopPropagation();
+  };
+  const handleUpload = useCallback(() => {
+    loading.show();
+    const { file } = fileInfo;
+    batchUpload({ uploadFile: file }).then((d) => {
+      const [success, result] = d;
+      if (success) {
+        if (result && result.errorCode === 501001) {
+          handleError(result.errorMsg);
+        } else {
+          handleSuccess();
+          setFileInfo({ file: null, fileList: [] });
         }
-        loading.hide()
-      })
-    },
-    [fileInfo]
-  )
-  const handleChooseDepts = useCallback(
-    () => {
-      chooseDepartments({
-        title: '选择部门',
-        departments: depts.map(({ id }) => id)
-      }).then(({ departments }) => {
-        setDepts(departments)
-      })
-    },
-    [depts]
-  )
-  const handleChangeCheckboxAll = (
-    { target }: { target: { checked: boolean }}
-  ) => {
+      }
+      loading.hide();
+    });
+  }, [fileInfo]);
+  const handleChooseDepts = useCallback(() => {
+    chooseDepartments({
+      title: '选择部门',
+      departments: depts.map(({ id }) => id),
+    }).then(({ departments }) => {
+      setDepts(departments);
+    });
+  }, [depts]);
+  const handleChangeCheckboxAll = ({ target }: { target: { checked: boolean } }) => {
     if (target.checked) {
       setCheckedValue(ruleOptions.map(({ value }) => value));
     } else {

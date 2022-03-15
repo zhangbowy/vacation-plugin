@@ -13,11 +13,13 @@
 }
 
 .pg-statistics {
+  display: flex;
+  flex-direction: column;
   .ant-table-wrapper {
-    height: 90%;
+    height: 100%;
     .ant-table-content {
-      overflow: auto;
-      height: calc(78vh - 10px);
+      overflow: inherit!important;
+      height: 100%;
     }
   }
 
