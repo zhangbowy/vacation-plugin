@@ -23,6 +23,7 @@ import moment from 'moment';
 import QuotaRule from './../QuotaRule';
 import { confirm } from '@/components/pop/Modal';
 import { Spin } from 'antd';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 const RULE_TYPE = [
   {
@@ -388,7 +389,8 @@ const AddRulePop: FC = () => {
   const close = () => {
     confirm({
       title: '提示',
-      content: '确定取消吗？',
+      content: <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>确定取消吗？</span>,
+      icon: <ExclamationCircleFilled />,
       onOk: () => {
         dispatch({
           type: 'rules/updateState',
@@ -654,14 +656,15 @@ const AddRulePop: FC = () => {
               ...values.vacationIssueRule?.expireRule,
               isExtended: true,
             },
-            quotaRule: {
-              ...values.vacationIssueRule?.quotaRule,
-              fixedQuota: values.vacationIssueRule?.quotaRule?.fixedQuota * 100 || 0,
-            },
             freedomLeave: !values.vacationIssueRule.freedomLeave, // 开关
           }, // 假期额度设置
         };
-
+        if (values.vacationIssueRule?.quotaRule) {
+          params.vacationIssueRule.quotaRule = {
+            ...values.vacationIssueRule?.quotaRule,
+            fixedQuota: values.vacationIssueRule?.quotaRule?.fixedQuota * 100 || 0,
+          };
+        }
         // 如果开启了限制单次最大请假时间
         if (values.isLimitLeaveTime) {
           params.vacationTypeRule.maxLeaveTime = values.maxLeaveTime;
