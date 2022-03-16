@@ -4,6 +4,14 @@ import './Item.less';
 import moment from 'moment';
 import Icon from '@/components/Icon';
 
+const dealDurationTime = (startTime: number, endTime: number) => {
+  // 2099年
+  if (endTime === 4102415999000) {
+    return '永久有效';
+  }
+  return `${moment(startTime).format('YYYY-MM-DD')}至${moment(endTime).format('YYYY-MM-DD')}有效`;
+};
+
 const getContext = (item: any, title: string) => {
   const {
     changeType,
@@ -20,35 +28,25 @@ const getContext = (item: any, title: string) => {
     return `${userName ? `${userName} ` : ''}使用了${
       (changeDuration || 0) / 100
     }${unit}的假期，当前剩余${(sumDuration || 0) / 100}${unit}${
-      startTime && endTime
-        ? `，${moment(startTime).format('YYYY-MM-DD')}至${moment(endTime).format('YYYY-MM-DD')}有效`
-        : ''
+      startTime && endTime ? `，${dealDurationTime(startTime, endTime)}` : ''
     }`;
   }
   if (changeType === 3) {
     return `假期过期${(changeDuration || 0) / 100}${unit}，当前剩余${
       (sumDuration || 0) / 100
-    }${unit}${
-      startTime && endTime
-        ? `，${moment(startTime).format('YYYY-MM-DD')}至${moment(endTime).format('YYYY-MM-DD')}有效`
-        : ''
-    }`;
+    }${unit}${startTime && endTime ? `，${dealDurationTime(startTime, endTime)}` : ''}`;
   }
   if (changeType === 1 || changeType === 2) {
     return `${createUserName ? `${createUserName} 为 ` : ''}${userName ? `${userName} ` : ''}${
       changeType === 1 ? '增加了' : '减少了'
     }${(changeDuration || 0) / 100}${unit}的${title}，当前剩余${(sumDuration || 0) / 100}${unit}${
-      startTime && endTime
-        ? `，${moment(startTime).format('YYYY-MM-DD')}至${moment(endTime).format('YYYY-MM-DD')}有效`
-        : ''
+      startTime && endTime ? `，${dealDurationTime(startTime, endTime)}` : ''
     }`;
   }
   return `系统按照规则自动${changeType === 0 ? '增加了' : '减少了'}${
     (changeDuration || 0) / 100
   }${unit}的${title}，当前剩余${(sumDuration || 0) / 100}${unit}${
-    startTime && endTime
-      ? `，${moment(startTime).format('YYYY-MM-DD')}至${moment(endTime).format('YYYY-MM-DD')}有效`
-      : ''
+    startTime && endTime ? `，${dealDurationTime(startTime, endTime)}` : ''
   }`;
 };
 
