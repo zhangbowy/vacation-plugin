@@ -1,9 +1,9 @@
-import { memo, useContext, useMemo } from 'react'
+import { memo, useContext, useMemo, useCallback } from 'react'
 import type { FC } from 'react'
 import './ResultBox.less'
-import Avatar from '@/components/Avatar'
-import Icon from '@/components/Icon'
-import { context } from '../../reducer'
+import { context } from '../../context'
+import ResultDept from '../ResultDept'
+import ResultUser from '../ResultUser'
 
 interface ValueProps {
   departments: { id: string, name: string }[]
@@ -11,10 +11,30 @@ interface ValueProps {
 }
 
 const ResultBox: FC = () => {
-  const { state: { value } } = useContext(context)
+  const { state: { value }, dispatch } = useContext(context)
   const { departments = [], users = [] } = useMemo<ValueProps>(
     () => value || { departments: [], users: [] },
     [value]
+  )
+  const handleRemovDept = useCallback(
+    index => {
+      dispatch({
+        type: 'remove item',
+        index,
+        itemType: 'dept'
+      })
+    },
+    [dispatch]
+  )
+  const handleRemoveUser = useCallback(
+    index => {
+      dispatch({
+        type: 'remove item',
+        index,
+        itemType: 'user'
+      })
+    },
+    [dispatch]
   )
   return <div className='com-pop-modal-complex-select--result-box'>
     <p className='com-pop-modal-complex-select--result-box--title'>
@@ -23,57 +43,23 @@ const ResultBox: FC = () => {
     <div className='com-pop-modal-complex-select--result-box--content'>
       {
         departments.map(
-          ({ id, name }) =>
-            <div
+          ({ id, name }, i) =>
+            <ResultDept
               key={id}
-              className='com-pop-modal-complex-select--result-box--dpet ellipsis'
-            >
-              <Icon
-                className='com-pop-modal-complex-select--result-box--folder'
-                type='icon-bumenzu'
-              />
-              <p
-                className='com-pop-modal-complex-select--result-box--name ellipsis' 
-              >
-                { name }
-              </p>
-              <Icon
-                className='com-pop-modal-complex-select--result-box--remove'
-                type='icon-shanchu'
-              />
-            </div>
+              name={name}
+              onRemove={() => { handleRemovDept(i) }}
+            />
         )
       }
       {
         users.map(
-          ({ id, name, avatar }) =>
-            <div
+          ({ id, name, avatar }, i) =>
+            <ResultUser
               key={id}
-              className='com-pop-modal-complex-select--result-box--user ellipsis'
-            >
-              {
-                avatar
-                  ? <Avatar
-                    className='com-pop-modal-complex-select--result-box--avatar'
-                    avatar={avatar}
-                    name={name}
-                  />
-                  : <p
-                    className='com-pop-modal-complex-select--result-box--avatar-text'
-                  >
-                    { name ? name.slice(0, 2) : '未知' }
-                  </p>
-              }
-              <p
-                className='com-pop-modal-complex-select--result-box--name ellipsis' 
-              >
-                { name }
-              </p>
-              <Icon
-                className='com-pop-modal-complex-select--result-box--remove'
-                type='icon-shanchu'
-              />
-            </div>
+              name={name}
+              avatar={avatar}
+              onRemove={() => { handleRemoveUser(i) }}
+            />
         )
       }
     </div>

@@ -1,31 +1,37 @@
-import { memo, useContext, Fragment } from 'react'
+import { memo, useContext, Fragment, useCallback } from 'react'
 import type { FC } from 'react'
 import './Navi.less'
-import { context } from '../../reducer'
+import { context } from '../../context'
 import Icon from '@/components/Icon'
 
-const paths = [
-  {
-    id: '1', name: '开发中心'
-  }, {
-    id: '2', name: '测试部'
-  // }, {
-  //   id: '3', name: '开发中心'
-  // }, {
-  //   id: '4', name: '测试部'
-  // }, {
-  //   id: '5', name: '开发中心'
-  // }, {
-  //   id: '6', name: '测试部'
-  }
-]
-
 const Navi: FC = () => {
-  const { state: { topName } } = useContext(context)
+  const { state: { topName, paths, searchString }, actions } = useContext(context)
+  const handleTop = useCallback(
+    () => {
+      if (paths.length > 0) {
+        actions.changeDept([])
+      }
+    },
+    [paths, actions]
+  )
+  const handleChange = useCallback(
+    index => {
+      if (paths.length - 1 > index) {
+        actions.changeDept(paths.slice(0, index + 1))
+      }
+    },
+    [paths, actions]
+  )
+  if (searchString) {
+    return null
+  }
   return <div className='com-pop-modal-complex-select--navi'>
     {
       topName &&
-      <p className='com-pop-modal-complex-select--navi--name'>
+      <p
+        className='com-pop-modal-complex-select--navi--name'
+        onClick={handleTop}
+      >
         { topName }
       </p>
     }
@@ -45,7 +51,10 @@ const Navi: FC = () => {
               className='com-pop-modal-complex-select--navi--divider'
               type='icon-youjiantou'
             />
-            <p className='com-pop-modal-complex-select--navi--name'>
+            <p
+              className='com-pop-modal-complex-select--navi--name'
+              onClick={() => handleChange(i)}
+            >
               { name }
             </p>
           </Fragment>

@@ -1,60 +1,144 @@
-import { createContext, useReducer } from 'react'
-import type { FC } from 'react'
+type Dept = { id: string, name: string }
+type Depts = Dept[]
+type User = { id: string, name: string, avatar?: string }
+type Users = User[]
 
 interface ReducerProps {
   topName: string
   dispDeptId: string | null
   options: {
-    departments: { id: string, name: string }[],
-    users: { id: string, name: string, avatar?: string }[]
+    departments: Depts,
+    users: Users
   }
   value: {
-    departments: { id: string, name: string }[],
-    users: { id: string, name: string, avatar?: string }[]
+    departments: Depts,
+    users: Users
   }
   type: 'complex' | 'user' | 'dept'
   searchString: string
+  paths: Depts
 }
 
-const getInitialState = (payload = {}): ReducerProps => ({
+const getInitialState = (payload = {}) => ({
   topName: '',
   dispDeptId: null,
   options: { departments: [], users: [] },
   value: { departments: [], users: [] },
   type: 'complex',
   searchString: '',
+  paths: [],
   ...payload
 })
 
-export const context = createContext({
-  // eslint-disable-next-line
-  dispatch: (_: any) => {},
-  state: getInitialState()
-})
-
-export const reducer = (state: ReducerProps, action: any) => {
-  console.log('what ffff')
-  console.log(state)
-  console.log(action)
+export default (state: ReducerProps, action: any) => {
   switch (action.type) {
     case 'reset':
       return getInitialState(action.payload)
-    case 'start search':
-      console.log(action.searchString)
-      return state
+    case 'open dept':
+      return {
+        ...state,
+        paths: [
+          ...state.paths,
+          { ...action.dept }
+        ],
+        searchString: ''
+      }
+    case 'update options':
+      return {
+        ...state,
+        options: action.options
+      }
+    case 'change paths':
+      return {
+        ...state,
+        paths: action.paths
+      }
+    case 'change search string':
+      return {
+        ...state,
+        searchString: action.searchString
+      }
+    case 'clear search string':
+      return {
+        ...state,
+        searchString: '',
+        paths: []
+      }
+    case 'remove item':
+       if (action.itemType === 'user') {
+        const index = action.index
+        const users = state.value.users
+        return {
+          ...state,
+          value: {
+            users: [
+              ...users.slice(0, index),
+              ...users.slice(index + 1)
+            ],
+            departments: state.value.departments
+          }
+        }
+       } else {
+        const index = action.index
+        const departments = state.value.departments
+        return {
+          ...state,
+          value: {
+            users: state.value.users,
+            departments: [
+              ...departments.slice(0, index),
+              ...departments.slice(index + 1)
+            ]
+          }
+        }
+       }
+    case 'batch add':
+      return {
+        ...state,
+        value: {
+          users: [
+            ...state.value.users,
+            ...action.users
+          ],
+          departments: [
+            ...state.value.departments,
+            ...action.departments
+          ]
+        }
+      }
+    case 'update value':
+      return {
+        ...state,
+        value: {
+          users: action.users,
+          departments: action.departments
+        }
+      }
+    case 'add item':
+      if (action.itemType === 'user') {
+        return {
+          ...state,
+          value: {
+            users: [
+              ...state.value.users,
+              action.item
+            ],
+            departments: state.value.departments
+          }
+        }
+      } else {
+        return {
+          ...state,
+          value: {
+            users: state.value.users,
+            departments: [
+              ...state.value.departments,
+              action.item
+            ]
+          }
+        }
+      }
     default:
       return state
   }
 }
-
-const ContextProvider: FC = ({ children }) => {
-  //@ts-ignore
-  const [state, dispatch] = useReducer(reducer, getInitialState())
-  return (
-    <context.Provider value={{ state, dispatch }}>
-      { children }
-    </context.Provider>
-  )
-}
-
-export default ContextProvider

@@ -2,12 +2,11 @@ import { memo } from 'react'
 import type { FC } from 'react'
 import './ModalComplexSelect.less'
 import Content from './components/Content'
-import ContextProvider from './reducer'
+import ContextProvider from './context'
 
 interface ModalComplexSelectProps {
   title?: string
   type?: 'complex' | 'user' | 'dept'
-  options?: any[]
   value?: any[]
   topName?: string,
   onChange?: VoidFunction

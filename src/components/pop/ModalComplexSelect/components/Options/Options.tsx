@@ -1,14 +1,16 @@
-import { memo, useContext, useMemo } from 'react'
-import type { FC, MouseEvent } from 'react'
+import { memo, useContext, useMemo, useCallback } from 'react'
+import type { FC } from 'react'
 import './Options.less'
 import Checkbox from '@/components/form/Checkbox'
-import { context } from '../../reducer'
-import Avatar from '@/components/Avatar'
-import Icon from '@/components/Icon'
+import { context } from '../../context'
+import OptionUser from '../OptionUser'
+import OptionsDept from '../OptionsDept'
+
+type E = { target: { checked: boolean } }
 
 const Options: FC = () => {
-  const { state } = useContext(context)
-  const { value, options } = state
+  const { state, actions, dispatch } = useContext(context)
+  const { value, options, searchString } = state
   const { deptMap, userMap } = useMemo(
     () => {
       const { users = [], departments = [] } = value || {}
@@ -43,91 +45,127 @@ const Options: FC = () => {
       deptOptions.every(v => deptMap[v.id]),
     [deptMap, userMap, userOptions, deptOptions]
   )
-  const handleChange = () => {
-    console.log('click checkbox')
-  }
-  const gotoNext = () => {
-    console.log('go to next')
+  const handleChangeAll = useCallback(
+    ({ target: { checked } }: E) => {
+      const { users = [], departments = [] } = options || {}
+      if (checked) {
+        dispatch({
+          type: 'batch add',
+          users: users.filter(({ id }) => !userMap[id]),
+          departments: departments.filter(({ id }) => !deptMap[id])
+        })
+      } else {
+        const optionUsersMap = {}
+        const optionDeptsMap = {}
+        users.forEach(({ id }) => {
+          optionUsersMap[id] = true
+        })
+        departments.forEach(({ id }) => {
+          optionDeptsMap[id] = true
+        })
+        const {
+          users: valueUsers = [], departments: valueDepartments = []
+        } = value || {}
+        dispatch({
+          type: 'update value',
+          users: valueUsers.filter(({ id }) => !optionUsersMap[id]),
+          departments: valueDepartments.filter(({ id }) => !optionDeptsMap[id])
+        })
+      }
+    },
+    [dispatch, options, deptMap, userMap, value]
+  )
+  const handleChangeDept = useCallback(
+    (item, checked) => {
+      if (checked) {
+        dispatch({
+          type: 'add item',
+          itemType: 'dept',
+          item
+        })
+      } else {
+        const { departments = [] } = value || {}
+        const index = departments.findIndex(({ id }) => id === item.id)
+        console.log(index)
+        if (~index) {
+          dispatch({
+            type: 'remove item',
+            itemType: 'dept',
+            index
+          })
+        }
+      }
+    },
+    [dispatch, value]
+  )
+  const handleChangeUser = useCallback(
+    (item, checked) => {
+      if (checked) {
+        dispatch({
+          type: 'add item',
+          itemType: 'user',
+          item
+        })
+      } else {
+        const { users = [] } = value || {}
+        const index = users.findIndex(({ id }) => id === item.id)
+        if (~index) {
+          dispatch({
+            type: 'remove item',
+            itemType: 'user',
+            index
+          })
+        }
+      }
+    },
+    [dispatch, value]
+  )
+  const openDept = useCallback(
+    dept => {
+      actions.openDept(dept)
+    },
+    [actions]
+  )
+  if (!userOptions.length && !deptOptions.length) {
+    return <p className='com-pop-modal-complex-select--options--empty'>
+      { searchString ? '没有搜索到结果' : '暂无数据' }
+    </p>
   }
   return <div className='com-pop-modal-complex-select--options'>
     <Checkbox
       className='com-pop-modal-complex-select--options--check-all'
       checked={isSelectedAll}
+      onChange={handleChangeAll}
     >
       全选
     </Checkbox>
     <div className='com-pop-modal-complex-select--options--content'>
       {
-        userOptions.map(
-          ({ id, avatar, name }) =>
-            <div
+        deptOptions.map(
+          ({ id, name }) =>
+            <OptionsDept
               key={id}
-              className='com-pop-modal-complex-select--options--user'
-            >
-              <Checkbox
-                className='com-pop-modal-complex-select--options--check-user'
-                checked={userMap[id]}
-                onChange={handleChange}
-              >
-                {
-                  avatar
-                    ? <Avatar
-                      className='com-pop-modal-complex-select--options--avatar'
-                      avatar={avatar}
-                      name={name}
-                    />
-                    : <p
-                      className='com-pop-modal-complex-select--options--avatar-text'
-                    >
-                      { name ? name.slice(0, 2) : '未知' }
-                    </p>
-                }
-                <p
-                  className='com-pop-modal-complex-select--options--name ellipsis' 
-                >
-                  { name }
-                </p>
-              </Checkbox>
-            </div>
+              checked={deptMap[id]}
+              onChange={(e: E) => handleChangeDept(
+                { id, name }, e.target.checked
+              )}
+              onOpen={() => openDept({ id, name })}
+              name={name}
+            />
         )
       }
       {
-        deptOptions.map(
-          ({ id, name }) =>
-            <div
+        userOptions.map(
+          ({ id, avatar, name }) =>
+            <OptionUser
               key={id}
-              className='com-pop-modal-complex-select--options--dept'
-            >
-              <Checkbox
-                className='com-pop-modal-complex-select--options--check-dept'
-                checked={deptMap[id]}
-                onChange={handleChange}
-              >
-                <Icon
-                  className='com-pop-modal-complex-select--options--folder'
-                  type='icon-bumenzu'
-                />
-                <p
-                  className='com-pop-modal-complex-select--options--name ellipsis' 
-                >
-                  { name }
-                </p>
-              </Checkbox>
-              <p
-                className='com-pop-modal-complex-select--options--button'
-                onClick={gotoNext}
-              >
-                <Icon
-                  className='com-pop-modal-complex-select--options--level'
-                  type='icon-xiaji'
-                />
-                <span
-                  className='com-pop-modal-complex-select--options--primary-text'
-                >
-                  下级
-                </span>
-              </p>
-            </div>
+              checked={userMap[id]}
+              onChange={(e: E) => handleChangeUser(
+                { id, avatar, name }, e.target.checked
+              )}
+              avatar={avatar}
+              name={name}
+            />
         )
       }
     </div>

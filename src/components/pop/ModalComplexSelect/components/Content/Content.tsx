@@ -4,13 +4,12 @@ import './Content.less'
 import Modal from '@/components/pop/Modal'
 import OptionBox from '../OptionBox'
 import ResultBox from '../ResultBox'
-import { context } from '../../reducer'
+import { context } from '../../context'
 
 interface ContentProps {
   title?: string
   topName?: string
   type?: 'complex' | 'user' | 'dept'
-  options?: any[]
   value?: any[]
   onChange?: VoidFunction
   visible?: boolean
@@ -27,74 +26,35 @@ const getDefaultTitle = (type: string) => {
   return '选择部门与人员'
 }
 
-const tstOptions = {
-  departments: [
-    {
-      id: '1', name: '测试部'
-    }, {
-      id: '2', name: '技术部'
-    }, {
-      id: '3', name: '测试部'
-    }, {
-      id: '4', name: '技术部'
-    }, {
-      id: '5', name: '测试部'
-    }, {
-      id: '6', name: '技术部'
-    }
-  ],
-  users: [
-    {
-      id: '1',
-      name: '测试部',
-      avatar: 'https://gw.alicdn.com/tps/TB1W_X6OXXXXXcZXVXXXXXXXXXX-400-400.png'
-    }, {
-      id: '2', name: '技术部'
-    }
-  ]
-}
-const tstValue = {
-  departments: [
-    {
-      id: '1', name: '测试部'
-    }, {
-      id: '2', name: '技术部'
-    }
-  ],
-  users: [
-    {
-      id: '1',
-      name: '测试部',
-      avatar: 'https://gw.alicdn.com/tps/TB1W_X6OXXXXXcZXVXXXXXXXXXX-400-400.png'
-    }, {
-      id: '2', name: '技术部'
-    }
-  ]
-}
+const tstTopName = 'xz考勤测试使用'
 
 const Content: FC<ContentProps> = ({
   title,
   type = 'complex',
-  options,
   value,
   topName,
   onChange,
   visible = true
 }) => {
-  const { dispatch } = useContext(context)
+  const { actions, dispatch } = useContext(context)
+  useEffect(
+    () => {
+      actions.getList()
+    },
+    [type, actions]
+  )
   useEffect(
     () => {
       dispatch({
         type: 'reset',
         payload: {
-          topName: '考勤打卡',
-          options: options || tstOptions,
-          value: value || tstValue,
-          type: 'user'
+          topName: topName || tstTopName,
+          value: value || { departments: [], users: [] },
+          type
         }
       })
     },
-    [options, value, type, topName, dispatch]
+    [value, type, topName, dispatch]
   )
   const dispTitle = useMemo<string>(
     () => {
