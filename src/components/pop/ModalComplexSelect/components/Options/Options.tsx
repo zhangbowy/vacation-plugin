@@ -10,7 +10,7 @@ type E = { target: { checked: boolean } }
 
 const Options: FC = () => {
   const { state, actions, dispatch } = useContext(context)
-  const { value, options, searchString } = state
+  const { value, options, searchString, type } = state
   const { deptMap, userMap } = useMemo(
     () => {
       const { users = [], departments = [] } = value || {}
@@ -40,10 +40,12 @@ const Options: FC = () => {
     [options]
   )
   const isSelectedAll = useMemo(
-    () => (userOptions.length > 0 || deptOptions.length > 0) &&
-      userOptions.every(v => userMap[v.id]) &&
-      deptOptions.every(v => deptMap[v.id]),
-    [deptMap, userMap, userOptions, deptOptions]
+    () => type === 'user'
+      ? userOptions.length > 0 && userOptions.every(v => userMap[v.id])
+      : (userOptions.length > 0 || deptOptions.length > 0) &&
+        userOptions.every(v => userMap[v.id]) &&
+        deptOptions.every(v => deptMap[v.id]),
+    [deptMap, userMap, userOptions, deptOptions, type]
   )
   const handleChangeAll = useCallback(
     ({ target: { checked } }: E) => {
@@ -52,7 +54,9 @@ const Options: FC = () => {
         dispatch({
           type: 'batch add',
           users: users.filter(({ id }) => !userMap[id]),
-          departments: departments.filter(({ id }) => !deptMap[id])
+          departments: type === 'user'
+            ? []
+            : departments.filter(({ id }) => !deptMap[id])
         })
       } else {
         const optionUsersMap = {}
@@ -60,20 +64,24 @@ const Options: FC = () => {
         users.forEach(({ id }) => {
           optionUsersMap[id] = true
         })
-        departments.forEach(({ id }) => {
-          optionDeptsMap[id] = true
-        })
+        if (type !== 'user') {
+          departments.forEach(({ id }) => {
+            optionDeptsMap[id] = true
+          })
+        }
         const {
           users: valueUsers = [], departments: valueDepartments = []
         } = value || {}
         dispatch({
           type: 'update value',
           users: valueUsers.filter(({ id }) => !optionUsersMap[id]),
-          departments: valueDepartments.filter(({ id }) => !optionDeptsMap[id])
+          departments: type === 'user'
+            ? []
+            : valueDepartments.filter(({ id }) => !optionDeptsMap[id])
         })
       }
     },
-    [dispatch, options, deptMap, userMap, value]
+    [dispatch, options, deptMap, userMap, value, type]
   )
   const handleChangeDept = useCallback(
     (item, checked) => {
@@ -86,7 +94,6 @@ const Options: FC = () => {
       } else {
         const { departments = [] } = value || {}
         const index = departments.findIndex(({ id }) => id === item.id)
-        console.log(index)
         if (~index) {
           dispatch({
             type: 'remove item',
@@ -151,11 +158,12 @@ const Options: FC = () => {
               )}
               onOpen={() => openDept({ id, name })}
               name={name}
+              showCheckbox={type !== 'user'}
             />
         )
       }
       {
-        userOptions.map(
+        type !== 'dept' && userOptions.map(
           ({ id, avatar, name }) =>
             <OptionUser
               key={id}

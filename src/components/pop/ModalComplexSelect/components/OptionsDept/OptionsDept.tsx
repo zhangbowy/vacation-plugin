@@ -10,29 +10,44 @@ interface OptionsDeptProps {
   onChange: (e: E) => void
   onOpen: VoidFunction
   name: string
+  showCheckbox: boolean
 }
 
 const OptionsDept: FC<OptionsDeptProps> = ({
-  checked, onChange, onOpen, name
+  checked, onChange, onOpen, name, showCheckbox
 }) =>
   <div
     className='com-pop-modal-complex-select--options-dept'
   >
-    <Checkbox
-      className='com-pop-modal-complex-select--options-dept--check'
-      checked={checked}
-      onChange={onChange}
-    >
-      <Icon
-        className='com-pop-modal-complex-select--options-dept--folder'
-        type='icon-bumenzu'
-      />
-      <p
-        className='com-pop-modal-complex-select--options-dept--name ellipsis' 
-      >
-        { name }
-      </p>
-    </Checkbox>
+    {
+      showCheckbox
+        ? <Checkbox
+          className='com-pop-modal-complex-select--options-dept--check'
+          checked={checked}
+          onChange={onChange}
+        >
+          <Icon
+            className='com-pop-modal-complex-select--options-dept--folder'
+            type='icon-bumenzu'
+          />
+          <p
+            className='com-pop-modal-complex-select--options-dept--name ellipsis' 
+          >
+            { name }
+          </p>
+        </Checkbox>
+      : <div className='com-pop-modal-complex-select--options-dept--topic'>
+        <Icon
+          className='com-pop-modal-complex-select--options-dept--topic-folder'
+          type='icon-bumenzu'
+        />
+        <p
+          className='com-pop-modal-complex-select--options-dept--topic-name ellipsis' 
+        >
+          { name }
+        </p>
+      </div>
+    }
     <p
       className='com-pop-modal-complex-select--options-dept--button'
       onClick={onOpen}

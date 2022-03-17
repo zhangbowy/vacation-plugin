@@ -1,7 +1,10 @@
 import { getAddressList, searchAddressList } from '@/services/address'
+import loading from '@/components/pop/loading'
+
 let fetchId = 0
+// 选人时也要显示部门信息
 const mapType = {
-  dept: 1, user: 2, complex: 3
+  dept: 1, user: 3, complex: 3
 }
 
 export const handleList = (
@@ -9,10 +12,12 @@ export const handleList = (
   callback: (x: any) => void
 ) => {
   const flag = ++fetchId
+  loading.show()
   return getAddressList({
     deptId: params.deptId || 1,
     type: mapType[params.type] || 3
   }).then(d => {
+    loading.hide()
     if (flag === fetchId && d[0]) {
       const { depts = [], users = [] } = d[1] || {}
       const r = {
@@ -38,10 +43,12 @@ export const handleSearch = (
   callback: (x: any) => void
 ) => {
   const flag = ++fetchId
+  loading.show()
   return searchAddressList({
     search: params.search,
     type: mapType[params.type] || 3
   }).then(d => {
+    loading.hide()
     if (flag === fetchId && d[0]) {
       const { depts = [], users = [] } = d[1] || {}
       const r = {

@@ -6,12 +6,22 @@ import OptionBox from '../OptionBox'
 import ResultBox from '../ResultBox'
 import { context } from '../../context'
 
+type Dept = { id: string, name: string }
+type Depts = Dept[]
+type User = { id: string, name: string, avatar?: string }
+type Users = User[]
 interface ContentProps {
   title?: string
   topName?: string
   type?: 'complex' | 'user' | 'dept'
-  value?: any[]
-  onChange?: VoidFunction
+  value?: {
+    departments: Depts,
+    users: Users
+  }
+  onChange?: (x: {
+    departments: Depts,
+    users: Users
+  }) => void
   visible?: boolean
   onCancel?: VoidFunction
   onConfirm?: VoidFunction
@@ -34,9 +44,13 @@ const Content: FC<ContentProps> = ({
   value,
   topName,
   onChange,
+  onConfirm,
+  onCancel,
   visible = true
 }) => {
-  const { actions, dispatch } = useContext(context)
+  const {
+    actions, dispatch, state: { value: stateValue }
+  } = useContext(context)
   useEffect(
     () => {
       actions.getList()
@@ -45,11 +59,15 @@ const Content: FC<ContentProps> = ({
   )
   useEffect(
     () => {
+      const  { departments = [], users = [] } = value || {}
       dispatch({
         type: 'reset',
         payload: {
           topName: topName || tstTopName,
-          value: value || { departments: [], users: [] },
+          value: {
+            departments: type !== 'user' ? departments : [],
+            users: type !== 'dept' ? users : []
+          },
           type
         }
       })
@@ -67,14 +85,25 @@ const Content: FC<ContentProps> = ({
   )
   const handleConfirm = useCallback(
     () => {
-      console.log('click confirm')
-      console.log('onChange', onChange)
+      if (onChange) {
+        onChange(stateValue)
+      }
+      if (onConfirm) {
+        onConfirm()
+      } else if (onCancel) {
+        onCancel()
+      }
     },
-    [onChange]
+    [onChange, onConfirm, onCancel, stateValue]
   )
-  const handleClose = () => {
-    console.log('click close')
-  }
+  const handleClose = useCallback(
+    () => {
+      if (onCancel) {
+        onCancel()
+      }
+    },
+    [onCancel]
+  )
   return <Modal
     className='com-pop-modal-complex-select--content'
     visible={visible}
