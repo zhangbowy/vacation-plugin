@@ -65,6 +65,7 @@ const ContextProvider: FC = ({ children }) => {
         handleList(
           params,
           options => {
+            //@ts-ignore
             dispatch({ type: 'update options', options })
           }
         )
@@ -75,11 +76,13 @@ const ContextProvider: FC = ({ children }) => {
         },
         openDept: (dept: Dept) => {
           const { type } = refState.current
+          //@ts-ignore
           dispatch({ type: 'open dept', dept })
           return _getList({ type, deptId: dept.id })
         },
         changeDept: (paths: Depts) => {
           const { type } = refState.current
+          //@ts-ignore
           dispatch({ type: 'change paths', paths })
           return _getList({
             type,
@@ -89,6 +92,7 @@ const ContextProvider: FC = ({ children }) => {
         doSearch: (search: string) => {
           const { type } = refState.current
           if (search) {
+            //@ts-ignore
             dispatch({
               type: 'change search string',
               searchString: search
@@ -96,6 +100,7 @@ const ContextProvider: FC = ({ children }) => {
             return handleSearch(
               { type, search },
               options => {
+                //@ts-ignore
                 dispatch({
                   type: 'update options',
                   options
@@ -103,6 +108,7 @@ const ContextProvider: FC = ({ children }) => {
               }
             )
           } else {
+            //@ts-ignore
             dispatch({ type: 'clear search string' })
             return _getList({
               type,
