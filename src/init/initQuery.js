@@ -6,7 +6,10 @@ function initQuery() {
     {
       query: ['corpId', 'corpid'],
       key: 'corpId',
-    },
+    }, {
+      query: 'code',
+      key: 'code'
+    }
   ];
 
   const split = window.location.href.split('?');

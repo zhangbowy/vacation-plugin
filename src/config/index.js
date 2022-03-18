@@ -1,8 +1,7 @@
 import { SESSION_KEY_CORPID } from '@/constant';
 
-console.log('need decide accessCode')
 const config = {
-  accessCode: '', // 这个需要根据钉钉的页面参数来决定，由它决定调用的登录接口及 headerReturn 的值
+  code: '',
   headerReturn: false,
   corpId: '',
   token: '',
