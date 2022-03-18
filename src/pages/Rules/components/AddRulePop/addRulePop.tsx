@@ -609,10 +609,11 @@ const AddRulePop: FC = () => {
             visibilityRules.push({
               type: 'staff',
               visible: users ? users.map(({ id }) => id) : [],
-              details: users.map(({ id, name }) => {
+              details: users.map(({ id, name, avatar }) => {
                 return {
                   id,
                   name,
+                  avatar
                 };
               }),
             });

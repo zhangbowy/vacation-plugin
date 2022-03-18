@@ -36,7 +36,9 @@ async function initDingTalkJsapi() {
         authMap[resourceId] = true
       }
     )
+    // headerReturn 根据环境设置示同的headerReturn
     setConfig({
+      headerReturn: false,
       token: result.token,
       authMap,
       loginInfo: result
