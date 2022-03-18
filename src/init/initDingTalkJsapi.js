@@ -22,6 +22,10 @@ async function initDingTalkJsapi() {
   const loginResult = await userLogin({
     code: authResult.code, corpId
   })
+  // const dd = await userLoginH5({
+  //   code: authResult.code
+  // })
+  // console.log('aa', dd)
   const [success, result] = loginResult
 
   const authMap = {}

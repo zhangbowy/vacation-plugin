@@ -14,7 +14,6 @@ import useStoreContentSize from '@/hooks/useStoreContentSize';
 import './BasicLayout.less';
 import styles from './index.less';
 import { useLocation } from 'umi';
-import ModalComplexSelect from '@/components/pop/ModalComplexSelect'
 
 const BasicLayout = (props) => {
   useStoreContentSize();
@@ -160,7 +159,6 @@ const BasicLayout = (props) => {
           <div id="lay-basic-layout--content-footer" />
         </div>
       </ProLayout>
-      <ModalComplexSelect />
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import { memo } from 'react'
 import type { FC } from 'react'
 import './OptionsDept.less'
-import Checkbox from '@/components/form/Checkbox'
 import Icon from '@/components/Icon'
 
 type E = { target: { checked: boolean } }
@@ -10,18 +9,19 @@ interface OptionsDeptProps {
   onChange: (e: E) => void
   onOpen: VoidFunction
   name: string
-  showCheckbox: boolean
+  showOption: boolean
+  Comp: any
 }
 
 const OptionsDept: FC<OptionsDeptProps> = ({
-  checked, onChange, onOpen, name, showCheckbox
+  checked, onChange, onOpen, name, showOption, Comp
 }) =>
   <div
     className='com-pop-modal-complex-select--options-dept'
   >
     {
-      showCheckbox
-        ? <Checkbox
+      showOption
+        ? <Comp
           className='com-pop-modal-complex-select--options-dept--check'
           checked={checked}
           onChange={onChange}
@@ -35,7 +35,7 @@ const OptionsDept: FC<OptionsDeptProps> = ({
           >
             { name }
           </p>
-        </Checkbox>
+        </Comp>
       : <div className='com-pop-modal-complex-select--options-dept--topic'>
         <Icon
           className='com-pop-modal-complex-select--options-dept--topic-folder'

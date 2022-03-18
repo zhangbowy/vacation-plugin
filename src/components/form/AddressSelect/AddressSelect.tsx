@@ -1,23 +1,25 @@
 import { memo, useCallback, useMemo, useState } from 'react'
 import type { FC } from 'react'
 import classnames from 'classnames'
-import './UserSelect.less'
-import Icon from '@/components/Icon'
+import './AddressSelect.less'
 import Tooltip from '@/components/pop/Tooltip'
+import Icon from '@/components/Icon'
 import ModalComplexSelect from '@/components/pop/ModalComplexSelect'
 
-interface UserSelectProps {
+interface AddressSelectProps {
   className?: string
-  value?: AddressUsers
-  onChange?: (value: AddressUsers) => void
+  value?: AddressList
+  onChange?: (value: AddressList) => void
   placeholder?: string
+  selectMode?: 'multiple' | 'single'
 }
 
-const UserSelect: FC<UserSelectProps> = ({
+const AddressSelect: FC<AddressSelectProps> = ({
   className,
   value,
   onChange,
-  placeholder = '选择成员'
+  placeholder = '选择部门和成员',
+  selectMode
 }) => {
   const [visible, setVisible] = useState(false)
   const handleClose = useCallback(
@@ -27,44 +29,38 @@ const UserSelect: FC<UserSelectProps> = ({
     []
   )
   const cName = useMemo(
-    () => classnames('com-form-user-select', className),
+    () => classnames('com-form-address-select', className),
     [className]
   )
   const handleChoose = useCallback(() => {
     setVisible(true)
   }, [])
   const handleClear = useCallback(
-    (e) => {
+    e => {
       e.stopPropagation()
       if (onChange) {
-        onChange([])
+        onChange({ departments: [], users: [] })
       }
     },
-    [onChange],
+    [onChange]
   )
   const txt = useMemo(
     () => {
-      if (value && value.length > 0) {
-        return value.map(({ name }: { name: string }) => name).join('，')
+      const { departments = [], users = [] } = value || {}
+      const v = [
+        ...departments, ...users
+      ]
+      if (v.length > 0) {
+        return v.map(({ name }) => name).join('，')
       }
       return ''
     },
     [value]
   )
-  console.log('visible', visible)
-  const modalValue = useMemo(
-    () => {
-      return {
-        departments: [],
-        users: value
-      }
-    },
-    [value]
-  )
   const handleChange = useCallback(
-    ({ users }) => {
+    v => {
       if (onChange) {
-        onChange(users)
+        onChange(v)
       }
     },
     [onChange]
@@ -75,27 +71,30 @@ const UserSelect: FC<UserSelectProps> = ({
         txt
           ? <>
             <Tooltip title={txt}>
-              <p className="com-form-user-select--text">{txt}</p>
+              <p className='com-form-address-select--text'>
+                { txt }
+              </p>
             </Tooltip>
             <Icon
-              className="com-form-user-select--icon"
-              type="icon-qingkong_mian"
+              className='com-form-address-select--icon'
+              type='icon-qingkong_mian'
               onClick={handleClear}
             />
           </>
-          : <span className="com-form-user-select--placeholder">
-            { placeholder }
-          </span>
+          : <span className='com-form-address-select--placeholder'>
+              { placeholder }
+            </span>
       }
     </div>
     <ModalComplexSelect
       visible={visible}
-      type='user'
-      value={modalValue}
+      type='complex'
+      value={value}
       onChange={handleChange}
       onCancel={handleClose}
+      selectMode={selectMode}
     />
   </>
 }
 
-export default memo(UserSelect)
+export default memo(AddressSelect)

@@ -2,6 +2,8 @@ import { get, post } from '@/utils/request'
 
 export const userLogin = params => post('/user/login', params)
 
+export const userLoginH5 = params => get('/user/getAdminInfo', params)
+
 // 获取钉钉授权的信息
 export const getApiTicket = (params) => get('/ding/getJsapiAuth', params)
 

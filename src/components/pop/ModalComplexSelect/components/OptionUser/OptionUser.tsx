@@ -1,7 +1,6 @@
 import { memo } from 'react'
 import type { FC } from 'react'
 import './OptionUser.less'
-import Checkbox from '@/components/form/Checkbox'
 import Avatar from '@/components/Avatar'
 
 type E = { target: { checked: boolean } }
@@ -10,13 +9,16 @@ interface OptionUserProps {
   onChange: (e: E) => void,
   avatar?: string,
   name: string
+  Comp: any
 }
 
-const OptionUser: FC<OptionUserProps> = ({ checked, onChange, avatar, name }) =>
+const OptionUser: FC<OptionUserProps> = ({
+  checked, onChange, avatar, name, Comp
+}) =>
   <div
     className='com-pop-modal-complex-select--options-user'
     >
-    <Checkbox
+    <Comp
       className='com-pop-modal-complex-select--options-user--check'
       checked={checked}
       onChange={onChange}
@@ -39,7 +41,7 @@ const OptionUser: FC<OptionUserProps> = ({ checked, onChange, avatar, name }) =>
       >
         { name }
       </p>
-    </Checkbox>
+    </Comp>
 </div>
 
 export default memo(OptionUser)

@@ -1,18 +1,18 @@
 import { memo } from 'react'
 import type { FC } from 'react'
-import './ModalComplexSelect.less'
 import Content from './components/Content'
 import ContextProvider from './context'
 
 interface ModalComplexSelectProps {
   title?: string
+  topName?: string
   type?: 'complex' | 'user' | 'dept'
-  value?: any[]
-  topName?: string,
-  onChange?: VoidFunction
+  value?: AddressList
+  onChange?: (x: AddressList) => void
   visible?: boolean
   onCancel?: VoidFunction
   onConfirm?: VoidFunction
+  selectMode?: 'multiple' | 'single'
 }
 
 const ModalComplexSelect: FC<ModalComplexSelectProps> = props => {

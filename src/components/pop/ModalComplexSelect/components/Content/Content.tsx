@@ -6,25 +6,16 @@ import OptionBox from '../OptionBox'
 import ResultBox from '../ResultBox'
 import { context } from '../../context'
 
-type Dept = { id: string, name: string }
-type Depts = Dept[]
-type User = { id: string, name: string, avatar?: string }
-type Users = User[]
 interface ContentProps {
   title?: string
   topName?: string
   type?: 'complex' | 'user' | 'dept'
-  value?: {
-    departments: Depts,
-    users: Users
-  }
-  onChange?: (x: {
-    departments: Depts,
-    users: Users
-  }) => void
+  value?: AddressList
+  onChange?: (x: AddressList) => void
   visible?: boolean
   onCancel?: VoidFunction
   onConfirm?: VoidFunction
+  selectMode?: 'multiple' | 'single'
 }
 
 const getDefaultTitle = (type: string) => {
@@ -46,16 +37,19 @@ const Content: FC<ContentProps> = ({
   onChange,
   onConfirm,
   onCancel,
-  visible = true
+  visible,
+  selectMode
 }) => {
   const {
     actions, dispatch, state: { value: stateValue }
   } = useContext(context)
   useEffect(
     () => {
-      actions.getList()
+      if (visible) {
+        actions.getList()
+      }
     },
-    [type, actions]
+    [type, actions, visible]
   )
   useEffect(
     () => {
@@ -68,11 +62,12 @@ const Content: FC<ContentProps> = ({
             departments: type !== 'user' ? departments : [],
             users: type !== 'dept' ? users : []
           },
-          type
+          type,
+          selectMode
         }
       })
     },
-    [value, type, topName, dispatch]
+    [value, type, topName, dispatch, selectMode, visible]
   )
   const dispTitle = useMemo<string>(
     () => {

@@ -1,22 +1,12 @@
-type Dept = { id: string, name: string }
-type Depts = Dept[]
-type User = { id: string, name: string, avatar?: string }
-type Users = User[]
-
 interface ReducerProps {
   topName: string
   dispDeptId: string | null
-  options: {
-    departments: Depts,
-    users: Users
-  }
-  value: {
-    departments: Depts,
-    users: Users
-  }
+  options: AddressList
+  value: AddressList
   type: 'complex' | 'user' | 'dept'
   searchString: string
-  paths: Depts
+  paths: AddressDepts
+  selectMode?: 'multiple' | 'single'
 }
 
 const getInitialState = (payload = {}) => ({
@@ -27,6 +17,7 @@ const getInitialState = (payload = {}) => ({
   type: 'complex',
   searchString: '',
   paths: [],
+  selectMode: 'multiple',
   ...payload
 })
 
@@ -42,6 +33,11 @@ export default (state: ReducerProps, action: any) => {
           { ...action.dept }
         ],
         searchString: ''
+      }
+    case 'set item':
+      return {
+        ...state,
+        value: action.value
       }
     case 'update options':
       return {

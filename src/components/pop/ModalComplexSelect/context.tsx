@@ -3,25 +3,15 @@ import type { FC } from 'react'
 import { handleList, handleSearch } from './methods'
 import reducer from './reducer'
 
-type Dept = { id: string, name: string }
-type Depts = Dept[]
-type User = { id: string, name: string, avatar?: string }
-type Users = User[]
-
 interface ReducerProps {
   topName: string
   dispDeptId: string | null
-  options: {
-    departments: Depts,
-    users: Users
-  }
-  value: {
-    departments: Depts,
-    users: Users
-  }
+  options: AddressList
+  value: AddressList
   type: 'complex' | 'user' | 'dept'
   searchString: string
-  paths: Depts
+  paths: AddressDepts
+  selectMode?: 'multiple' | 'single'
 }
 
 const getInitialState = (payload = {}): ReducerProps => ({
@@ -32,6 +22,7 @@ const getInitialState = (payload = {}): ReducerProps => ({
   type: 'complex',
   searchString: '',
   paths: [],
+  selectMode: 'multiple',
   ...payload
 })
 
@@ -74,13 +65,13 @@ const ContextProvider: FC = ({ children }) => {
           const { type } = refState.current
           return _getList({ type, deptId: 1 })
         },
-        openDept: (dept: Dept) => {
+        openDept: (dept: AddressDept) => {
           const { type } = refState.current
           //@ts-ignore
           dispatch({ type: 'open dept', dept })
           return _getList({ type, deptId: dept.id })
         },
-        changeDept: (paths: Depts) => {
+        changeDept: (paths: AddressDepts) => {
           const { type } = refState.current
           //@ts-ignore
           dispatch({ type: 'change paths', paths })
