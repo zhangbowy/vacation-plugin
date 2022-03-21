@@ -110,7 +110,7 @@ export const addRoutes = [
   {
     path: '/main',
     name: '假期管理',
-    // hideInMenu: true,
+    hideInMenu: true,
     component: dynamic({
       loader: () => import('@/pages/Main'),
       loading: LoadingComponent,
