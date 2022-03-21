@@ -2,7 +2,7 @@ import { SESSION_KEY_CORPID, SESSION_KEY_CODE } from '@/constant';
 
 const config = {
   code: '',
-  headerReturn: false,
+  inH5: false,
   corpId: '',
   token: '',
   authMap: {},

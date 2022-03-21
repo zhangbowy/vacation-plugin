@@ -19,8 +19,8 @@ async function initDingTalkJsapi() {
   // })
 
   const authResult = await requestAuth(corpId);
-  // or use config.RUN_TYPE
-  // console.log(config.runType)
+  // now is use code && session to decide isH5 or not
+  // if has error, use config.runType [need set in package scripts] replace
   if (config.code) {
     const action = config.code === 'test' ? userLoginH5Text :userLoginH5
     const loginResult = await action({
@@ -35,9 +35,9 @@ async function initDingTalkJsapi() {
           authMap[resourceId] = true
         }
       )
-      // headerReturn 根据环境设置示同的headerReturn
+      // inH5 根据环境设置示同的inH5
       setConfig({
-        headerReturn: true,
+        inH5: true,
         token: result.token,
         authMap,
         loginInfo: result
@@ -57,9 +57,9 @@ async function initDingTalkJsapi() {
           authMap[resourceId] = true
         }
       )
-      // headerReturn 根据环境设置示同的headerReturn
+      // inH5 根据环境设置示同的inH5
       setConfig({
-        headerReturn: false,
+        inH5: false,
         token: result.token,
         authMap,
         loginInfo: result

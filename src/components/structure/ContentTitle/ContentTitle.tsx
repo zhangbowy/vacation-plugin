@@ -14,7 +14,7 @@ interface ContentTitleProps {
 }
 
 const ContentTitle: FC<ContentTitleProps> = ({
-  className, children, onClick, hasReturn = config.headerReturn
+  className, children, onClick, hasReturn = config.inH5
 }) => {
   const cName = useMemo(
     () => classnames(
