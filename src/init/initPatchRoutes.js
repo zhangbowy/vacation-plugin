@@ -7,6 +7,7 @@ import LoadingComponent from '@/Loading';
 import { recursionFormatData } from '@/utils/utils';
 import initDingTalkJsapi from '@/init/initDingTalkJsapi';
 import checkAuth from '@/utils/checkAuth';
+import config from '@/config';
 
 function filterRoleMenu(menu) {
   return recursionFormatData(menu, 'routes', {
@@ -136,7 +137,9 @@ export default function patchRoutes({ routes }) {
 
   // 过滤没有权限的页面
   const filterAddRoutesByRole = filterRoleMenu(allRoutes);
-  const fistPage = filterAddRoutesByRole.find((item) => !item.hideInMenu);
+  const fistPage = config.code
+    ? '/main'
+    : filterAddRoutesByRole.find((item) => !item.hideInMenu);
   const mergeRoutes = [
     {
       path: '/(index.html)?',
