@@ -1,0 +1,68 @@
+.com-pop-modal-complex-select--options-user {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  justify-content: space-between;
+}
+.com-pop-modal-complex-select--options-user--check {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  .ant-checkbox {
+    top: 0;
+    + span {
+      flex: auto;
+      display: flex;
+      align-items: center;
+      padding-right: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  }
+  span.ant-radio {
+    top: 0;
+    + * {
+      flex: auto;
+      display: flex;
+      align-items: center;
+      padding-right: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  }
+}
+.com-pop-modal-complex-select--options-user--avatar.com-avatar {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  border-radius: 50%;
+  user-select: none;
+  cursor: pointer;
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+}
+.com-pop-modal-complex-select--options-user--avatar-text {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 28px;
+  text-align: center;
+  margin-right: 8px;
+  border-radius: 50%;
+  background-color: #0089ff;
+  user-select: none;
+  cursor: default;
+}
+.com-pop-modal-complex-select--options-user--name {
+  flex: auto;
+  color: #171a1d;
+  font-size: 14px;
+  line-height: 22px;
+  cursor: pointer;
+}

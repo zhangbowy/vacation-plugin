@@ -70,7 +70,7 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
     form
       .validateFields()
       .then((values) => {
-        const { dingUsers, name, range, resourceInfo } = values;
+        const { dingUsers = [], name, range, resourceInfo } = values;
         const { dataAuthority, depts } = range;
         const { isAllHandleAuthority, resourceMap = {} } = resourceInfo || {};
         const params = {
@@ -78,7 +78,9 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
           name,
           dataAuthority,
           deptIds: (depts || []).map(({ id: deptId }: { id: string | number }) => deptId),
-          dingUserIds: (dingUsers || []).map(({ emplId }: { emplId: string | number }) => emplId),
+          dingUserIds: dingUsers.map(
+            ({ id: userId }: { id: string | number }) => userId
+          ),
           isAllHandleAuthority: isAllHandleAuthority || false,
           resourceIds: Object.entries(resourceMap)
             .filter((v) => v[1])
@@ -146,12 +148,15 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
                 ({
                   name: userName,
                   dingUserId,
+                  avatar
                 }: {
-                  name: string;
-                  dingUserId: string | number;
+                  name: string,
+                  dingUserId: string | number,
+                  avatar: string
                 }) => ({
-                  emplId: dingUserId,
+                  id: dingUserId,
                   name: userName,
+                  avatar
                 }),
               ),
               range: {

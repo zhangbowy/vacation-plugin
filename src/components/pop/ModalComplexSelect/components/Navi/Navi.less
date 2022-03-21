@@ -1,0 +1,40 @@
+.com-pop-modal-complex-select--navi {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0 0 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.com-pop-modal-complex-select--navi--name {
+  flex: none;
+  color: #0089ff;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+  &:hover {
+    color: lighten(#0089ff, 10%);
+  }
+  &:active {
+    color: #0089ff;
+  }
+  &:first-child {
+    padding-left: 16px;
+  }
+  &:last-child {
+    padding-right: 16px;
+    color: #171a1d;
+    cursor: default;
+    &:hover, &:active {
+      color: #171a1d;
+    }
+  }
+}
+.com-pop-modal-complex-select--navi--divider {
+  flex: none;
+  height: 14px;
+  margin: 0 4px;
+  color: #acb2b7;
+  font-size: 14px;
+  line-height: 14px;
+}
