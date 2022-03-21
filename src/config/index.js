@@ -1,4 +1,4 @@
-import { SESSION_KEY_CORPID } from '@/constant';
+import { SESSION_KEY_CORPID, SESSION_KEY_CODE } from '@/constant';
 
 const config = {
   code: '',
@@ -11,6 +11,7 @@ const config = {
 
 const cacheKeyMap = {
   corpId: SESSION_KEY_CORPID,
+  code: SESSION_KEY_CODE
 };
 
 const cacheSessionKeys = ['corpId', 'code'];
