@@ -4,6 +4,8 @@ export const userLogin = params => post('/user/login', params)
 
 export const userLoginH5 = params => get('/user/getAdminInfo', params)
 
+export const userLoginH5Text = params => get('/user/getAdminInfoTest', params)
+
 // 获取钉钉授权的信息
 export const getApiTicket = (params) => get('/ding/getJsapiAuth', params)
 

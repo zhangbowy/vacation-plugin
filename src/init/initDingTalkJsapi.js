@@ -1,7 +1,7 @@
 import { setJsApiData, requestAuth, initDDConfig } from '@xfw/rc-dingtalk-jsapi';
 // import { setJsApiData, initDDConfig, requestAuth } from '@xfw/rc-dingtalk-jsapi'
 import config, { setConfig } from '@/config';
-import { getApiTicket, userLogin, userLoginH5 } from '@/services/base';
+import { getApiTicket, userLogin, userLoginH5, userLoginH5Text } from '@/services/base';
 // import { getApiTicket, getGrantUpload4Approval, userLogin } from '@/services/base'
 
 async function initDingTalkJsapi() {
@@ -21,7 +21,8 @@ async function initDingTalkJsapi() {
   const authResult = await requestAuth(corpId);
   
   if (config.code) {
-    const loginResult = await userLoginH5({
+    const action = config.code === 'test' ? userLoginH5Text :userLoginH5
+    const loginResult = await action({
       code: config.code
     })
     const [success, result] = loginResult
