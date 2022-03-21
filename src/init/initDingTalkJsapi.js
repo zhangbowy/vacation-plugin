@@ -25,6 +25,9 @@ async function initDingTalkJsapi() {
     const loginResult = await action({
       code: config.code
     })
+    console.log(
+      'loginResult', loginResult
+    )
     const [success, result] = loginResult
     const authMap = {}
     if (success) {

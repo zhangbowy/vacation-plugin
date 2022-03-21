@@ -138,7 +138,7 @@ export default function patchRoutes({ routes }) {
   // 过滤没有权限的页面
   const filterAddRoutesByRole = filterRoleMenu(allRoutes);
   const fistPage = config.code
-    ? '/main'
+    ? { path: '/main' }
     : filterAddRoutesByRole.find((item) => !item.hideInMenu);
   const mergeRoutes = [
     {
