@@ -4,7 +4,7 @@ import path from 'path';
 import proxy from './proxy';
 import routes from './routes';
 
-const { REACT_APP_ENV } = process.env;
+const { REACT_APP_ENV, RNU_TYPE } = process.env;
 
 export default defineConfig({
   // mfsu: {},
@@ -17,6 +17,7 @@ export default defineConfig({
     fim: path.join(__dirname, '../', 'src/.fim'),
   },
   define: {
+    'process.env.RUN_TYPE': process.env.RNU_TYPE || 'PC',
     PUBLIC_PATH: '/',
     API_PREFIX: '/vacation',
     ICONFONT_URL: '//at.alicdn.com/t/font_3178022_7g46o4qmjtl.js',

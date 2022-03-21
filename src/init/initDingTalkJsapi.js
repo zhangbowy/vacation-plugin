@@ -19,15 +19,13 @@ async function initDingTalkJsapi() {
   // })
 
   const authResult = await requestAuth(corpId);
-  
+  // or use config.RUN_TYPE
+  // console.log(config.runType)
   if (config.code) {
     const action = config.code === 'test' ? userLoginH5Text :userLoginH5
     const loginResult = await action({
       code: config.code
     })
-    console.log(
-      'loginResult', loginResult
-    )
     const [success, result] = loginResult
     const authMap = {}
     if (success) {

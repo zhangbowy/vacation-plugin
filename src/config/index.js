@@ -6,7 +6,8 @@ const config = {
   corpId: '',
   token: '',
   authMap: {},
-  loginInfo: {}
+  loginInfo: {},
+  runType: process.env.RUN_TYPE
 };
 
 const cacheKeyMap = {
