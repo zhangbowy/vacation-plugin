@@ -13,7 +13,7 @@ const cacheKeyMap = {
   corpId: SESSION_KEY_CORPID,
 };
 
-const cacheSessionKeys = ['corpId'];
+const cacheSessionKeys = ['corpId', 'code'];
 const cacheLocalKeys = [];
 
 // 将 config 数据，持久缓存
