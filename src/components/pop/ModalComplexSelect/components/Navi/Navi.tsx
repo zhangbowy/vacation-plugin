@@ -5,7 +5,7 @@ import { context } from '../../context'
 import Icon from '@/components/Icon'
 
 const Navi: FC = () => {
-  const { state: { topName, paths, searchString }, actions } = useContext(context)
+  const { state: { paths, searchString, showCompany }, actions } = useContext(context)
   const handleTop = useCallback(
     () => {
       if (paths.length > 0) {
@@ -27,36 +27,46 @@ const Navi: FC = () => {
   }
   return <div className='com-pop-modal-complex-select--navi'>
     {
-      topName &&
-      <p
-        className='com-pop-modal-complex-select--navi--name'
-        onClick={handleTop}
-      >
-        { topName }
-      </p>
+      showCompany &&
+      <>
+        <p
+          className='com-pop-modal-complex-select--navi--name'
+          onClick={handleTop}
+        >
+          通讯录
+        </p>
+        {
+          paths.length > 0 &&
+          <Icon
+            className='com-pop-modal-complex-select--navi--divider'
+            type='icon-youjiantou'
+          />
+        }
+      </>
     }
     {
       paths.map(
         ({ id, name }, i) => {
-          if (i && !topName) {
+          if (i === paths.length - 1) {
             return <p
               key={id}
               className='com-pop-modal-complex-select--navi--name'
+              onClick={() => handleChange(i)}
             >
               { name }
             </p>
           }
           return <Fragment key={id}>
-            <Icon
-              className='com-pop-modal-complex-select--navi--divider'
-              type='icon-youjiantou'
-            />
             <p
               className='com-pop-modal-complex-select--navi--name'
               onClick={() => handleChange(i)}
             >
               { name }
             </p>
+            <Icon
+              className='com-pop-modal-complex-select--navi--divider'
+              type='icon-youjiantou'
+            />
           </Fragment>
         }
       )

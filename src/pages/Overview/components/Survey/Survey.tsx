@@ -89,6 +89,7 @@ const Survey: FC<SurveyProps> = ({ changeSelecteDate }) => {
   )
   return <>
     <DeptSelect
+      showCompany
       placeholder='选择部门'
       value={depts}
       onChange={onChangeDepts}

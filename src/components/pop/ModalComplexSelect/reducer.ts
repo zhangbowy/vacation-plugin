@@ -7,19 +7,37 @@ interface ReducerProps {
   searchString: string
   paths: AddressDepts
   selectMode?: 'multiple' | 'single'
+  showCompany?: boolean
+  inTop?: boolean
 }
 
-const getInitialState = (payload = {}) => ({
-  topName: '',
-  dispDeptId: null,
-  options: { departments: [], users: [] },
-  value: { departments: [], users: [] },
-  type: 'complex',
-  searchString: '',
-  paths: [],
-  selectMode: 'multiple',
-  ...payload
-})
+const getInitialState = (payload = {}) => {
+  //@ts-ignore
+  const { type, showCompany, topName } = payload
+  const r: ReducerProps = {
+    topName: '',
+    dispDeptId: null,
+    options: { departments: [], users: [] },
+    value: { departments: [], users: [] },
+    type: 'complex',
+    searchString: '',
+    paths: [{ id: '1', name: topName }],
+    selectMode: 'multiple',
+    showCompany: false,
+    ...payload
+  }
+  if (type !== 'user' && showCompany) {
+    r.paths = []
+    r.options.departments = [
+      { name: topName, id: '1' }
+    ]
+    return r
+  }
+  if (type === 'user' && r.showCompany) {
+    r.showCompany = false
+  }
+  return r
+}
 
 export default (state: ReducerProps, action: any) => {
   switch (action.type) {

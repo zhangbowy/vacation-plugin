@@ -12,6 +12,7 @@ interface ReducerProps {
   searchString: string
   paths: AddressDepts
   selectMode?: 'multiple' | 'single'
+  showCompany?: boolean
 }
 
 const getInitialState = (payload = {}): ReducerProps => ({
@@ -27,7 +28,7 @@ const getInitialState = (payload = {}): ReducerProps => ({
 })
 
 // eslint-disable-next-line
-const paramsFunction = (_?: any) => new Promise((resolve) => { resolve({}) })
+const paramsFunction = (_?: any) => {}
 export const context = createContext({
   // eslint-disable-next-line
   dispatch: (_: any) => {},
@@ -62,7 +63,19 @@ const ContextProvider: FC = ({ children }) => {
         )
       return {
         getList: () => {
-          const { type } = refState.current
+          const { type, showCompany, topName } = refState.current
+          if (showCompany) {
+            dispatch({
+              type: 'update options',
+              options: {
+                departments: [{
+                  name: topName, deptId: '1'
+                }],
+                users: []
+              }
+            })
+            return
+          }
           return _getList({ type, deptId: 1 })
         },
         openDept: (dept: AddressDept) => {
@@ -72,16 +85,28 @@ const ContextProvider: FC = ({ children }) => {
           return _getList({ type, deptId: dept.id })
         },
         changeDept: (paths: AddressDepts) => {
-          const { type } = refState.current
+          const { type, showCompany, topName } = refState.current
           //@ts-ignore
           dispatch({ type: 'change paths', paths })
+          if (showCompany && paths.length === 0) {
+            dispatch({
+              type: 'update options',
+              options: {
+                departments: [{
+                  name: topName, id: '1'
+                }],
+                users: []
+              }
+            })
+            return
+          }
           return _getList({
             type,
             deptId: paths.length > 0 ? paths[paths.length - 1].id : 1
           })
         },
         doSearch: (search: string) => {
-          const { type } = refState.current
+          const { type, showCompany, topName } = refState.current
           if (search) {
             //@ts-ignore
             dispatch({
@@ -101,6 +126,18 @@ const ContextProvider: FC = ({ children }) => {
           } else {
             //@ts-ignore
             dispatch({ type: 'clear search string' })
+            if (showCompany) {
+              dispatch({
+                type: 'update options',
+                options: {
+                  departments: [{
+                    name: topName, id: '1'
+                  }],
+                  users: []
+                }
+              })
+              return
+            }
             return _getList({
               type,
               deptId: 1

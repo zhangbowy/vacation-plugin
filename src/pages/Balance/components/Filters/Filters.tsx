@@ -32,6 +32,7 @@ const Filters: FC<{ tableName: string }> = ({ tableName }) => {
     />
     <FilterDeptSelect
       className='pg-balance--filters--dept'
+      showCompany
     />
     <FilterSelect
       className='pg-balance--filters--status'

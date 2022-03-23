@@ -13,6 +13,7 @@ interface ModalComplexSelectProps {
   onCancel?: VoidFunction
   onConfirm?: VoidFunction
   selectMode?: 'multiple' | 'single'
+  showCompany?: boolean
 }
 
 const ModalComplexSelect: FC<ModalComplexSelectProps> = props => {

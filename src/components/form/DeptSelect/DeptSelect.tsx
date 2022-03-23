@@ -12,6 +12,7 @@ interface DeptSelectProps {
   onChange?: (departments: AddressDepts) => void
   placeholder?: string
   selectMode?: 'multiple' | 'single'
+  showCompany?: boolean
 }
 
 const DeptSelect: FC<DeptSelectProps> = ({
@@ -19,7 +20,8 @@ const DeptSelect: FC<DeptSelectProps> = ({
   value,
   onChange,
   placeholder = '选择部门',
-  selectMode
+  selectMode,
+  showCompany
 }) => {
   const [visible, setVisible] = useState(false)
   const handleClose = useCallback(
@@ -93,6 +95,7 @@ const DeptSelect: FC<DeptSelectProps> = ({
     </div>
     <ModalComplexSelect
       visible={visible}
+      showCompany={showCompany}
       type='dept'
       value={modalValue}
       onChange={handleChange}

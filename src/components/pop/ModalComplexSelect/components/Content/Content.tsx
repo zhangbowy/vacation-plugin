@@ -2,6 +2,7 @@ import { memo, useMemo, useEffect, useContext, useCallback } from 'react'
 import type { FC } from 'react'
 import './Content.less'
 import Modal from '@/components/pop/Modal'
+import config from '@/config'
 import OptionBox from '../OptionBox'
 import ResultBox from '../ResultBox'
 import { context } from '../../context'
@@ -16,6 +17,7 @@ interface ContentProps {
   onCancel?: VoidFunction
   onConfirm?: VoidFunction
   selectMode?: 'multiple' | 'single'
+  showCompany?: boolean
 }
 
 const getDefaultTitle = (type: string) => {
@@ -27,7 +29,6 @@ const getDefaultTitle = (type: string) => {
   return '选择部门与人员'
 }
 
-const tstTopName = 'xz考勤测试使用'
 
 const Content: FC<ContentProps> = ({
   title,
@@ -38,7 +39,8 @@ const Content: FC<ContentProps> = ({
   onConfirm,
   onCancel,
   visible,
-  selectMode
+  selectMode,
+  showCompany
 }) => {
   const {
     actions, dispatch, state: { value: stateValue }
@@ -57,17 +59,19 @@ const Content: FC<ContentProps> = ({
       dispatch({
         type: 'reset',
         payload: {
-          topName: topName || tstTopName,
+          //@ts-ignore
+          topName: topName || config.loginInfo?.companyName || '考勤统计',
           value: {
             departments: type !== 'user' ? departments : [],
             users: type !== 'dept' ? users : []
           },
           type,
-          selectMode
+          selectMode,
+          showCompany
         }
       })
     },
-    [value, type, topName, dispatch, selectMode, visible]
+    [value, type, topName, dispatch, selectMode, visible, showCompany]
   )
   const dispTitle = useMemo<string>(
     () => {

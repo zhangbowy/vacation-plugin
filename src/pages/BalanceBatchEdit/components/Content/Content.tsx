@@ -250,6 +250,7 @@ const Content: FC = () => {
         </div>
       </div>
       <ModalComplexSelect
+        showCompany
         visible={modalInfo.visible}
         type='dept'
         value={modalInfo.value}

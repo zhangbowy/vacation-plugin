@@ -12,6 +12,7 @@ interface AddressSelectProps {
   onChange?: (value: AddressList) => void
   placeholder?: string
   selectMode?: 'multiple' | 'single'
+  showCompany?: boolean
 }
 
 const AddressSelect: FC<AddressSelectProps> = ({
@@ -19,7 +20,8 @@ const AddressSelect: FC<AddressSelectProps> = ({
   value,
   onChange,
   placeholder = '选择部门和成员',
-  selectMode
+  selectMode,
+  showCompany
 }) => {
   const [visible, setVisible] = useState(false)
   const handleClose = useCallback(
@@ -87,6 +89,7 @@ const AddressSelect: FC<AddressSelectProps> = ({
       }
     </div>
     <ModalComplexSelect
+      showCompany={showCompany}
       visible={visible}
       type='complex'
       value={value}
