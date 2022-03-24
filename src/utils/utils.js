@@ -192,7 +192,7 @@ export function formatImageUploadUrl(urls) {
 export function __merge(d, b, cover) {
   if (b) {
     for (const k in b) {
-      if (b[k] === null) continue;
+      if (b[k] === null || b[k] === '') continue;
       if (
         typeof b[k] === 'object' &&
         (!d[k] || typeof d[k] === 'object') &&
