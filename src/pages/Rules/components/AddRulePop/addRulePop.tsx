@@ -362,8 +362,8 @@ const defaultData = {
     },
     expireRule: {
       expireType: 'permanent',
-      extendedTime: 0,
-      fixedTime: 0,
+      extendedTime: 1,
+      fixedTime: 1,
       specifyDay: '',
       untilDay: '',
       fixedUnit: 'day',
@@ -1407,7 +1407,7 @@ const AddRulePop: FC = () => {
                           className="inline"
                           name={['vacationIssueRule', 'expireRule', 'fixedTime']}
                         >
-                          <InputNumber min={0} />
+                          <InputNumber min={1} />
                         </Item>
                         <Item
                           label=""
