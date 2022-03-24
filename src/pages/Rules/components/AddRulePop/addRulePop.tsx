@@ -205,6 +205,25 @@ const EXPIRE_TYPE = [
   },
 ];
 
+const EXPIRE_TYPE_LILIU = [
+  {
+    value: 'permanent',
+    label: '不过期',
+  },
+  {
+    value: 'fixed_time',
+    label: '固定时间段内有效',
+  },
+  {
+    value: 'one_year',
+    label: '自发放起一周年',
+  },
+  {
+    value: 'until_day',
+    label: '截止到固定日期有效',
+  },
+];
+
 const EXPIRE_WAY = [
   {
     value: 0,
@@ -1056,7 +1075,7 @@ const AddRulePop: FC = () => {
                     className="m-r-8"
                     name={['vacationIssueRule', 'expireRule', 'expireType']}
                   >
-                    <Select options={EXPIRE_TYPE} />
+                    <Select options={EXPIRE_TYPE_LILIU} />
                   </Item>
                   {/*固定时间段*/}
                   {formData.vacationIssueRule.expireRule?.expireType === 'fixed_time' && (
