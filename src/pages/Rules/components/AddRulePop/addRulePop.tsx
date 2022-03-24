@@ -1087,11 +1087,11 @@ const AddRulePop: FC = () => {
                         className="expireRule"
                         name={['vacationIssueRule', 'expireRule', 'fixedTime']}
                       >
-                        <InputNumber />
+                        <InputNumber min={1} />
                       </Item>
                       <Item
                         label=""
-                        name="fixedUnit"
+                        name={['vacationIssueRule', 'expireRule', 'fixedUnit']}
                         className="w-80 m-l-8 inline"
                         rules={[{ required: true, message: '请选择天或月' }]}
                       >
