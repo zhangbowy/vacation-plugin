@@ -424,7 +424,9 @@ const AddRulePop: FC = () => {
               ? moment(vacationIssueRule.timeRule.issueDayOfYear)
               : null,
           },
-          freedomLeave: !vacationIssueRule.freedomLeave,
+          freedomLeave:
+            // 如果是调休家按钮置为开启，不是就取反
+            vacationTypeRule.bizType === 'lieu_leave' ? true : !vacationIssueRule.freedomLeave,
         },
       };
 
@@ -656,7 +658,8 @@ const AddRulePop: FC = () => {
               ...values.vacationIssueRule?.expireRule,
               isExtended: true,
             },
-            freedomLeave: !values.vacationIssueRule.freedomLeave, // 开关
+            freedomLeave:
+              values.bizType === 'lieu_leave' ? true : !values.vacationIssueRule?.freedomLeave,
           }, // 假期额度设置
         };
         if (values.vacationIssueRule?.quotaRule) {
