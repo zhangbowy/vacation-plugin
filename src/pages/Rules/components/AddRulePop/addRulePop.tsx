@@ -157,6 +157,10 @@ const AVERAGE_TYPE = [
     value: 'average_work_time',
     label: '按上年实际工作时长发放余额',
   },
+  {
+    value: 'average_work_time_mouth',
+    label: '按上年实际工作时长相差月份发放余额',
+  },
 ];
 
 const ROUND_TYPE = [
