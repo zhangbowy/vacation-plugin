@@ -155,7 +155,11 @@ const AVERAGE_TYPE = [
   },
   {
     value: 'average_work_time',
-    label: '按上年实际工作时长发放余额',
+    label: '按上年实际工作时长发放余额（按入职天数）',
+  },
+  {
+    value: 'average_work_time_month',
+    label: '按上年实际工作时长发放余额（按入职月份）',
   },
 ];
 
