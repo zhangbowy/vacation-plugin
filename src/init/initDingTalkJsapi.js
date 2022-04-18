@@ -10,7 +10,7 @@ import { fromJSON, toJSON } from '@/utils/utils';
 async function initDingTalkJsapi() {
   const { corpId } = config;
 
-  setJsApiData('corpId', corpId);
+  
 
   // 设置空间 id
   // setJsApiData('spaceId', async () => {
@@ -21,7 +21,7 @@ async function initDingTalkJsapi() {
   //   return result?.data?.spaceId
   // })
 
-  const authResult = await requestAuth(corpId);
+  
   // now is use code && session to decide isH5 or not
   // if has error, use config.runType [need set in package scripts] replace
   if (config.code) {
@@ -70,6 +70,8 @@ async function initDingTalkJsapi() {
       return loginResult
     }
   } else {
+    setJsApiData('corpId', corpId);
+    const authResult = await requestAuth(corpId);
     const loginResult = await userLogin({
       code: authResult.code, corpId
     })
