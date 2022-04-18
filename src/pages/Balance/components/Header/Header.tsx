@@ -14,11 +14,6 @@ const Header: FC = () => {
   useEffect(
     () => {
       refDestroyed.current = false
-      getSyncName().then(d => {
-        if (d[0] && !refDestroyed.current) {
-          setSyncOptions(d[1])
-        }
-      })
       return () => {
         refDestroyed.current = true
       }
@@ -27,6 +22,12 @@ const Header: FC = () => {
   )
   const handleOpen = () => {
     setVisible(true)
+    setSyncOptions([])
+    getSyncName().then(d => {
+      if (d[0] && !refDestroyed.current) {
+        setSyncOptions(d[1])
+      }
+    })
   }
   const handleHide = () => {
     setVisible(false)
