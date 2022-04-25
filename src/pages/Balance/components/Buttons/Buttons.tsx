@@ -24,12 +24,17 @@ const Buttons: FC = () => {
   };
   return (
     <div className="pg-balance--buttons">
-      {checkAuth(2002) && <Button onClick={handleBatchEdit}>使用Excel批量修改</Button>}
-      {checkAuth(2003) && (
-        <Button type="primary" ghost onClick={handleExport}>
-          导出
-        </Button>
-      )}
+      {
+        checkAuth(2002) &&
+        <Button onClick={handleBatchEdit}>使用Excel批量修改</Button>
+      }
+      {
+        checkAuth(2003) && (
+          <Button type="primary" ghost onClick={handleExport}>
+            导出
+          </Button>
+        )
+      }
     </div>
   );
 };

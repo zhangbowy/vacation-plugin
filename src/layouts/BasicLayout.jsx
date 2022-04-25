@@ -14,6 +14,7 @@ import useStoreContentSize from '@/hooks/useStoreContentSize';
 import './BasicLayout.less';
 import styles from './index.less';
 import { useLocation } from 'umi';
+import config from '@/config';
 
 const BasicLayout = (props) => {
   useStoreContentSize();
@@ -67,6 +68,9 @@ const BasicLayout = (props) => {
         headerHeight={64}
         collapsed={collapsed}
         menuRender={(_props, defaultDom) => {
+          if (config.code) {
+            return null;
+          }
           const hasPermission = _props.menuData.find((item) => item.permissionId);
           return hasPermission ? (
             <div className={cs(styles.menu, { [styles.collapsedMenu]: collapsed })}>

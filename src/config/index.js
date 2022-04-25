@@ -1,17 +1,21 @@
-import { SESSION_KEY_CORPID } from '@/constant';
+import { SESSION_KEY_CORPID, SESSION_KEY_CODE } from '@/constant';
 
 const config = {
+  code: '',
+  inH5: false,
   corpId: '',
   token: '',
   authMap: {},
-  loginInfo: {}
+  loginInfo: {},
+  runType: process.env.RUN_TYPE
 };
 
 const cacheKeyMap = {
   corpId: SESSION_KEY_CORPID,
+  code: SESSION_KEY_CODE
 };
 
-const cacheSessionKeys = ['corpId'];
+const cacheSessionKeys = ['corpId', 'code'];
 const cacheLocalKeys = [];
 
 // 将 config 数据，持久缓存

@@ -89,10 +89,11 @@ const Survey: FC<SurveyProps> = ({ changeSelecteDate }) => {
   )
   return <>
     <DeptSelect
+      showCompany
       placeholder='选择部门'
       value={depts}
       onChange={onChangeDepts}
-      options={{ multiple: false }}
+      selectMode='single'
     />
     <Calendar
       className='pg-overview--survey'

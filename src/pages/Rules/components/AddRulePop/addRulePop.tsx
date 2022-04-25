@@ -14,7 +14,7 @@ import Radio from '@/components/form/Radio/Radio';
 import InputNumber from '@/components/form/InputNumber';
 import DatePicker from '@/components/form/DatePicker';
 import { Space, Switch } from 'antd';
-import UserSelect from '@/components/form/UserSelect/UserSelect';
+import AddressSelect from '@/components/form/AddressSelect/AddressSelect';
 import { addRule, getDetail, editRule } from '@/services/rules';
 import { errMsg, msg } from '@/components/pop';
 import { __merge } from '@/utils/utils';
@@ -476,12 +476,7 @@ const AddRulePop: FC = () => {
         };
         editData.chooseUsers = {
           departments: departments?.details,
-          users: users?.details.map(({ id, name }) => {
-            return {
-              emplId: id,
-              name,
-            };
-          }),
+          users: users?.details
         };
       }
 
@@ -640,11 +635,12 @@ const AddRulePop: FC = () => {
           if (users) {
             visibilityRules.push({
               type: 'staff',
-              visible: users ? users.map(({ emplId }) => emplId) : [],
-              details: users.map(({ emplId, name }) => {
+              visible: users ? users.map(({ id }) => id) : [],
+              details: users.map(({ id, name, avatar }) => {
                 return {
-                  id: emplId,
+                  id,
                   name,
+                  avatar
                 };
               }),
             });
@@ -868,9 +864,8 @@ const AddRulePop: FC = () => {
                     style={{ display: 'inline-block', width: 270, margin: '0 8px' }}
                     name="chooseUsers"
                   >
-                    <UserSelect
+                    <AddressSelect
                       placeholder="请选择"
-                      responseUserOnly={false}
                       className={'app_range_user_select'}
                     />
                   </Item>

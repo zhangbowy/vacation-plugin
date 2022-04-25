@@ -211,3 +211,58 @@ export function __merge(d, b, cover) {
   }
   return d;
 }
+
+const getDefaultType = type => {
+  if (type === 'array') {
+    return [];
+  }
+  const types = {
+    object: {},
+    string: '',
+    number: NaN,
+    boolean: false
+  };
+  return types[type] || undefined;
+};
+/**
+ * json 转 字符串
+ * @param {*} json 原json字符串
+ * @param {*} options 如果是 string 类型，作为默认值；
+ * 对象类型，则从中提取 type（用于赋初值） 和 defaultValue（默认值）
+ * @returns 字符串
+ */
+export const fromJSON = (json, options) => {
+  const objectOptions = typeof options === 'object' ? options : {};
+  const { type = 'string' } = objectOptions;
+  const defaultValue = typeof options === 'string'
+    ? options : objectOptions.defaultValue || getDefaultType(type);
+  let r = '';
+  try {
+    r = JSON.parse(json);
+  } catch (e) {
+    r = defaultValue;
+  }
+  return r;
+};
+/**
+ * 字符串 转 json
+ * @param {*} string 字符串
+ * @param {*} options 如果是 string 类型，作为默认值；
+ * 对象类型，则从中提取defaultValue（默认值）
+ * @returns json字符串
+ */
+export const toJSON = (string, options) => {
+  const objectOptions = typeof options === 'object' ? options : {};
+  const defaultValue = typeof options === 'string'
+    ? options
+    : typeof objectOptions.defaultValue === 'string'
+      ? objectOptions.defaultValue
+      : JSON.stringify('');
+  let r = '';
+  try {
+    r = JSON.stringify(string);
+  } catch (e) {
+    r = defaultValue;
+  }
+  return r;
+};

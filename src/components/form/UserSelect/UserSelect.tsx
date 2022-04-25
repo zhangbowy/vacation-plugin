@@ -1,122 +1,101 @@
-import { memo, useCallback, useMemo } from 'react';
-import type { FC } from 'react';
-import classnames from 'classnames';
-import './UserSelect.less';
-import Icon from '@/components/Icon';
-import Tooltip from '@/components/pop/Tooltip';
-import { chooseComplexPicker } from '@xfw/rc-dingtalk-jsapi';
-
-export type ValuesType = {
-  emplId: string | number;
-  name: string;
-  avatar?: string;
-}[];
+import { memo, useCallback, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import classnames from 'classnames'
+import './UserSelect.less'
+import Icon from '@/components/Icon'
+import Tooltip from '@/components/pop/Tooltip'
+import ModalComplexSelect from '@/components/pop/ModalComplexSelect'
 
 interface UserSelectProps {
-  className?: string;
-  value?: ValuesType | Result;
-  onChange?: (users: ValuesType) => any;
-  options?: Record<string, any>;
-  placeholder?: string;
-  responseUserOnly?: boolean;
-}
-
-interface Result {
-  departments: [];
-  selectedCount: number;
-  users: ValuesType;
+  className?: string
+  value?: AddressUsers
+  onChange?: (value: AddressUsers) => void
+  placeholder?: string
 }
 
 const UserSelect: FC<UserSelectProps> = ({
   className,
   value,
   onChange,
-  options = {},
-  placeholder = '选择成员',
-  responseUserOnly = true,
+  placeholder = '选择成员'
 }) => {
-  const cName = useMemo(() => classnames('com-form-user-select', className), [className]);
-  const pickedDepartments = useMemo(() => {
-    let result: any[] = [];
-    if (!responseUserOnly) {
-      const { departments } = (value as Result) || {};
-      result = departments ? departments.map(({ id }) => id) : [];
-    }
-    return result;
-  }, [value]);
-  const pickedUsers = useMemo(() => {
-    let users: { emplId: string | number; name: string; avatar?: string }[] | Result | undefined =
-      value;
-    if (!responseUserOnly) {
-      users = (value as Result)?.users || [];
-    }
-    // @ts-ignore
-    return users?.map(({ emplId }) => emplId);
-  }, [value]);
+  const [visible, setVisible] = useState(false)
+  const handleClose = useCallback(
+    () => {
+      setVisible(false)
+    },
+    []
+  )
+  const cName = useMemo(
+    () => classnames('com-form-user-select', className),
+    [className]
+  )
   const handleChoose = useCallback(() => {
-    chooseComplexPicker({
-      title: '选择部门',
-      pickedUsers: pickedUsers,
-      pickedDepartments: pickedDepartments,
-      responseUserOnly,
-      ...options,
-      // @ts-ignore
-    }).then((result: any) => {
-      const { users } = result;
-      if (onChange) {
-        onChange(responseUserOnly ? users : result);
-      }
-    });
-  }, [onChange, options, value]);
+    setVisible(true)
+  }, [])
   const handleClear = useCallback(
     (e) => {
-      e.stopPropagation();
+      e.stopPropagation()
       if (onChange) {
-        onChange([]);
+        onChange([])
       }
     },
     [onChange],
-  );
-  const txt = useMemo(() => {
-    if (!responseUserOnly) {
-      let text = '';
-      const { departments = [], users = [] } = (value as Result) || {};
-      if (departments && departments.length > 0) {
-        text = text + departments.map(({ name }) => name).join('，');
+  )
+  const txt = useMemo(
+    () => {
+      if (value && value.length > 0) {
+        return value.map(({ name }: { name: string }) => name).join('，')
       }
-      if (users && users.length > 0) {
-        if (text) {
-          text = text + ',';
-        }
-        text = text + users.map(({ name }) => name).join('，');
+      return ''
+    },
+    [value]
+  )
+  console.log('visible', visible)
+  const modalValue = useMemo(
+    () => {
+      return {
+        departments: [],
+        users: value
       }
-      return text;
-    }
-    // @ts-ignore
-    if (value && value.length > 0) {
-      // @ts-ignore
-      return value.map(({ name }) => name).join('，');
-    }
-    return '';
-  }, [value]);
-  return (
+    },
+    [value]
+  )
+  const handleChange = useCallback(
+    ({ users }) => {
+      if (onChange) {
+        onChange(users)
+      }
+    },
+    [onChange]
+  )
+  return <>
     <div className={cName} onClick={handleChoose}>
-      {txt ? (
-        <>
-          <Tooltip title={txt}>
-            <p className="com-form-user-select--text">{txt}</p>
-          </Tooltip>
-          <Icon
-            className="com-form-user-select--icon"
-            type="icon-qingkong_mian"
-            onClick={handleClear}
-          />
-        </>
-      ) : (
-        <span className="com-form-user-select--placeholder">{placeholder}</span>
-      )}
+      {
+        txt
+          ? <>
+            <Tooltip title={txt}>
+              <p className="com-form-user-select--text">{txt}</p>
+            </Tooltip>
+            <Icon
+              className="com-form-user-select--icon"
+              type="icon-qingkong_mian"
+              onClick={handleClear}
+            />
+          </>
+          : <span className="com-form-user-select--placeholder">
+            { placeholder }
+          </span>
+      }
     </div>
-  );
-};
+    <ModalComplexSelect
+      visible={visible}
+      type='user'
+      value={modalValue}
+      onChange={handleChange}
+      onCancel={handleClose}
+    />
+  </>
+}
 
-export default memo(UserSelect);
+export default memo(UserSelect)

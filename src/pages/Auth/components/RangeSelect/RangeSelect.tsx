@@ -1,9 +1,9 @@
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import type { FC } from 'react'
 import './RangeSelect.less'
 import Radio, { Group } from '@/components/form/Radio'
-import { chooseDepartments } from '@xfw/rc-dingtalk-jsapi'
 import Tooltip from '@/components/pop/Tooltip'
+import ModalComplexSelect from '@/components/pop/ModalComplexSelect'
 
 interface RangeValueType {
   depts?: [],
@@ -16,6 +16,10 @@ interface RangeSelectProps {
 }
 
 const RangeSelect: FC<RangeSelectProps> = ({ value, onChange }) => {
+  const [modalInfo, setModalInfo] = useState({
+    visible: false,
+    value: { departments: [], users: [] }
+  })
   const { depts, dataAuthority } = useMemo(
     () => {
       if (value) {
@@ -30,21 +34,36 @@ const RangeSelect: FC<RangeSelectProps> = ({ value, onChange }) => {
     },
     [value]
   )
-  const chooseDepts = useCallback(
+  const openDeptModal = useCallback(
     () => {
-      chooseDepartments({
-        title: '选择部门',
-        departments: (value && value.depts || []).map(({ id }) => id)
-      }).then(({ departments }) => {
-        if (onChange) {
-          onChange({
-            depts: departments,
-            dataAuthority: 2
-          })
+      setModalInfo({
+        visible: true,
+        value: {
+          departments: value && value.depts || [],
+          users: []
         }
       })
     },
-    [value, onChange]
+    [value]
+  )
+  const closeDeptModal = useCallback(
+    () => {
+      setModalInfo({
+        visible: false, value: { departments: [], users: [] }
+      })
+    },
+    []
+  )
+  const chooseDepts = useCallback(
+    ({ departments }) => {
+      if (onChange) {
+        onChange({
+          depts: departments,
+          dataAuthority: 2
+        })
+      }
+    },
+    [onChange]
   )
   const handleChangeDataAuthority = useCallback(
     ({ target }) => {
@@ -73,20 +92,27 @@ const RangeSelect: FC<RangeSelectProps> = ({ value, onChange }) => {
               </Tooltip>
               <a
                 className='com-auth--range-select--custom-link'
-                onClick={chooseDepts}
+                onClick={openDeptModal}
               >
                 重选
               </a>
             </>
             : <a
               className='com-auth--range-select--custom-link'
-              onClick={chooseDepts}
+              onClick={openDeptModal}
             >
               选择部门
             </a>
         }
       </Radio>
     </Group>
+    <ModalComplexSelect
+      visible={modalInfo.visible}
+      type='dept'
+      value={modalInfo.value}
+      onCancel={closeDeptModal}
+      onChange={chooseDepts}
+    />
   </div>
 }
 
