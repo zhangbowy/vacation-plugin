@@ -63,9 +63,7 @@ const Auth: FC = () => {
     };
   }, []);
   useEffect(() => {
-    getDropdownList({
-      type: 1,
-    }).then((d) => {
+    getDropdownList({}).then((d) => {
       const [success, result] = d;
       if (success) {
         setRuleOptionss(
