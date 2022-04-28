@@ -86,10 +86,10 @@ const ContextProvider: FC = ({ children }) => {
         return _getList({ type, deptId: dept.id });
       },
       changeDept: (paths: AddressDepts) => {
-        const { type, showCompany, topName } = refState.current;
+        const { type, showCompany, topName, hasPermission } = refState.current;
         //@ts-ignore
         dispatch({ type: 'change paths', paths });
-        if (showCompany && paths.length === 0) {
+        if (showCompany && paths.length === 0 && !hasPermission) {
           dispatch({
             type: 'update options',
             options: {
@@ -103,6 +103,11 @@ const ContextProvider: FC = ({ children }) => {
             },
           });
           return;
+        }
+        if (hasPermission) {
+          return _getList({
+            type,
+          });
         }
         return _getList({
           type,
