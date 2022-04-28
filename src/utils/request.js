@@ -2,6 +2,10 @@ import { message } from 'antd';
 import to from 'await-to-js';
 import { request } from 'umi';
 import config from '@/config';
+import { confirm } from '@/components/pop/Modal';
+import { history } from '@@/core/history';
+import React from 'react';
+let isReloadLock = false;
 
 // header 添加 token 和 corpId
 const requestInterceptorToken = (url, options) => {
@@ -78,8 +82,21 @@ async function middlewareTokenInvalid(ctx, next) {
 
   console.log(ctx);
   if (ctx.res?.code === 102) {
-    message.error('登录超时，重新登录~');
-    window.location.reload();
+    // message.error('登录超时，重新登录~');
+    if (!isReloadLock) {
+      isReloadLock = true;
+      confirm({
+        title: '登陆过期提示',
+        content: (
+          <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>登陆过期，是否立即重新登录?</span>
+        ),
+        okText: '重新登陆',
+        cancelButtonProps: { style: { display: 'none' } }, // 隐藏取消按钮
+        onOk: () => {
+          window.location.reload();
+        },
+      });
+    }
   }
 }
 
@@ -135,7 +152,7 @@ export const requestConfig = {
     adaptor: (resData) => {
       return {
         ...resData,
-        errorMessage: resData.errorMsg || resData.error || '网络错误',
+        errorMessage: resData.message || resData.error || '网络错误',
       };
     },
   },
