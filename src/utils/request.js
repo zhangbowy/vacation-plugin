@@ -50,59 +50,48 @@ const responseInterceptorDownload = async (response, options) => {
 };
 
 const requestInterceptorUpload = async (url, options) => {
-  const { upload } = options
+  const { upload } = options;
   if (upload) {
-    const { data } = options
-    const formData = new FormData()
+    const { data } = options;
+    const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value)
-    })
+      formData.append(key, value);
+    });
     return {
       url,
       options: {
         ...options,
         data: formData,
-        requestType: 'form'
-      }
-    }
+        requestType: 'form',
+      },
+    };
   }
   return { url, options };
 };
-
 
 const requestInterceptors = [requestInterceptorToken, requestInterceptorUpload];
 
 const responseInterceptors = [responseInterceptorDownload];
 
-let isReloadLock = false;
-
 async function middlewareTokenInvalid(ctx, next) {
-  await next();
-
-  if (Number(ctx?.res?.errorCode) === 401) {
-    if (!isReloadLock) {
-      isReloadLock = true;
-      message.error('登录超时，重新登录~');
-      window.location.reload();
-    }
+  if (Number(ctx.res.errorCode) === 102) {
+    message.error('登录超时，重新登录~');
+    window.location.reload();
+  } else {
+    await next();
   }
 }
 
 async function middlewareBatchUploadInvalid(ctx, next) {
   await next();
-
   if (Number(ctx?.res?.errorCode) === 501001) {
-    ctx.res.success = true
+    ctx.res.success = true;
     ctx.res.result = {
       errorCode: 501001,
-      errorMsg: ctx.res.errorMsg || ''
-    }
+      errorMsg: ctx.res.errorMsg || '',
+    };
   }
 }
-
-const adapRequestDataKey = {
-  get: 'params',
-};
 
 export const adapRequest = async (method, url, params, options = {}) => {
   let finallyUrl = url;
@@ -123,11 +112,11 @@ export const adapRequest = async (method, url, params, options = {}) => {
       }),
     );
     if (err || !result || !result.success) {
-      return [false, result]
+      return [false, result];
     }
-    return [true, result.result]
+    return [true, result.result];
   } catch (e) {
-    return [false, e]
+    return [false, e];
   }
 };
 

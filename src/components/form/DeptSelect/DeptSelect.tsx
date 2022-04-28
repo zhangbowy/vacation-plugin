@@ -1,18 +1,19 @@
-import { memo, useCallback, useMemo, useState } from 'react'
-import type { FC } from 'react'
-import classnames from 'classnames'
-import './DeptSelect.less'
-import Tooltip from '@/components/pop/Tooltip'
-import Icon from '@/components/Icon'
-import ModalComplexSelect from '@/components/pop/ModalComplexSelect'
+import { memo, useCallback, useMemo, useState } from 'react';
+import type { FC } from 'react';
+import classnames from 'classnames';
+import './DeptSelect.less';
+import Tooltip from '@/components/pop/Tooltip';
+import Icon from '@/components/Icon';
+import ModalComplexSelect from '@/components/pop/ModalComplexSelect';
 
 interface DeptSelectProps {
-  className?: string
-  value?: AddressDepts
-  onChange?: (departments: AddressDepts) => void
-  placeholder?: string
-  selectMode?: 'multiple' | 'single'
-  showCompany?: boolean
+  className?: string;
+  value?: AddressDepts;
+  onChange?: (departments: AddressDepts) => void;
+  placeholder?: string;
+  selectMode?: 'multiple' | 'single';
+  showCompany?: boolean;
+  hasPermission?: boolean;
 }
 
 const DeptSelect: FC<DeptSelectProps> = ({
@@ -21,88 +22,76 @@ const DeptSelect: FC<DeptSelectProps> = ({
   onChange,
   placeholder = '选择部门',
   selectMode,
-  showCompany
+  showCompany,
+  hasPermission,
 }) => {
-  const [visible, setVisible] = useState(false)
-  const handleClose = useCallback(
-    () => {
-      setVisible(false)
-    },
-    []
-  )
-  const cName = useMemo(
-    () => classnames('com-form-dept-select', className),
-    [className]
-  )
+  const [visible, setVisible] = useState(false);
+  const handleClose = useCallback(() => {
+    setVisible(false);
+  }, []);
+  const cName = useMemo(() => classnames('com-form-dept-select', className), [className]);
   const handleChoose = useCallback(() => {
-    setVisible(true)
-  }, [])
+    setVisible(true);
+  }, []);
   const handleClear = useCallback(
-    e => {
-      e.stopPropagation()
+    (e) => {
+      e.stopPropagation();
       if (onChange) {
-        onChange([])
+        onChange([]);
       }
     },
-    [onChange]
-  )
-  const txt = useMemo(
-    () => {
-      if (value && value.length > 0) {
-        return value.map(({ name }) => name).join('，')
-      }
-      return ''
-    },
-    [value]
-  )
-  const modalValue = useMemo(
-    () => {
-      return {
-        departments: value,
-        users: []
-      }
-    },
-    [value]
-  )
+    [onChange],
+  );
+  const txt = useMemo(() => {
+    if (value && value.length > 0) {
+      return value.map(({ name }) => name).join('，');
+    }
+    return '';
+  }, [value]);
+  const modalValue = useMemo(() => {
+    return {
+      departments: value,
+      users: [],
+    };
+  }, [value]);
   const handleChange = useCallback(
     ({ departments }) => {
       if (onChange) {
-        onChange(departments)
+        onChange(departments);
       }
     },
-    [onChange]
-  )
-  return <>
-    <div className={cName} onClick={handleChoose}>
-      {
-        txt
-          ? <>
+    [onChange],
+  );
+  return (
+    <>
+      <div className={cName} onClick={handleChoose}>
+        {txt ? (
+          <>
             <Tooltip title={txt}>
-              <p className='com-form-dept-select--text'>
-                { txt }
-              </p>
+              <p className="com-form-dept-select--text">{txt}</p>
             </Tooltip>
             <Icon
-              className='com-form-dept-select--icon'
-              type='icon-qingkong_mian'
+              className="com-form-dept-select--icon"
+              type="icon-qingkong_mian"
               onClick={handleClear}
             />
           </>
-          : <span className='com-form-dept-select--placeholder'>
-              { placeholder }
-            </span>
-      }
-    </div>
-    <ModalComplexSelect
-      visible={visible}
-      showCompany={showCompany}
-      type='dept'
-      value={modalValue}
-      onChange={handleChange}
-      onCancel={handleClose}
-      selectMode={selectMode}
-    />
-  </>
-}
+        ) : (
+          <span className="com-form-dept-select--placeholder">{placeholder}</span>
+        )}
+      </div>
+      <ModalComplexSelect
+        visible={visible}
+        showCompany={showCompany}
+        hasPermission={hasPermission}
+        type="dept"
+        value={modalValue}
+        onChange={handleChange}
+        onCancel={handleClose}
+        selectMode={selectMode}
+      />
+    </>
+  );
+};
 
-export default memo(DeptSelect)
+export default memo(DeptSelect);

@@ -15,7 +15,7 @@ import InputNumber from '@/components/form/InputNumber';
 import DatePicker from '@/components/form/DatePicker';
 import { Space, Switch } from 'antd';
 import AddressSelect from '@/components/form/AddressSelect/AddressSelect';
-import { addRule, getDetail, editRule } from '@/services/rules';
+import { addRule, getDetail, editRule, getPermissions } from '@/services/rules';
 import { errMsg, msg } from '@/components/pop';
 import { __merge } from '@/utils/utils';
 import Tooltip from '@/components/pop/Tooltip/Tooltip';
@@ -24,7 +24,9 @@ import QuotaRule from './../QuotaRule';
 import { confirm } from '@/components/pop/Modal';
 import { Spin } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-
+import config from '@/config';
+import checkAuth from '@/utils/checkAuth';
+import { history } from 'umi';
 const RULE_TYPE = [
   {
     value: 'general_leave',
@@ -476,7 +478,7 @@ const AddRulePop: FC = () => {
         };
         editData.chooseUsers = {
           departments: departments?.details,
-          users: users?.details
+          users: users?.details,
         };
       }
 
@@ -611,6 +613,71 @@ const AddRulePop: FC = () => {
     [],
   );
 
+  const checkRulePermission = () => {
+    getPermissions({
+      code: config.code,
+      corpId: config.corpId,
+    }).then(([success, result]) => {
+      if (success) {
+        const { isAllRule } = result;
+        // case1 可管理全部假期 和权限设置权限
+        if (isAllRule && (checkAuth(6002) || checkAuth(6003))) {
+          confirm({
+            title: '假期可见权限',
+            content: (
+              <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>
+                添加假期规则后，可指定部分管理员可见，是否前往权限管理设置
+              </span>
+            ),
+            // icon: <ExclamationCircleFilled />,
+            okText: '设置',
+            cancelText: '暂不设置',
+            onOk: () => {
+              history.push('/auth');
+            },
+          });
+          return;
+        }
+        // case2 可管理部分假期 和权限设置权限
+        if (!editInfo && (checkAuth(6002) || checkAuth(6003))) {
+          confirm({
+            title: '假期可见权限',
+            content: (
+              <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>
+                当前角色对该假期不可见，是否前往设置权限
+              </span>
+            ),
+            // icon: <ExclamationCircleFilled />,
+            okText: '设置',
+            cancelText: '暂不设置',
+            onOk: () => {
+              history.push('/auth');
+            },
+          });
+          return;
+        }
+        // case3 可管理部分假期 和无权限设置权限
+        if (!editInfo && !checkAuth(6002) && !checkAuth(6003)) {
+          confirm({
+            title: '假期可见权限',
+            content: (
+              <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>
+                当前角色对该假期不可见，是否前往设置权限
+              </span>
+            ),
+            // icon: <ExclamationCircleFilled />,
+            okText: '设置',
+            cancelText: '暂不设置',
+            onOk: () => {
+              history.push('/auth');
+            },
+          });
+          return;
+        }
+      }
+    });
+  };
+
   const onClick_save = () => {
     setIsPopLoading(true);
     form
@@ -640,7 +707,7 @@ const AddRulePop: FC = () => {
                 return {
                   id,
                   name,
-                  avatar
+                  avatar,
                 };
               }),
             });
@@ -748,6 +815,7 @@ const AddRulePop: FC = () => {
             });
             dispatch({ type: 'table/refreshTable' });
             msg(`规则${text}成功`);
+            checkRulePermission();
           }
         });
       })
@@ -864,10 +932,7 @@ const AddRulePop: FC = () => {
                     style={{ display: 'inline-block', width: 270, margin: '0 8px' }}
                     name="chooseUsers"
                   >
-                    <AddressSelect
-                      placeholder="请选择"
-                      className={'app_range_user_select'}
-                    />
+                    <AddressSelect placeholder="请选择" className={'app_range_user_select'} />
                   </Item>
                 )}
               </Item>

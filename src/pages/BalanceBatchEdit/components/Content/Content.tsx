@@ -9,16 +9,17 @@ import Upload from '@/components/form/Upload';
 import { createSuccess, createError } from '@/components/pop/Modal';
 import { batchUpload } from '@/services/balance';
 import loading from '@/components/pop/loading';
-import ModalComplexSelect from '@/components/pop/ModalComplexSelect'
+import ModalComplexSelect from '@/components/pop/ModalComplexSelect';
 
 const Content: FC = () => {
   const refDestroyed = useRef(false);
   const [modalInfo, setModalInfo] = useState<{
-    visible: boolean, value: AddressList
+    visible: boolean;
+    value: AddressList;
   }>({
     visible: false,
-    value: { departments: [], users: [] }
-  })
+    value: { departments: [], users: [] },
+  });
   const [fileInfo, setFileInfo] = useState<{
     file: File | null;
     fileList: File[];
@@ -32,7 +33,7 @@ const Content: FC = () => {
   const [checkedValue, setCheckedValue] = useState<(string | number | boolean)[]>([]);
   useEffect(() => {
     refDestroyed.current = false;
-    getDropdownList().then((d) => {
+    getDropdownList({ type: 1 }).then((d) => {
       const [success, result = []] = d;
       //
       const res = result.filter(({ freedomLeave }: { freedomLeave: boolean }) => !freedomLeave);
@@ -87,54 +88,41 @@ const Content: FC = () => {
   const handleCatch = (e: any) => {
     e.stopPropagation();
   };
-  const handleUpload = useCallback(
-    () => {
-      loading.show();
-      const { file } = fileInfo;
-      batchUpload({ uploadFile: file }).then((d) => {
-        const [success, result] = d;
-        if (success) {
-          if (result && result.errorCode === 501001) {
-            handleError(result.errorMsg);
-          } else {
-            handleSuccess();
-            setFileInfo({ file: null, fileList: [] });
-          }
-          loading.hide()
+  const handleUpload = useCallback(() => {
+    loading.show();
+    const { file } = fileInfo;
+    batchUpload({ uploadFile: file }).then((d) => {
+      const [success, result] = d;
+      if (success) {
+        if (result && result.errorCode === 501001) {
+          handleError(result.errorMsg);
+        } else {
+          handleSuccess();
+          setFileInfo({ file: null, fileList: [] });
         }
-      })
-    },
-    [fileInfo]
-  )
-  const openDeptModal = useCallback(
-    () => {
-      setModalInfo({
-        visible: true,
-        value: {
-          departments: depts || [],
-          users: []
-        }
-      })
-    },
-    [depts]
-  )
-  const closeDeptModal = useCallback(
-    () => {
-      setModalInfo({
-        visible: false, value: { departments: [], users: [] }
-      })
-    },
-    []
-  )
-  const chooseDepts = useCallback(
-    ({ departments }) => {
-      setDepts(departments)
-    },
-    []
-  )
-  const handleChangeCheckboxAll = (
-    { target }: { target: { checked: boolean }}
-  ) => {
+        loading.hide();
+      }
+    });
+  }, [fileInfo]);
+  const openDeptModal = useCallback(() => {
+    setModalInfo({
+      visible: true,
+      value: {
+        departments: depts || [],
+        users: [],
+      },
+    });
+  }, [depts]);
+  const closeDeptModal = useCallback(() => {
+    setModalInfo({
+      visible: false,
+      value: { departments: [], users: [] },
+    });
+  }, []);
+  const chooseDepts = useCallback(({ departments }) => {
+    setDepts(departments);
+  }, []);
+  const handleChangeCheckboxAll = ({ target }: { target: { checked: boolean } }) => {
     if (target.checked) {
       setCheckedValue(ruleOptions.map(({ value }) => value));
     } else {
@@ -166,31 +154,26 @@ const Content: FC = () => {
           <div className="pg-balance-batch-edit--content--body">
             <div className="pg-balance-batch-edit--content--item">
               <span className="pg-balance-batch-edit--content--label">所属部门：</span>
-              {
-                depts.length > 0
-                  ? <>
-                    <span className="pg-balance-batch-edit--content--departments">
-                      {`已选择${depts.length}个部门`}
-                    </span>
-                    <span
-                      className="pg-balance-batch-edit--content--clickable"
-                      onClick={openDeptModal}
-                    >
-                      重新选择
-                    </span>
-                  </>
-                  : <span
+              {depts.length > 0 ? (
+                <>
+                  <span className="pg-balance-batch-edit--content--departments">
+                    {`已选择${depts.length}个部门`}
+                  </span>
+                  <span
                     className="pg-balance-batch-edit--content--clickable"
                     onClick={openDeptModal}
                   >
-                    选择部门
+                    重新选择
                   </span>
-              }
+                </>
+              ) : (
+                <span className="pg-balance-batch-edit--content--clickable" onClick={openDeptModal}>
+                  选择部门
+                </span>
+              )}
             </div>
             <div className="pg-balance-batch-edit--content--item">
-              <span className="pg-balance-batch-edit--content--label">
-                假期类型：
-              </span>
+              <span className="pg-balance-batch-edit--content--label">假期类型：</span>
               <div className="pg-balance-batch-edit--content--detail">
                 <Checkbox
                   className="pg-balance-batch-edit--content--checkbox"
@@ -250,9 +233,10 @@ const Content: FC = () => {
         </div>
       </div>
       <ModalComplexSelect
+        hasPermission
         showCompany
         visible={modalInfo.visible}
-        type='dept'
+        type="dept"
         value={modalInfo.value}
         onCancel={closeDeptModal}
         onChange={chooseDepts}
