@@ -74,16 +74,18 @@ const requestInterceptors = [requestInterceptorToken, requestInterceptorUpload];
 const responseInterceptors = [responseInterceptorDownload];
 
 async function middlewareTokenInvalid(ctx, next) {
-  if (Number(ctx.res.errorCode) === 102) {
+  await next();
+
+  console.log(ctx);
+  if (ctx.res?.code === 102) {
     message.error('登录超时，重新登录~');
     window.location.reload();
-  } else {
-    await next();
   }
 }
 
 async function middlewareBatchUploadInvalid(ctx, next) {
   await next();
+
   if (Number(ctx?.res?.errorCode) === 501001) {
     ctx.res.success = true;
     ctx.res.result = {
@@ -92,6 +94,10 @@ async function middlewareBatchUploadInvalid(ctx, next) {
     };
   }
 }
+
+const adapRequestDataKey = {
+  get: 'params',
+};
 
 export const adapRequest = async (method, url, params, options = {}) => {
   let finallyUrl = url;
