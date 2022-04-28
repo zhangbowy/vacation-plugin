@@ -152,7 +152,7 @@ export const requestConfig = {
     adaptor: (resData) => {
       return {
         ...resData,
-        errorMessage: resData.message || resData.error || '网络错误',
+        errorMessage: resData.message || resData.error || '操作失败',
       };
     },
   },

@@ -91,18 +91,21 @@ const Content: FC = () => {
   const handleUpload = useCallback(() => {
     loading.show();
     const { file } = fileInfo;
-    batchUpload({ uploadFile: file }).then((d) => {
-      const [success, result] = d;
-      if (success) {
-        if (result && result.errorCode === 501001) {
-          handleError(result.errorMsg);
-        } else {
-          handleSuccess();
-          setFileInfo({ file: null, fileList: [] });
+    batchUpload({ uploadFile: file })
+      .then((d) => {
+        const [success, result] = d;
+        if (success) {
+          if (result && result.errorCode === 501001) {
+            handleError(result.errorMsg);
+          } else {
+            handleSuccess();
+            setFileInfo({ file: null, fileList: [] });
+          }
         }
+      })
+      .finally(() => {
         loading.hide();
-      }
-    });
+      });
   }, [fileInfo]);
   const openDeptModal = useCallback(() => {
     setModalInfo({
