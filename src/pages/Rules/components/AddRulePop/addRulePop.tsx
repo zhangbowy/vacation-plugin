@@ -24,7 +24,7 @@ import QuotaRule from './../QuotaRule';
 import { confirm } from '@/components/pop/Modal';
 import { Spin } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import config from '@/config';
+import config, { setConfig } from '@/config';
 import checkAuth from '@/utils/checkAuth';
 import { history } from 'umi';
 const RULE_TYPE = [
@@ -619,7 +619,14 @@ const AddRulePop: FC = () => {
       corpId: config.corpId,
     }).then(([success, result]) => {
       if (success) {
-        const { isAllRule } = result;
+        const authMap = {};
+        const { isAllRule, resourceList } = result;
+        resourceList.forEach(({ resourceId }) => {
+          authMap[resourceId] = true;
+        });
+        setConfig({
+          authMap,
+        });
         // case1 可管理全部假期 和权限设置权限
         if (isAllRule && (checkAuth(6002) || checkAuth(6003))) {
           confirm({
@@ -657,17 +664,22 @@ const AddRulePop: FC = () => {
           return;
         }
         // case3 可管理部分假期 和无权限设置权限
-        if (!editInfo && !checkAuth(6002) && !checkAuth(6003)) {
+        if (!editInfo && !isAllRule && !checkAuth(6002) && !checkAuth(6003)) {
           confirm({
             title: '假期可见权限',
             content: (
               <span style={{ color: 'rgba(23, 26, 29, 0.6)' }}>
-                当前角色对该假期不可见，是否前往设置权限
+                当前角色对该假期不可见，请联系管理员设置
               </span>
             ),
             // icon: <ExclamationCircleFilled />,
-            okText: '设置',
-            cancelText: '暂不设置',
+            okText: '关闭',
+            cancelText: '关闭',
+            okButtonProps: {
+              style: {
+                display: 'none',
+              },
+            },
             onOk: () => {
               history.push('/auth');
             },

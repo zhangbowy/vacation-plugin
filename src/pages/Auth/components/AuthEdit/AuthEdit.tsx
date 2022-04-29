@@ -199,6 +199,7 @@ const AuthEdit: FC<AuthEditProps> = ({ id, visible, onVisibleChange, resourceLis
         });
       } else {
         setInitialValues(getInitialValues());
+        setVacationAuthority(-1);
       }
     }
   }, [visible, id, resourceList]);
