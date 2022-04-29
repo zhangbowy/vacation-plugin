@@ -109,10 +109,10 @@ const TARGET_USER = [
     value: 'formal',
     label: '正式员工',
   },
-  {
-    value: 'specific',
-    label: '特定人员',
-  },
+  // {
+  //   value: 'specific',
+  //   label: '特定人员',
+  // },
 ];
 
 const level1Data = [
@@ -1257,51 +1257,51 @@ const AddRulePop: FC = () => {
                     >
                       <Select options={TARGET_USER} />
                     </Item>
-                    {formData.vacationIssueRule?.targetRule &&
-                      formData.vacationIssueRule.targetRule.targetType === 'specific' && (
-                        <div className="target-rule">
-                          <span className="hours-InPerDay">性别为</span>
-                          <Item
-                            label=""
-                            style={{ display: 'inline-block', width: 80, marginRight: 8 }}
-                            name={['vacationIssueRule', 'targetRule', 'sex']}
-                            rules={[{ required: true, message: '请选择性别' }]}
-                          >
-                            <Select options={SEX} />
-                          </Item>
-                          年龄在
-                          <Item
-                            label=""
-                            style={{ display: 'inline-block', width: 80, margin: '0 8px' }}
-                            name={['vacationIssueRule', 'targetRule', 'minAge']}
-                            rules={[{ required: true, message: '' }]}
-                          >
-                            <InputNumber
-                              min={0}
-                              max={
-                                formData.vacationIssueRule.targetRule.maxAge
-                                  ? formData.vacationIssueRule.targetRule.maxAge - 1
-                                  : 99
-                              }
-                            />
-                          </Item>
-                          <span>-</span>
-                          <Item
-                            label=""
-                            style={{ display: 'inline-block', width: 80, margin: '0 8px' }}
-                            name={['vacationIssueRule', 'targetRule', 'maxAge']}
-                            rules={[{ required: true, message: '' }]}
-                          >
-                            <InputNumber
-                              min={
-                                formData.vacationIssueRule.targetRule.minAge
-                                  ? formData.vacationIssueRule.targetRule.minAge + 1
-                                  : 1
-                              }
-                            />
-                          </Item>
-                        </div>
-                      )}
+                    {/*{formData.vacationIssueRule?.targetRule &&*/}
+                    {/*  formData.vacationIssueRule.targetRule.targetType === 'specific' && (*/}
+                    {/*    <div className="target-rule">*/}
+                    {/*      <span className="hours-InPerDay">性别为</span>*/}
+                    {/*      <Item*/}
+                    {/*        label=""*/}
+                    {/*        style={{ display: 'inline-block', width: 80, marginRight: 8 }}*/}
+                    {/*        name={['vacationIssueRule', 'targetRule', 'sex']}*/}
+                    {/*        rules={[{ required: true, message: '请选择性别' }]}*/}
+                    {/*      >*/}
+                    {/*        <Select options={SEX} />*/}
+                    {/*      </Item>*/}
+                    {/*      年龄在*/}
+                    {/*      <Item*/}
+                    {/*        label=""*/}
+                    {/*        style={{ display: 'inline-block', width: 80, margin: '0 8px' }}*/}
+                    {/*        name={['vacationIssueRule', 'targetRule', 'minAge']}*/}
+                    {/*        rules={[{ required: true, message: '' }]}*/}
+                    {/*      >*/}
+                    {/*        <InputNumber*/}
+                    {/*          min={0}*/}
+                    {/*          max={*/}
+                    {/*            formData.vacationIssueRule.targetRule.maxAge*/}
+                    {/*              ? formData.vacationIssueRule.targetRule.maxAge - 1*/}
+                    {/*              : 99*/}
+                    {/*          }*/}
+                    {/*        />*/}
+                    {/*      </Item>*/}
+                    {/*      <span>-</span>*/}
+                    {/*      <Item*/}
+                    {/*        label=""*/}
+                    {/*        style={{ display: 'inline-block', width: 80, margin: '0 8px' }}*/}
+                    {/*        name={['vacationIssueRule', 'targetRule', 'maxAge']}*/}
+                    {/*        rules={[{ required: true, message: '' }]}*/}
+                    {/*      >*/}
+                    {/*        <InputNumber*/}
+                    {/*          min={*/}
+                    {/*            formData.vacationIssueRule.targetRule.minAge*/}
+                    {/*              ? formData.vacationIssueRule.targetRule.minAge + 1*/}
+                    {/*              : 1*/}
+                    {/*          }*/}
+                    {/*        />*/}
+                    {/*      </Item>*/}
+                    {/*    </div>*/}
+                    {/*  )}*/}
                   </Item>
                   <div className={'quota-rule'}>
                     <Item
