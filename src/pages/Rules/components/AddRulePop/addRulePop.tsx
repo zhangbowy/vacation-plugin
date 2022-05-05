@@ -789,6 +789,9 @@ const AddRulePop: FC = () => {
               return item;
             });
         }
+        if (values.vacationIssueRule?.expireRule?.expireType === 'next_month') {
+          params.vacationIssueRule.expireRule.netMonthValue = 1;
+        }
         // 过期时间特别的一天时间格式化
         if (values.vacationIssueRule?.expireRule?.specifyDay) {
           params.vacationIssueRule.expireRule.specifyDay = moment(
