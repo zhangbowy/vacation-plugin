@@ -82,10 +82,10 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
               if (preRule && currentRow.minAge <= preRule.maxAge) {
                 currentRow.minAge = preRule.maxAge;
               } else {
-                --currentRow.minAge;
+                // --currentRow.minAge;
               }
               if (currentRow.maxAge <= currentRow.minAge) {
-                currentRow.maxAge = currentRow.minAge + 1;
+                // currentRow.maxAge = currentRow.minAge + 1;
               }
             } else {
               ++currentRow.maxAge;
@@ -144,6 +144,7 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
                       >
                         <InputNumber
                           placeholder=""
+                          // onChange={}
                           disabled={fields[fields.length - 1].key !== key}
                         />
                       </Form.Item>
@@ -154,7 +155,7 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
                         style={{ width: 80 }}
                         rules={[{ required: true, message: '' }]}
                       >
-                        <InputNumber placeholder="" min={1} />
+                        <InputNumber placeholder="" min={0} />
                       </Form.Item>
                       <span>天假期</span>
                     </Space>
