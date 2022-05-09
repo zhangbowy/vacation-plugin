@@ -380,6 +380,7 @@ const defaultData = {
       fixedQuota: 0.0,
       averageType: 'none',
       roundType: 'none',
+      roundStep: 1,
       ageRules: [
         {
           maxAge: 1,
@@ -1466,6 +1467,15 @@ const AddRulePop: FC = () => {
                       >
                         <Select options={ROUND_TYPE} />
                       </Item>
+                      {formData.vacationIssueRule.quotaRule.roundType === 'ceil' && (
+                        <Item
+                          label="步长"
+                          className="inline"
+                          name={['vacationIssueRule', 'quotaRule', 'roundStep']}
+                        >
+                          <InputNumber min={0.5} step={0.5} />
+                        </Item>
+                      )}
                     </Item>
                   )}
                   <Item label="额度有效期" style={{ marginBottom: 0 }}>
