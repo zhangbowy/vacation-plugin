@@ -1467,7 +1467,8 @@ const AddRulePop: FC = () => {
                       >
                         <Select options={ROUND_TYPE} />
                       </Item>
-                      {formData.vacationIssueRule.quotaRule.roundType === 'ceil' && (
+                      {(formData.vacationIssueRule.quotaRule.roundType === 'ceil' ||
+                        formData.vacationIssueRule.quotaRule.roundType === 'floor') && (
                         <Item
                           label="步长"
                           className="inline"
