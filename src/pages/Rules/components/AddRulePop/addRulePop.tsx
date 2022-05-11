@@ -587,7 +587,7 @@ const AddRulePop: FC = () => {
       }
     }
     if (changedValues?.vacationIssueRule?.quotaRule?.roundStep) {
-      if (changedValues.vacationIssueRule.quotaRule.roundStep / 0.5 != 0) {
+      if (changedValues.vacationIssueRule.quotaRule.roundStep % 0.5 != 0) {
         result.vacationIssueRule.quotaRule.roundStep = Math.round(changedValues.vacationIssueRule.quotaRule.roundStep);
       }
     }
