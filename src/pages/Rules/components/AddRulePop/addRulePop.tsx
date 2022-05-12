@@ -329,6 +329,7 @@ const TIME_UNIT = [
 
 const defaultData = {
   whenCanLeave: 'entry', //
+  leaveName: '',
   paidLeave: true, // 是否带薪休假
   bizType: 'general_leave', // 假期规则
   APPLICATION_RANGE: 1, // 适用范围
@@ -527,7 +528,11 @@ const AddRulePop: FC = () => {
   }, [form]);
 
   const onChange_value = (changedValues: any, allVal: any) => {
+    console.log(changedValues)
     const result = __merge(formData, allVal, true);
+    if (changedValues?.leaveName == '') {
+      result.leaveName = '';
+    }
     if (changedValues?.vacationIssueRule?.timeRule?.issueType === 'month_day') {
       result.vacationIssueRule.timeRule.issueTimeType = 'fixed_day';
     }
@@ -591,6 +596,7 @@ const AddRulePop: FC = () => {
         result.vacationIssueRule.quotaRule.roundStep = Math.round(changedValues.vacationIssueRule.quotaRule.roundStep);
       }
     }
+    console.log(result)
     form.setFieldsValue({ ...result });
     setFormData({ ...result });
   };
@@ -918,7 +924,7 @@ const AddRulePop: FC = () => {
                 name="leaveName"
                 rules={[{ required: true, message: '请输入规则名称' }]}
               >
-                <Input placeholder="请输入规则名称" showCount={showCount} maxLength={64} />
+                <Input placeholder="请输入规则名称" showCount={showCount} minLength={0} maxLength={64} />
               </Item>
               <Item
                 label="假期规则类型"
