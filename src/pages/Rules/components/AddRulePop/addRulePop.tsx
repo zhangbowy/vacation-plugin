@@ -528,7 +528,7 @@ const AddRulePop: FC = () => {
   }, [form]);
 
   const onChange_value = (changedValues: any, allVal: any) => {
-    console.log(changedValues)
+    console.log(changedValues);
     const result = __merge(formData, allVal, true);
     if (changedValues?.leaveName == '') {
       result.leaveName = '';
@@ -593,10 +593,12 @@ const AddRulePop: FC = () => {
     }
     if (changedValues?.vacationIssueRule?.quotaRule?.roundStep) {
       if (changedValues.vacationIssueRule.quotaRule.roundStep % 0.5 != 0) {
-        result.vacationIssueRule.quotaRule.roundStep = Math.round(changedValues.vacationIssueRule.quotaRule.roundStep);
+        result.vacationIssueRule.quotaRule.roundStep = Math.round(
+          changedValues.vacationIssueRule.quotaRule.roundStep,
+        );
       }
     }
-    console.log(result)
+    console.log(result);
     form.setFieldsValue({ ...result });
     setFormData({ ...result });
   };
@@ -924,7 +926,12 @@ const AddRulePop: FC = () => {
                 name="leaveName"
                 rules={[{ required: true, message: '请输入规则名称' }]}
               >
-                <Input placeholder="请输入规则名称" showCount={showCount} minLength={0} maxLength={64} />
+                <Input
+                  placeholder="请输入规则名称"
+                  showCount={showCount}
+                  minLength={0}
+                  maxLength={64}
+                />
               </Item>
               <Item
                 label="假期规则类型"
@@ -1255,7 +1262,11 @@ const AddRulePop: FC = () => {
                           name={['vacationIssueRule', 'timeRule', 'issueDayOfYear']}
                           rules={[{ required: true, message: '请选择日期' }]}
                         >
-                          <DatePicker format={'MM-DD'} />
+                          <DatePicker
+                            format={'MM-DD'}
+                            mode={'date'}
+                            dropdownClassName="myCustomPicker"
+                          />
                         </Item>
                       )}
                     <span className="hour-text">
