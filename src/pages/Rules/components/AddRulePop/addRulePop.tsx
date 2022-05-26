@@ -1361,9 +1361,11 @@ const AddRulePop: FC = () => {
                             className="expireRule"
                             name={['vacationIssueRule', 'quotaRule', 'fixedQuota']}
                           >
-                            <InputNumber step="0.01" />
+                            <InputNumber step="1" />
                           </Item>
-                          <span className="hour-text m-l-8">天</span>
+                          <span className="hour-text m-l-8">
+                            {formData.leaveViewUnit === 'hour' ? '小时' : '天'}
+                          </span>
                         </>
                       )}
                       {/*额度配置 - 按社会工龄*/}
