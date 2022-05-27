@@ -8,7 +8,7 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useForm } from '@/components/form/Form';
 import { message } from '@/components/pop';
 
-const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) => {
+const QuotaRule = ({ unit, cRef, type, work_age, value = [], className, onChange }) => {
   let addFn: Function;
   const [form] = useForm();
   const cName = useMemo(() => classnames('rules-quota-rule', className), [className]);
@@ -157,7 +157,7 @@ const QuotaRule = ({ cRef, type, work_age, value = [], className, onChange }) =>
                       >
                         <InputNumber placeholder="" min={0} />
                       </Form.Item>
-                      <span>天假期</span>
+                      <span>{unit}假期</span>
                     </Space>
                     {fields[fields.length - 1].key === key && 0 !== key && (
                       <MinusCircleOutlined
