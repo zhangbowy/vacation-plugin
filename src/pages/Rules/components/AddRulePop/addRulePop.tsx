@@ -863,6 +863,7 @@ const AddRulePop: FC = () => {
       });
   };
 
+  // @ts-ignore
   return (
     <Drawer
       title=""
@@ -1385,7 +1386,11 @@ const AddRulePop: FC = () => {
                             className="w-120"
                             name={['vacationIssueRule', 'quotaRule', 'ageRules']}
                           >
-                            <QuotaRule cRef={workAgeRef} type={'work_age'} />
+                            <QuotaRule
+                              unit={formData.leaveViewUnit === 'hour' ? '小时' : '天'}
+                              cRef={workAgeRef}
+                              type={'work_age'}
+                            />
                           </Item>
                         </>
                       )}
@@ -1406,7 +1411,11 @@ const AddRulePop: FC = () => {
                             className="w-120"
                             name={['vacationIssueRule', 'quotaRule', 'ageRules']}
                           >
-                            <QuotaRule cRef={workAgeRef} type={'entry_age'} />
+                            <QuotaRule
+                              cRef={workAgeRef}
+                              type={'entry_age'}
+                              unit={formData.leaveViewUnit === 'hour' ? '小时' : '天'}
+                            />
                           </Item>
                         </>
                       )}
@@ -1433,7 +1442,11 @@ const AddRulePop: FC = () => {
                               className="w-120"
                               name={['vacationIssueRule', 'quotaRule', 'ageRules']}
                             >
-                              <QuotaRule cRef={workAgeRef} type={'work_age'} />
+                              <QuotaRule
+                                cRef={workAgeRef}
+                                type={'work_age'}
+                                unit={formData.leaveViewUnit === 'hour' ? '小时' : '天'}
+                              />
                             </Item>
                           </div>
                           <div className={'sum_work_entry_age'}>
@@ -1454,7 +1467,11 @@ const AddRulePop: FC = () => {
                               className="w-120"
                               name={['vacationIssueRule', 'quotaRule', 'ageRules_two']}
                             >
-                              <QuotaRule cRef={entryAgeRef} type={'entry_age'} />
+                              <QuotaRule
+                                cRef={entryAgeRef}
+                                type={'entry_age'}
+                                unit={formData.leaveViewUnit === 'hour' ? '小时' : '天'}
+                              />
                             </Item>
                           </div>
                         </>
