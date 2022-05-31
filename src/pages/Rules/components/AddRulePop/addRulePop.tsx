@@ -707,7 +707,8 @@ const AddRulePop: FC = () => {
     setIsPopLoading(true);
     form
       .validateFields()
-      .then((values) => {
+      .then((valuess) => {
+        const values = __merge({}, valuess, true);
         const chooseUsers = values.chooseUsers;
         const { departments, users } = chooseUsers || {};
         const visibilityRules = [];
